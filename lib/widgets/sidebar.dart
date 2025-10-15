@@ -257,24 +257,28 @@ class _CustomSidebarState extends State<CustomSidebar> {
                             ],
                           ),
                       
-                      trailing: widget.isMinimized ? null : Icon(
-                        Icons.keyboard_arrow_down,
-                        color: isSelected ? mainColor : const Color(0xFF5C7E9D),
+                      trailing: widget.isMinimized
+                      ? null
+                      : Icon(
+                          Icons.keyboard_arrow_down,
+                          color: isSelected ? mainColor : const Color(0xFF5C7E9D),
                       ),
 
                       // Children / Submenu
                       children: [
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: item.subItems!.map((subTitle) {
-                            return SubSidebarItem(
-                              title: subTitle,
-                              isSelected: subTitle == widget.selectedSubItem,
-                              isMinimized: widget.isMinimized,
-                              onTap: () => widget.onSelect(item.title, subTitle),
-                            );
-                          }).toList(),
-                        )
+                      // 👇 PERBAIKAN: Gunakan kondisi untuk menyembunyikan sub-menu saat minimize
+                        if (!widget.isMinimized) 
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: item.subItems!.map((subTitle) {
+                              return SubSidebarItem(
+                                title: subTitle,
+                                isSelected: subTitle == widget.selectedSubItem,
+                                isMinimized: widget.isMinimized,
+                                onTap: () => widget.onSelect(item.title, subTitle),
+                              );
+                            }).toList(),
+                          )
                       ],
                     ),
                   );
