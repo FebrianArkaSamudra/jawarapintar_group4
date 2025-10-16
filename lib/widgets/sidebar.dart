@@ -22,44 +22,36 @@ class SubSidebarItem extends StatelessWidget {
       return const SizedBox.shrink(); // Sembunyikan saat minimize
     }
 
-    final mainColor = Theme.of(context).colorScheme.primary;
-    final selectedBarColor = mainColor;
-    final selectedTextColor =
-        mainColor; // show primary color for selected subitem
+    final selectedBgColor = Theme.of(context).colorScheme.primary;
+    final selectedColor = Colors.white;
     final unselectedColor = const Color(0xFF5C7E9D);
 
     return Padding(
-      padding: const EdgeInsets.only(left: 8.0, bottom: 4.0),
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(8),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Garis vertikal tipis seperti di desain
-            Container(
-              width: 2,
-              height: 36,
-              margin: const EdgeInsets.only(right: 12, left: 8),
-              decoration: BoxDecoration(
-                color: isSelected ? selectedBarColor : const Color(0xFFDCE7EE),
-                borderRadius: BorderRadius.circular(2),
-              ),
+      padding: const EdgeInsets.only(
+        left: 4.0,
+      ), // Padding menyesuaikan garis leading
+      child: Container(
+        margin: const EdgeInsets.only(right: 16),
+        decoration: BoxDecoration(
+          color: isSelected ? selectedBgColor : Colors.transparent,
+          borderRadius: const BorderRadius.only(
+            topRight: Radius.circular(8),
+            bottomRight: Radius.circular(8),
+          ),
+        ),
+        child: ListTile(
+          dense: true, // Membuat item lebih ringkas
+          contentPadding: const EdgeInsets.fromLTRB(60.0, 0, 16.0, 0),
+          title: Text(
+            title,
+            style: TextStyle(
+              color: isSelected ? selectedColor : unselectedColor,
+              fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+              fontSize: 14,
             ),
-            Expanded(
-              child: Container(
-                padding: const EdgeInsets.symmetric(vertical: 8.0),
-                child: Text(
-                  title,
-                  style: TextStyle(
-                    color: isSelected ? selectedTextColor : unselectedColor,
-                    fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
-                    fontSize: 15,
-                  ),
-                ),
-              ),
-            ),
-          ],
+            overflow: TextOverflow.ellipsis,
+          ),
+          onTap: onTap,
         ),
       ),
     );
@@ -233,16 +225,6 @@ class _CustomSidebarState extends State<CustomSidebar> {
 
           const Divider(color: Color(0xFFF0F0F0), thickness: 2, height: 1),
 
-          // Label Menu seperti pada desain
-          if (!widget.isMinimized)
-            const Padding(
-              padding: EdgeInsets.fromLTRB(20, 18, 16, 8),
-              child: Text(
-                'Menu',
-                style: TextStyle(color: Color(0xFF8A9BAE), fontSize: 14),
-              ),
-            ),
-
           // Daftar Menu
           Expanded(
             child: ListView(
@@ -338,23 +320,19 @@ class _CustomSidebarState extends State<CustomSidebar> {
 
                       // Children / Submenu
                       children: [
-                        // Sembunyikan sub-items saat sidebar diminimalkan
+                        // 👇 PERBAIKAN: Gunakan kondisi untuk menyembunyikan sub-menu saat minimize
                         if (!widget.isMinimized)
-                          Padding(
-                            padding: const EdgeInsets.only(left: 12.0),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: item.subItems!.map((subTitle) {
-                                return SubSidebarItem(
-                                  title: subTitle,
-                                  isSelected:
-                                      subTitle == widget.selectedSubItem,
-                                  isMinimized: widget.isMinimized,
-                                  onTap: () =>
-                                      widget.onSelect(item.title, subTitle),
-                                );
-                              }).toList(),
-                            ),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: item.subItems!.map((subTitle) {
+                              return SubSidebarItem(
+                                title: subTitle,
+                                isSelected: subTitle == widget.selectedSubItem,
+                                isMinimized: widget.isMinimized,
+                                onTap: () =>
+                                    widget.onSelect(item.title, subTitle),
+                              );
+                            }).toList(),
                           ),
                       ],
                     ),
