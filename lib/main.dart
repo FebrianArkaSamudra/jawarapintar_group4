@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'home_page.dart'; // Import halaman utama
+import 'screens/home_page.dart';
+import 'config/theme.dart';
 
 void main() {
   runApp(const MyApp());
@@ -10,25 +11,10 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Warna utama aplikasi (biru tua)
-    const primaryBlue = Color(0xFF3F6FAA);
-
     return MaterialApp(
       title: 'Jawara Pintar',
-      debugShowCheckedModeBanner: false, // Sembunyikan banner debug
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: primaryBlue,
-          brightness: Brightness.light,
-          primary: primaryBlue, // Terapkan warna utama
-        ),
-        useMaterial3: true,
-        fontFamily: 'Poppins',
-        // Tambahkan sentuhan visual untuk ListTile (mempengaruhi SubSidebarItem)
-        listTileTheme: ListTileThemeData(
-          iconColor: primaryBlue,
-        ),
-      ),
+      debugShowCheckedModeBanner: false,
+      theme: AppTheme.lightTheme,
       home: const MyHomePage(),
     );
   }
