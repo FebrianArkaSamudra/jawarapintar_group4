@@ -127,8 +127,14 @@ class _MyHomePageState extends State<MyHomePage> {
                   return const PesanWargaScreen();
                 if (_selectedPrimaryItem == 'Penerimaan Warga')
                   return const PenerimaanWargaScreen();
-                if (_selectedPrimaryItem == 'Mutasi Keluarga')
-                  return const MutasiKeluargaScreen();
+                if (_selectedPrimaryItem == 'Mutasi Keluarga') {
+                  if (_selectedSubItem == 'Daftar') {
+                    return const MutasiKeluargaDaftar();
+                  }
+                  if (_selectedSubItem == 'Tambah') {
+                    return const MutasiKeluargaTambah();
+                  }
+                }
                 if (_selectedPrimaryItem == 'Log Aktifitas')
                   return const LogAktifitasScreen();
 
