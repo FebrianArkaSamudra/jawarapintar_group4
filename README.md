@@ -48,6 +48,6 @@ Below is a breakdown of each feature in the app, complete with screenshots and s
 Provides quick navigation across all modules and collapses for compact view.
 
 🖼️ **Screenshot:**
-![Sidebar](/IMG/sidebar.png)
+![Sidebar](/lib/IMG/Sidebar.png)
 
 ```dart
