@@ -1,22 +1,53 @@
-<<<<<<< HEAD
-# jawarapintar
+# 🏡 JawaraPintar
 
-A new Flutter project.
+A modern **Flutter Web Application** built for smart community management.
 
-## Getting Started
+## 👥 Team Members
 
-This project is a starting point for a Flutter application.
+| Name | NIM |
+|------|------|
+| Febrian Arka Samudra | 2341720066 |
+| Hammam Abdullah Saeed Bin Ghaleb | 2341720203 |
+| Mikaila Kafka Akmalsyah | 2341720223 |
+| Muhammad Rizal Al Baihaqi | 2341720225 |
+| Yuma Akhunza Kausar Putra | 2341720259 |
 
-A few resources to get you started if this is your first Flutter project:
+![Group members](../jawarapintar_group4/lib/IMG/Group.png)
+---
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+## 💡 Project Overview
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
-=======
-# jawarapintar_group4
->>>>>>> 2f8857adc5d11aa6ff7d7f0581f5114229d7da5b
+**JawaraPintar** is a community management system designed to simplify administrative, communication, and financial management for neighborhood or housing associations.
 
-Hammam
+Built using **Flutter Web**, it includes features like user management, financial reports, message broadcasting, and more — all with a sleek sidebar-based UI.
+
+---
+
+## 🎨 Figma Design
+
+
+The base UI design and prototype were created in **Figma**, focusing on:
+- Responsive layout  
+- Consistent color palette  
+- Modern sidebar navigation  
+
+🖼️ **Preview:**
+![Figma Design](/lib/IMG/Figma.png)
+
+---
+
+
+## 📂 Main Features
+
+Below is a breakdown of each feature in the app, complete with screenshots and sample Dart code.
+
+---
+
+### 🧭 Sidebar
+
+Provides quick navigation across all modules and collapses for compact view.
+
+🖼️ **Screenshot:**
+![Sidebar](/IMG/sidebar.png)
+
+```dart
