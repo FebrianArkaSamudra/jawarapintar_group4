@@ -18,7 +18,8 @@ import 'laporan_keuangan/laporan_keuangan_screen.dart';
 import 'kegiatan_broadcast/kegiatan_broadcast_screen.dart';
 import 'pesan_warga/pesan_warga_screen.dart';
 import 'penerimaan_warga/penerimaan_warga_screen.dart';
-import 'mutasi_keluarga/mutasi_keluarga_screen.dart';
+import 'mutasi_keluarga/mutasi_keluarga_daftar.dart';
+import 'mutasi_keluarga/mutasi_keluarga_tambah.dart';
 import 'log_aktifitas/log_aktifitas_screen.dart';
 import 'Manajemen_Pengguna/daftar_pengguna.dart';
 import 'Manajemen_Pengguna/edit_pengguna_screen.dart';
@@ -184,7 +185,12 @@ class _MyHomePageState extends State<MyHomePage> {
                 }
                 // Mutasi Keluarga screens
                 if (_selectedPrimaryItem == 'Mutasi Keluarga') {
-                  return const MutasiKeluargaScreen();
+                  if (_selectedSubItem == 'Daftar') {
+                    return const MutasiKeluargaDaftar();
+                  }
+                  if (_selectedSubItem == 'Tambah') {
+                    return const MutasiKeluargaTambah();
+                  }
                 }
                 // Log Aktifitas screens
                 if (_selectedPrimaryItem == 'Log Aktifitas') {
