@@ -12,7 +12,7 @@ A modern **Flutter Web Application** built for smart community management.
 | Muhammad Rizal Al Baihaqi | 2341720225 |
 | Yuma Akhunza Kausar Putra | 2341720259 |
 
-![Group members](../jawarapintar_group4/lib/IMG/Group.png)
+![Group members](/lib/IMG/Group.png)
 ---
 
 ## 💡 Project Overview
@@ -48,6 +48,7 @@ Below is a breakdown of each feature in the app, complete with screenshots and s
 Provides quick navigation across all modules and collapses for compact view.
 
 🖼️ **Screenshot:**
+
 ![Sidebar](/lib/IMG/Sidebar.png)
 
 ```dart
