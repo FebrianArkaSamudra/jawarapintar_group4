@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:jawarapintar/screens/pesan_warga/informasi_aspirasi_screen.dart';
 import '../widgets/sidebar.dart';
 import '../models/menu_item.dart';
 import 'dashboard/keuangan_screen.dart';
@@ -14,7 +15,7 @@ import 'pemasukan/pemasukan_screen.dart';
 import 'pengeluaran/pengeluaran_screen.dart';
 import 'laporan_keuangan/laporan_keuangan_screen.dart';
 import 'kegiatan_broadcast/kegiatan_broadcast_screen.dart';
-import 'pesan_warga/pesan_warga_screen.dart';
+import 'pesan_warga/informasi_aspirasi_screen.dart';
 import 'penerimaan_warga/penerimaan_warga_screen.dart';
 import 'mutasi_keluarga/mutasi_keluarga_screen.dart';
 import 'log_aktifitas/log_aktifitas_screen.dart';
@@ -122,7 +123,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 }
                 // Pesan Warga screens
                 if (_selectedPrimaryItem == 'Pesan Warga') {
-                  return const PesanWargaScreen();
+                  return const InformasiAspirasiScreen();
                 }
                 // Penerimaan Warga screens
                 if (_selectedPrimaryItem == 'Penerimaan Warga') {
