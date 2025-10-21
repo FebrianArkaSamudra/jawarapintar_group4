@@ -1,53 +1,64 @@
 import 'package:flutter/material.dart';
 
 // Small local model mirroring the attachment version
-class _AspirasiItem {
+class _PenerimaanWargaItem {
   int no;
-  String pengirim;
-  String judul;
+  String Nama;
+  String NIK;
+  String Email;
+  String Jenis_Kelamin;
+  String Foto_Identitas;
   String status;
-  String tanggal;
 
-  _AspirasiItem({
+  _PenerimaanWargaItem({
     required this.no,
-    required this.pengirim,
-    required this.judul,
+    required this.Nama,
+    required this.NIK,
+    required this.Email,
+    required this.Jenis_Kelamin,
+    required this.Foto_Identitas,
     required this.status,
-    required this.tanggal,
   });
 }
 
-class InformasiAspirasiScreen extends StatefulWidget {
-  const InformasiAspirasiScreen({super.key});
+class InformasiPenerimaanWargaScreen extends StatefulWidget {
+  const InformasiPenerimaanWargaScreen({super.key});
 
   @override
-  State<InformasiAspirasiScreen> createState() =>
-      _InformasiAspirasiScreenState();
+  State<InformasiPenerimaanWargaScreen> createState() =>
+      _InformasiPenerimaanWargaScreenState();
 }
 
-class _InformasiAspirasiScreenState extends State<InformasiAspirasiScreen> {
+class _InformasiPenerimaanWargaScreenState
+    extends State<InformasiPenerimaanWargaScreen> {
   // use a mutable list of model objects
-  final List<_AspirasiItem> _items = [
-    _AspirasiItem(
+  final List<_PenerimaanWargaItem> _items = [
+    _PenerimaanWargaItem(
       no: 1,
-      pengirim: 'Slamet',
-      judul: 'Uji Coba',
+      Nama: 'Slamet',
+      NIK: '23417202556',
+      Email: 'Slamet@gmail.com',
+      Jenis_Kelamin: 'Laki-laki',
+      Foto_Identitas: '-',
       status: 'Diterima',
-      tanggal: '26 September 2025',
     ),
-    _AspirasiItem(
+    _PenerimaanWargaItem(
       no: 2,
-      pengirim: 'Murjoko',
-      judul: 'Tes Jaringan',
+      Nama: 'Murjoko',
+      NIK: '23417202552',
+      Email: 'Joko@gmail.com',
+      Jenis_Kelamin: 'Laki-laki',
+      Foto_Identitas: '-',
       status: 'Pending',
-      tanggal: '27 September 2025',
     ),
-    _AspirasiItem(
+    _PenerimaanWargaItem(
       no: 3,
-      pengirim: 'Budianto',
-      judul: 'Lampu Jalan Mati',
+      Nama: 'Budianto',
+      NIK: '23417202550',
+      Email: 'Budianti@gmail.com',
+      Jenis_Kelamin: 'Laki-Laki',
+      Foto_Identitas: '-',
       status: 'Ditolak',
-      tanggal: '28 September 2025',
     ),
   ];
 
@@ -100,7 +111,8 @@ class _InformasiAspirasiScreenState extends State<InformasiAspirasiScreen> {
   // Filter modal from attachment
   void _showFilterModal(BuildContext context) {
     String? selectedStatus;
-    final TextEditingController judulController = TextEditingController();
+    final TextEditingController NamaController = TextEditingController();
+    final TextEditingController KelaminController = TextEditingController();
 
     showDialog(
       context: context,
@@ -117,7 +129,7 @@ class _InformasiAspirasiScreenState extends State<InformasiAspirasiScreen> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 const Text(
-                  'Filter Pesan Warga',
+                  'Filter Penerimaan Warga',
                   style: TextStyle(fontWeight: FontWeight.bold),
                 ),
                 InkWell(
@@ -137,14 +149,29 @@ class _InformasiAspirasiScreenState extends State<InformasiAspirasiScreen> {
                   children: [
                     const SizedBox(height: 12),
                     const Text(
-                      'Judul',
+                      'Nama',
                       style: TextStyle(fontWeight: FontWeight.w600),
                     ),
                     const SizedBox(height: 8),
                     TextField(
-                      controller: judulController,
+                      controller: NamaController,
                       decoration: InputDecoration(
-                        hintText: 'Cari judul...',
+                        hintText: 'Cari Nama',
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    const Text(
+                      'Jenis Kelamin',
+                      style: TextStyle(fontWeight: FontWeight.w600),
+                    ),
+                    const SizedBox(height: 8),
+                    TextField(
+                      controller: KelaminController,
+                      decoration: InputDecoration(
+                        hintText: '-- Pilih enis Kelamin --',
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(8),
                         ),
@@ -157,7 +184,7 @@ class _InformasiAspirasiScreenState extends State<InformasiAspirasiScreen> {
                     ),
                     const SizedBox(height: 8),
                     DropdownButtonFormField<String>(
-                      value: selectedStatus,
+                      initialValue: selectedStatus,
                       hint: const Text('-- Pilih Status --'),
                       items: const ['Pending', 'Diterima', 'Ditolak']
                           .map(
@@ -172,7 +199,7 @@ class _InformasiAspirasiScreenState extends State<InformasiAspirasiScreen> {
                       children: [
                         OutlinedButton(
                           onPressed: () {
-                            judulController.clear();
+                            NamaController.clear();
                             setState(() {
                               selectedStatus = null;
                             });
@@ -198,7 +225,7 @@ class _InformasiAspirasiScreenState extends State<InformasiAspirasiScreen> {
   }
 
   // Action menu builder: triggers detail/edit/hapus
-  Widget _buildActionMenu(BuildContext context, _AspirasiItem item, int index) {
+  Widget _buildActionMenu(BuildContext context,_PenerimaanWargaItem item,int index) {
     return PopupMenuButton<String>(
       icon: const Icon(Icons.more_horiz, color: Color(0xFF999999)),
       offset: const Offset(0, 36),
@@ -215,116 +242,60 @@ class _InformasiAspirasiScreenState extends State<InformasiAspirasiScreen> {
               Text('Detail'),
             ],
           ),
-          onTap: () {
+          onTap: () async {
             // Show inline detail dialog
-            Future.delayed(Duration.zero, () {
-              showDialog(
-                context: context,
-                builder: (dctx) => AlertDialog(
-                  title: const Text('Detail Informasi'),
-                  content: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text('Pengirim: ${item.pengirim}'),
-                      const SizedBox(height: 6),
-                      Text('Judul: ${item.judul}'),
-                      const SizedBox(height: 6),
-                      Text('Status: ${item.status}'),
-                      const SizedBox(height: 6),
-                      Text('Tanggal: ${item.tanggal}'),
-                    ],
-                  ),
-                  actions: [
-                    TextButton(
-                      onPressed: () => Navigator.pop(dctx),
-                      child: const Text('Tutup'),
+            if (!mounted) return;
+            final currentContext = context;
+            await showDialog(
+              context: currentContext,
+              builder: (dctx) => AlertDialog(
+                title: const Text('Detail Informasi / Penerimaan Warga'),
+                content: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      'NIK:',
+                      style: TextStyle(fontWeight: FontWeight.w600),
                     ),
+                    Text(item.NIK),
+                    const SizedBox(height: 12),
+                    const Text(
+                      'Deskripsi:',
+                      style: TextStyle(fontWeight: FontWeight.w600),
+                    ),
+                    Text('mobileigmana bang'),
+                    const SizedBox(height: 12),
+                    const Text(
+                      'Status:',
+                      style: TextStyle(fontWeight: FontWeight.w600),
+                    ),
+                    Text(item.status),
+                    const SizedBox(height: 12),
+                    const Text(
+                      'Dibuat oleh:',
+                      style: TextStyle(fontWeight: FontWeight.w600),
+                    ),
+                    Text('varizky naldiba rimra'),
+                    const SizedBox(height: 12),
+                    const Text(
+                      'Tanggal Dibuat:',
+                      style: TextStyle(fontWeight: FontWeight.w600),
+                    ),
+                    Text('16 Oktober 2025'),
                   ],
                 ),
-              );
-            });
-          },
-        ),
-        PopupMenuItem(
-          value: 'Edit',
-          child: Row(
-            children: const [
-              Icon(Icons.edit_outlined, size: 18),
-              SizedBox(width: 50),
-              Text('Edit'),
-            ],
-          ),
-          onTap: () async {
-            // Show edit dialog and update the item
-            await Future.delayed(Duration.zero); // allow menu to close
-            final controller = TextEditingController(text: item.judul);
-            final res = await showDialog<bool>(
-              context: context,
-              builder: (dctx) => AlertDialog(
-                title: const Text('Edit Judul'),
-                content: TextField(controller: controller),
                 actions: [
                   TextButton(
-                    onPressed: () => Navigator.pop(dctx, false),
-                    child: const Text('Batal'),
-                  ),
-                  TextButton(
-                    onPressed: () => Navigator.pop(dctx, true),
-                    child: const Text('Simpan'),
+                    onPressed: () => Navigator.pop(dctx),
+                    child: const Text('Tutup'),
                   ),
                 ],
               ),
             );
-            if (res == true) {
-              setState(() {
-                item.judul = controller.text;
-              });
-              ScaffoldMessenger.of(
-                context,
-              ).showSnackBar(const SnackBar(content: Text('Judul diperbarui')));
-            }
           },
         ),
-        PopupMenuItem(
-          value: 'Hapus',
-          child: Row(
-            children: const [
-              Icon(Icons.delete_outline_rounded, size: 18),
-              SizedBox(width: 50),
-              Text('Hapus'),
-            ],
-          ),
-          onTap: () async {
-            await Future.delayed(Duration.zero);
-            final confirm = await showDialog<bool>(
-              context: context,
-              builder: (dctx) => AlertDialog(
-                title: const Text('Hapus'),
-                content: const Text('Yakin ingin menghapus item ini?'),
-                actions: [
-                  TextButton(
-                    onPressed: () => Navigator.pop(dctx, false),
-                    child: const Text('Batal'),
-                  ),
-                  TextButton(
-                    onPressed: () => Navigator.pop(dctx, true),
-                    child: const Text('Hapus'),
-                  ),
-                ],
-              ),
-            );
-            if (confirm == true) {
-              setState(() {
-                _items.removeAt(index);
-              });
-              ScaffoldMessenger.of(
-                context,
-              ).showSnackBar(const SnackBar(content: Text('Item dihapus')));
-            }
-          },
-        ),
-      ],
+        ],
     );
   }
 
@@ -349,7 +320,7 @@ class _InformasiAspirasiScreenState extends State<InformasiAspirasiScreen> {
                 borderRadius: BorderRadius.circular(12),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.05),
+                    color: Colors.black.withOpacity(0.04),
                     blurRadius: 10,
                     offset: const Offset(0, 5),
                   ),
@@ -377,20 +348,28 @@ class _InformasiAspirasiScreenState extends State<InformasiAspirasiScreen> {
                           child: Text('No', style: headerStyle),
                         ),
                         Expanded(
-                          flex: 2,
-                          child: Text('Pengirim', style: headerStyle),
+                          flex: 3,
+                          child: Text(' Nama', style: headerStyle),
                         ),
                         Expanded(
                           flex: 3,
-                          child: Text('Judul', style: headerStyle),
+                          child: Text('NIK', style: headerStyle),
+                        ),
+                        Expanded(
+                          flex: 3,
+                          child: Text('Email', style: headerStyle),
+                        ),
+                        Expanded(
+                          flex: 3,
+                          child: Text('Jenis Kelamin', style: headerStyle),
+                        ),
+                        Expanded(
+                          flex: 3,
+                          child: Text('Foto Identitas', style: headerStyle),
                         ),
                         Expanded(
                           flex: 2,
                           child: Text('Status', style: headerStyle),
-                        ),
-                        Expanded(
-                          flex: 3,
-                          child: Text('Tanggal dibuat', style: headerStyle),
                         ),
                         SizedBox(
                           width: 50,
@@ -431,10 +410,11 @@ class _InformasiAspirasiScreenState extends State<InformasiAspirasiScreen> {
 }
 
 class _HoverableRow extends StatefulWidget {
-  final _AspirasiItem data;
+  final _PenerimaanWargaItem data;
   final TextStyle bodyStyle;
   final Widget Function(BuildContext, String) buildStatusBadge;
-  final Widget Function(BuildContext, _AspirasiItem, int) buildActionButton;
+  final Widget Function(BuildContext, _PenerimaanWargaItem, int)
+  buildActionButton;
   final int index;
 
   const _HoverableRow({
@@ -489,15 +469,24 @@ class _HoverableRowState extends State<_HoverableRow> {
                       ),
                     ),
                     Expanded(
-                      flex: 2,
-                      child: Text(
-                        widget.data.pengirim,
-                        style: widget.bodyStyle,
-                      ),
+                      flex: 3,
+                      child: Text(widget.data.Nama, style: widget.bodyStyle),
                     ),
                     Expanded(
                       flex: 3,
-                      child: Text(widget.data.judul, style: widget.bodyStyle),
+                      child: Text(widget.data.NIK, style: widget.bodyStyle),
+                    ),
+                    Expanded(
+                      flex: 3,
+                      child: Text(widget.data.Email, style: widget.bodyStyle),
+                    ),
+                    Expanded(
+                      flex: 3,
+                      child: Text(widget.data.Jenis_Kelamin, style: widget.bodyStyle),
+                    ),
+                    Expanded(
+                      flex: 3,
+                      child: Text(widget.data.Foto_Identitas, style: widget.bodyStyle),
                     ),
                     Expanded(
                       flex: 2,
@@ -505,10 +494,6 @@ class _HoverableRowState extends State<_HoverableRow> {
                         context,
                         widget.data.status,
                       ),
-                    ),
-                    Expanded(
-                      flex: 3,
-                      child: Text(widget.data.tanggal, style: widget.bodyStyle),
                     ),
                     SizedBox(
                       width: 50,
@@ -526,85 +511,6 @@ class _HoverableRowState extends State<_HoverableRow> {
         ),
         const Divider(height: 1, thickness: 0.5, color: Color(0xFFF0F0F0)),
       ],
-    );
-  }
-}
-
-// Keep StatusChip as earlier (kept for compatibility where used elsewhere)
-class StatusChip extends StatelessWidget {
-  final String status;
-
-  const StatusChip({required this.status, super.key});
-
-  Color _background(String s) {
-    switch (s.toLowerCase()) {
-      case 'approved':
-      case 'diterima':
-        return const Color(0xFFDFF7E6);
-      case 'pending':
-        return const Color(0xFFFFF4D9);
-      case 'ditolak':
-        return const Color(0xFFFEECEC);
-      default:
-        return const Color(0xFFECEFF6);
-    }
-  }
-
-  Color _textColor(String s) {
-    switch (s.toLowerCase()) {
-      case 'approved':
-      case 'diterima':
-        return const Color(0xFF1B7A3A);
-      case 'pending':
-        return const Color(0xFFB97A00);
-      case 'ditolak':
-        return const Color(0xFFB00020);
-      default:
-        return Colors.black87;
-    }
-  }
-
-  IconData _icon(String s) {
-    switch (s.toLowerCase()) {
-      case 'approved':
-      case 'diterima':
-        return Icons.check_circle_outline;
-      case 'pending':
-        return Icons.access_time;
-      case 'ditolak':
-        return Icons.close;
-      default:
-        return Icons.info_outline;
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final bg = _background(status);
-    final tc = _textColor(status);
-    final icon = _icon(status);
-
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-      decoration: BoxDecoration(
-        color: bg,
-        borderRadius: BorderRadius.circular(20),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(icon, size: 14, color: tc),
-          const SizedBox(width: 6),
-          Text(
-            status,
-            style: TextStyle(
-              color: tc,
-              fontSize: 13,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-        ],
-      ),
     );
   }
 }
