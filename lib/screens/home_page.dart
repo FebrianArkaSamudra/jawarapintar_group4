@@ -12,8 +12,6 @@ import 'datawarga_rumah/rumah_daftar_screen.dart';
 import 'datawarga_rumah/rumah_tambah_screen.dart';
 import '../widgets/main_content.dart';
 import 'pemasukan/pemasukan_screen.dart';
-import 'pengeluaran/daftar.dart';
-import 'pengeluaran/tambah.dart';
 import 'laporan_keuangan/laporan_keuangan_screen.dart';
 import 'kegiatan_broadcast/kegiatan_broadcast_screen.dart';
 import 'pesan_warga/pesan_warga_screen.dart';
@@ -112,13 +110,6 @@ class _MyHomePageState extends State<MyHomePage> {
                     return const RumahTambahScreen();
                 }
 
-                // Pemasukan / Pengeluaran / Laporan etc.
-                if (_selectedPrimaryItem == 'Pemasukan')
-                  return const PemasukanScreen();
-                if (_selectedPrimaryItem == 'Pengeluaran') {
-                  if (_selectedSubItem == 'Daftar') return const Daftar();
-                  if (_selectedSubItem == 'Tambah') return const Tambah();
-                }
                 if (_selectedPrimaryItem == 'Laporan Keuangan')
                   return const LaporanKeuanganScreen();
                 if (_selectedPrimaryItem == 'Kegiatan & Broadcast')
@@ -163,15 +154,6 @@ class _MyHomePageState extends State<MyHomePage> {
                 // Pemasukan screens
                 if (_selectedPrimaryItem == 'Pemasukan') {
                   return const PemasukanScreen();
-                }
-                // Pengeluaran screens
-                if (_selectedPrimaryItem == 'Pengeluaran') {
-                  if (_selectedSubItem == 'Daftar') {
-                    return const Daftar();
-                  }
-                  if (_selectedSubItem == 'Tambah') {
-                    return const Tambah();
-                  }
                 }
                 // Laporan Keuangan screens
                 if (_selectedPrimaryItem == 'Laporan Keuangan') {
