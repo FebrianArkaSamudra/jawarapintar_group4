@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:jawarapintar/screens/kegiatan_broadcast/Broadcast_daftar.dart';
+import 'package:jawarapintar/screens/kegiatan_broadcast/broadcast_tambah.dart';
+import 'package:jawarapintar/screens/kegiatan_broadcast/kegiatan_tambah.dart';
 import '../widgets/sidebar.dart';
 import '../models/menu_item.dart';
 import '../models/pengguna_repo.dart';
@@ -14,8 +17,10 @@ import '../widgets/main_content.dart';
 import 'pemasukan/pemasukan_screen.dart';
 import 'pengeluaran/daftar.dart';
 import 'pengeluaran/tambah.dart';
-import 'laporan_keuangan/laporan_keuangan_screen.dart';
-import 'kegiatan_broadcast/kegiatan_broadcast_screen.dart';
+import 'laporan_keuangan/cetak_laporan.dart';
+import 'laporan_keuangan/semua_pemasukan.dart';
+import 'laporan_keuangan/semua_pengeluaran.dart';
+import 'kegiatan_broadcast/kegiatan_daftar.dart';
 import 'pesan_warga/pesan_warga_screen.dart';
 import 'penerimaan_warga/penerimaan_warga_screen.dart';
 import 'mutasi_keluarga/mutasi_keluarga_daftar.dart';
@@ -131,10 +136,29 @@ class _MyHomePageState extends State<MyHomePage> {
                   }
                 }
                 if (_selectedPrimaryItem == 'Laporan Keuangan') {
-                  return const LaporanKeuanganScreen();
+                  if (_selectedSubItem == 'Cetak laporan') {
+                    return const CetakLaporan();
+                  }
+                  if (_selectedSubItem == 'Semua Pemasukan') {
+                    return const SemuaPemasukan();
+                  }
+                  if (_selectedSubItem == 'Semua Pengeluaran') {
+                    return const SemuaPengeluaran();
+                  }
                 }
                 if (_selectedPrimaryItem == 'Kegiatan & Broadcast') {
-                  return const KegiatanBroadcastScreen();
+                  if (_selectedSubItem == 'Kegiatan - Daftar') {
+                    return const KegiatanDaftar();
+                  }
+                  if (_selectedSubItem == 'Kegiatan - Tambah') {
+                    return const KegiatanTambah();
+                  }
+                  if (_selectedSubItem == 'Broadcast - Daftar') {
+                    return const BroadcastDaftar();
+                  }
+                  if (_selectedSubItem == 'Broadcast - Tambah') {
+                    return const BroadcastTambah();
+                  }
                 }
                 if (_selectedPrimaryItem == 'Pesan Warga') {
                   return const PesanWargaScreen();
@@ -190,12 +214,21 @@ class _MyHomePageState extends State<MyHomePage> {
                   }
                 }
                 // Laporan Keuangan screens
-                if (_selectedPrimaryItem == 'Laporan Keuangan') {
-                  return const LaporanKeuanganScreen();
-                }
+                
                 // Kegiatan & Broadcast screens
                 if (_selectedPrimaryItem == 'Kegiatan & Broadcast') {
-                  return const KegiatanBroadcastScreen();
+                  if (_selectedSubItem == 'Kegiatan - Daftar') {
+                    return const KegiatanDaftar();
+                  }
+                  if (_selectedSubItem == 'Kegiatan - Tambah') {
+                    return const KegiatanTambah();
+                  }
+                  if (_selectedSubItem == 'Broadcast - Daftar') {
+                    return const BroadcastDaftar();
+                  }
+                  if (_selectedSubItem == 'Broadcast - Tambah') {
+                    return const BroadcastTambah();
+                  }
                 }
                 // Pesan Warga screens
                 if (_selectedPrimaryItem == 'Pesan Warga') {
