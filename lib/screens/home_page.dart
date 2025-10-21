@@ -113,11 +113,9 @@ class _MyHomePageState extends State<MyHomePage> {
                 // Pemasukan / Pengeluaran / Laporan etc.
                 if (_selectedPrimaryItem == 'Pemasukan')
                   return const PemasukanScreen();
-                if (_selectedPrimaryItem == 'Pengeluaran'){
-                  if (_selectedSubItem == 'Daftar')
-                     return const Daftar();
-                  if (_selectedSubItem == 'Tambah')
-                    return const Tambah();
+                if (_selectedPrimaryItem == 'Pengeluaran') {
+                  if (_selectedSubItem == 'Daftar') return const Daftar();
+                  if (_selectedSubItem == 'Tambah') return const Tambah();
                 }
                 if (_selectedPrimaryItem == 'Laporan Keuangan')
                   return const LaporanKeuanganScreen();
