@@ -27,7 +27,14 @@ import 'Manajemen_Pengguna/edit_pengguna_screen.dart';
 import '../models/pengguna.dart';
 
 class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key});
+  final String? initialPrimaryItem;
+  final String? initialSubItem;
+
+  const MyHomePage({
+    super.key,
+    this.initialPrimaryItem,
+    this.initialSubItem,
+  });
 
   @override
   State<MyHomePage> createState() => _MyHomePageState();
@@ -43,6 +50,14 @@ class _MyHomePageState extends State<MyHomePage> {
     super.initState();
     // initialize repository (loads persisted users if any)
     PenggunaRepo.init().then((_) => setState(() {}));
+
+    // if the parent requested an initial selection, apply it
+    if (widget.initialPrimaryItem != null) {
+      _selectedPrimaryItem = widget.initialPrimaryItem!;
+    }
+    if (widget.initialSubItem != null) {
+      _selectedSubItem = widget.initialSubItem;
+    }
   }
 
   void _toggleSidebar() {
