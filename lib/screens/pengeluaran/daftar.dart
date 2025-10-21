@@ -78,7 +78,6 @@ class _TablePageState extends State<TablePage> {
   }
 
 void _showFilterDialog(BuildContext context) {
-  final screenWidth = MediaQuery.of(context).size.width;
   final maxDialogWidth = 600.0; // agar tidak terlalu lebar
   final containerPadding = 16.0; // sama dengan padding kontainer utama
 
@@ -238,7 +237,6 @@ void _showFilterDialog(BuildContext context) {
   Widget build(BuildContext context) {
     final double maxContentWidth = 1000;
     final screenWidth = MediaQuery.of(context).size.width;
-
     return Center(
       child: Container(
         width: screenWidth < maxContentWidth ? screenWidth : maxContentWidth,
