@@ -19,7 +19,10 @@ class _LoginPageState extends State<LoginPage> {
     if (!_formKey.currentState!.validate()) return;
     setState(() => _loading = true);
 
-    final res = await AuthService.login(_emailController.text.trim(), _passwordController.text);
+    final res = await AuthService.login(
+      _emailController.text.trim(),
+      _passwordController.text,
+    );
 
     setState(() => _loading = false);
 
@@ -51,7 +54,10 @@ class _LoginPageState extends State<LoginPage> {
           Expanded(
             flex: 5,
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 48.0, vertical: 56.0),
+              padding: const EdgeInsets.symmetric(
+                horizontal: 48.0,
+                vertical: 56.0,
+              ),
               child: Center(
                 child: ConstrainedBox(
                   constraints: const BoxConstraints(maxWidth: 420),
@@ -66,18 +72,32 @@ class _LoginPageState extends State<LoginPage> {
                             child: const Icon(Icons.book, color: Colors.white),
                           ),
                           const SizedBox(width: 12),
-                          const Text('Jawara Pintar', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
+                          const Text(
+                            'Jawara Pintar',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 18,
+                            ),
+                          ),
                         ],
                       ),
                       const SizedBox(height: 24),
-                      const Text('Selamat Datang', style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
+                      const Text(
+                        'Selamat Datang',
+                        style: TextStyle(
+                          fontSize: 22,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
                       const SizedBox(height: 8),
                       const Text('Login untuk mengakses sistem Jawara Pintar.'),
                       const SizedBox(height: 24),
 
                       Card(
                         elevation: 4,
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
                         child: Padding(
                           padding: const EdgeInsets.all(20.0),
                           child: Form(
@@ -85,39 +105,64 @@ class _LoginPageState extends State<LoginPage> {
                             child: Column(
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                const Text('Masuk ke akun anda', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                                const Text(
+                                  'Masuk ke akun anda',
+                                  style: TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
                                 const SizedBox(height: 18),
 
                                 TextFormField(
                                   controller: _emailController,
-                                  decoration: const InputDecoration(labelText: 'Email', hintText: 'Masukkan email disini'),
-                                  validator: (v) => (v == null || v.isEmpty) ? 'Email tidak boleh kosong' : null,
+                                  decoration: const InputDecoration(
+                                    labelText: 'Email',
+                                    hintText: 'Masukkan email disini',
+                                  ),
+                                  validator: (v) => (v == null || v.isEmpty)
+                                      ? 'Email tidak boleh kosong'
+                                      : null,
                                 ),
                                 const SizedBox(height: 12),
                                 TextFormField(
                                   controller: _passwordController,
                                   obscureText: true,
-                                  decoration: const InputDecoration(labelText: 'Password', hintText: 'Masukkan password disini'),
-                                  validator: (v) => (v == null || v.isEmpty) ? 'Password tidak boleh kosong' : null,
+                                  decoration: const InputDecoration(
+                                    labelText: 'Password',
+                                    hintText: 'Masukkan password disini',
+                                  ),
+                                  validator: (v) => (v == null || v.isEmpty)
+                                      ? 'Password tidak boleh kosong'
+                                      : null,
                                 ),
                                 const SizedBox(height: 18),
                                 SizedBox(
                                   width: double.infinity,
                                   child: ElevatedButton(
                                     onPressed: _loading ? null : _submit,
-                                    child: _loading ? const SizedBox(height: 16, width: 16, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white)) : const Text('Login'),
+                                    child: _loading
+                                        ? const SizedBox(
+                                            height: 16,
+                                            width: 16,
+                                            child: CircularProgressIndicator(
+                                              strokeWidth: 2,
+                                              color: Colors.white,
+                                            ),
+                                          )
+                                        : const Text('Login'),
                                   ),
                                 ),
                                 const SizedBox(height: 8),
                                 TextButton(
                                   onPressed: () {},
                                   child: const Text('Belum punya akun? Daftar'),
-                                )
+                                ),
                               ],
                             ),
                           ),
                         ),
-                      )
+                      ),
                     ],
                   ),
                 ),
@@ -138,7 +183,8 @@ class _LoginPageState extends State<LoginPage> {
                     fit: BoxFit.cover,
                     width: double.infinity,
                     height: double.infinity,
-                    errorBuilder: (context, error, stackTrace) => const SizedBox.shrink(),
+                    errorBuilder: (context, error, stackTrace) =>
+                        const SizedBox.shrink(),
                   ),
                 ),
               ),

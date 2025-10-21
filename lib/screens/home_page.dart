@@ -30,11 +30,7 @@ class MyHomePage extends StatefulWidget {
   final String? initialPrimaryItem;
   final String? initialSubItem;
 
-  const MyHomePage({
-    super.key,
-    this.initialPrimaryItem,
-    this.initialSubItem,
-  });
+  const MyHomePage({super.key, this.initialPrimaryItem, this.initialSubItem});
 
   @override
   State<MyHomePage> createState() => _MyHomePageState();

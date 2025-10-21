@@ -2,7 +2,10 @@ import 'dart:async';
 
 class AuthService {
   // simple in-memory auth simulation
-  static Future<Map<String, dynamic>> login(String email, String password) async {
+  static Future<Map<String, dynamic>> login(
+    String email,
+    String password,
+  ) async {
     // emulate network delay
     await Future.delayed(const Duration(milliseconds: 400));
 
