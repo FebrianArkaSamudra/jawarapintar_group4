@@ -3,7 +3,7 @@ import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 
 class Tambah extends StatefulWidget {
-  const Tambah({Key? key}) : super(key: key);
+  const Tambah({super.key});
 
   @override
   State<Tambah> createState() => _TambahState();
@@ -177,7 +177,7 @@ class _TambahState extends State<Tambah> {
               ),
               const SizedBox(height: 8),
               DropdownButtonFormField<String>(
-                value: _selectedCategory,
+                initialValue: _selectedCategory,
                 hint: const Text('-- Pilih Kategori --'),
                 decoration: InputDecoration(
                   border: OutlineInputBorder(

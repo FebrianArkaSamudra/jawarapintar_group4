@@ -308,8 +308,9 @@ class _MutasiKeluargaDaftarState extends State<MutasiKeluargaDaftar> {
                               return InkWell(
                                 onTap: () {
                                   final keluargaName = item['keluarga'] ?? '';
-                                  if (widget.onSelectKeluarga != null)
+                                  if (widget.onSelectKeluarga != null) {
                                     widget.onSelectKeluarga!(keluargaName);
+                                  }
                                 },
                                 child: Container(
                                   color: index.isEven
@@ -354,16 +355,18 @@ class _MutasiKeluargaDaftarState extends State<MutasiKeluargaDaftar> {
                                                             .toLowerCase()
                                                             .trim();
                                                     if (jenis ==
-                                                        'keluar wilayah')
+                                                        'keluar wilayah') {
                                                       return Colors
                                                           .red
                                                           .shade100;
+                                                    }
                                                     if (jenis ==
                                                             'pindah rumah' ||
-                                                        jenis == 'pindah masuk')
+                                                        jenis == 'pindah masuk') {
                                                       return Colors
                                                           .green
                                                           .shade100;
+                                                    }
                                                     return Colors
                                                         .green
                                                         .shade100;
@@ -383,17 +386,19 @@ class _MutasiKeluargaDaftarState extends State<MutasiKeluargaDaftar> {
                                                               .toLowerCase()
                                                               .trim();
                                                       if (jenis ==
-                                                          'keluar wilayah')
+                                                          'keluar wilayah') {
                                                         return Colors
                                                             .red
                                                             .shade700;
+                                                      }
                                                       if (jenis ==
                                                               'pindah rumah' ||
                                                           jenis ==
-                                                              'pindah masuk')
+                                                              'pindah masuk') {
                                                         return Colors
                                                             .green
                                                             .shade700;
+                                                      }
                                                       return Colors
                                                           .green
                                                           .shade700;
