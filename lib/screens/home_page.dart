@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../widgets/sidebar.dart';
 import '../models/menu_item.dart';
+import '../models/pengguna_repo.dart';
 import 'dashboard/keuangan_screen.dart';
 import 'dashboard/kegiatan_screen.dart';
 import 'dashboard/kependudukan_screen.dart';
@@ -17,8 +18,13 @@ import 'laporan_keuangan/laporan_keuangan_screen.dart';
 import 'kegiatan_broadcast/kegiatan_broadcast_screen.dart';
 import 'pesan_warga/pesan_warga_screen.dart';
 import 'penerimaan_warga/penerimaan_warga_screen.dart';
-import 'mutasi_keluarga/mutasi_keluarga_screen.dart';
+import 'mutasi_keluarga/mutasi_keluarga_daftar.dart';
+import 'mutasi_keluarga/mutasi_keluarga_tambah.dart';
 import 'log_aktifitas/log_aktifitas_screen.dart';
+import 'Manajemen_Pengguna/daftar_pengguna.dart';
+import 'Manajemen_Pengguna/edit_pengguna_screen.dart';
+import 'Manajemen_Pengguna/tambah_pengguna_screen.dart';
+import '../models/pengguna.dart';
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key});
@@ -32,6 +38,13 @@ class _MyHomePageState extends State<MyHomePage> {
   String _selectedPrimaryItem = primaryMenuItems.first.title;
   String? _selectedSubItem = primaryMenuItems.first.subItems?.first;
 
+  @override
+  void initState() {
+    super.initState();
+    // initialize repository (loads persisted users if any)
+    PenggunaRepo.init().then((_) => setState(() {}));
+  }
+
   void _toggleSidebar() {
     setState(() {
       _isSidebarMinimized = !_isSidebarMinimized;
@@ -43,7 +56,6 @@ class _MyHomePageState extends State<MyHomePage> {
       _selectedPrimaryItem = primaryTitle;
       _selectedSubItem = subTitle;
     });
-    // Gunakan debugPrint untuk logging selama development
     debugPrint(
       'Menu Dipilih: $primaryTitle${subTitle != null ? ' > $subTitle' : ''}',
     );
@@ -71,7 +83,6 @@ class _MyHomePageState extends State<MyHomePage> {
             color: Color(0xFFCCCCCC),
           ),
 
-          // Konten utama: pilih screen berdasarkan submenu yang dipilih
           Expanded(
             child: Builder(
               builder: (context) {
@@ -87,6 +98,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     return const KependudukanScreen();
                   }
                 }
+
                 // Data Warga & Rumah screens
                 if (_selectedPrimaryItem == 'Data Warga & Rumah') {
                   if (_selectedSubItem == 'Warga - Daftar') {
@@ -105,6 +117,65 @@ class _MyHomePageState extends State<MyHomePage> {
                     return const RumahTambahScreen();
                   }
                 }
+
+                // Pemasukan / Pengeluaran / Laporan etc.
+                if (_selectedPrimaryItem == 'Pemasukan') {
+                  return const PemasukanScreen();
+                }
+                if (_selectedPrimaryItem == 'Pengeluaran'){
+                  if (_selectedSubItem == 'Daftar') {
+                    return const Daftar();
+                  }
+                  if (_selectedSubItem == 'Tambah') {
+                    return const Tambah();
+                  }
+                }
+                if (_selectedPrimaryItem == 'Laporan Keuangan') {
+                  return const LaporanKeuanganScreen();
+                }
+                if (_selectedPrimaryItem == 'Kegiatan & Broadcast') {
+                  return const KegiatanBroadcastScreen();
+                }
+                if (_selectedPrimaryItem == 'Pesan Warga') {
+                  return const PesanWargaScreen();
+                }
+                if (_selectedPrimaryItem == 'Penerimaan Warga') {
+                  return const PenerimaanWargaScreen();
+                }
+                if (_selectedPrimaryItem == 'Mutasi Keluarga') {
+                  if (_selectedSubItem == 'Daftar') {
+                    return const MutasiKeluargaDaftar();
+                  }
+                  if (_selectedSubItem == 'Tambah') {
+                    return const MutasiKeluargaTambah();
+                  }
+                }
+                if (_selectedPrimaryItem == 'Log Aktifitas') {
+                  return const LogAktifitasScreen();
+                }
+
+                // Manajemen Pengguna: subpages rendered in main area
+                if (_selectedPrimaryItem == 'Manajemen Pengguna') {
+                  if (_selectedSubItem == 'Daftar Pengguna') {
+                    return const RegistrasiPage();
+                  }
+                  if (_selectedSubItem == 'Tambah Pengguna') {
+                    return TambahPenggunaScreen(
+                      onUserAdded: (newUser) async {
+                        await PenggunaRepo.add(newUser);
+                        setState(() {
+                          _selectedSubItem = 'Daftar Pengguna';
+                        });
+                      },
+                    );
+                  }
+                  if (_selectedSubItem == 'Edit Pengguna') {
+                    // RegistrasiPage handles navigation to Edit with data via popup/route.
+                    return const RegistrasiPage();
+                  }
+                }
+
+                // Default content
                 // Pemasukan screens
                 if (_selectedPrimaryItem == 'Pemasukan') {
                   return const PemasukanScreen();
@@ -136,7 +207,12 @@ class _MyHomePageState extends State<MyHomePage> {
                 }
                 // Mutasi Keluarga screens
                 if (_selectedPrimaryItem == 'Mutasi Keluarga') {
-                  return const MutasiKeluargaScreen();
+                  if (_selectedSubItem == 'Daftar') {
+                    return const MutasiKeluargaDaftar();
+                  }
+                  if (_selectedSubItem == 'Tambah') {
+                    return const MutasiKeluargaTambah();
+                  }
                 }
                 // Log Aktifitas screens
                 if (_selectedPrimaryItem == 'Log Aktifitas') {
