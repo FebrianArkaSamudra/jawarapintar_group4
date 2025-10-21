@@ -12,17 +12,21 @@ import 'datawarga_rumah/rumah_daftar_screen.dart';
 import 'datawarga_rumah/rumah_tambah_screen.dart';
 import '../widgets/main_content.dart';
 import 'pemasukan/pemasukan_screen.dart';
-import 'pengeluaran/pengeluaran_screen.dart';
+import 'pengeluaran/daftar.dart';
+import 'pengeluaran/tambah.dart';
 import 'laporan_keuangan/laporan_keuangan_screen.dart';
 import 'kegiatan_broadcast/kegiatan_broadcast_screen.dart';
 import 'pesan_warga/pesan_warga_screen.dart';
 import 'penerimaan_warga/penerimaan_warga_screen.dart';
-import 'mutasi_keluarga/mutasi_keluarga_screen.dart';
+import 'mutasi_keluarga/mutasi_keluarga_daftar.dart';
+import 'mutasi_keluarga/mutasi_keluarga_tambah.dart';
 import 'log_aktifitas/log_aktifitas_screen.dart';
 import 'Manajemen_Pengguna/daftar_pengguna.dart';
 import 'Manajemen_Pengguna/edit_pengguna_screen.dart';
 import 'Manajemen_Pengguna/tambah_pengguna_screen.dart';
 import '../models/pengguna.dart';
+import 'channel/daftarChannel.dart';
+import 'channel/tambahChannel.dart';
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key});
@@ -111,8 +115,10 @@ class _MyHomePageState extends State<MyHomePage> {
                 // Pemasukan / Pengeluaran / Laporan etc.
                 if (_selectedPrimaryItem == 'Pemasukan')
                   return const PemasukanScreen();
-                if (_selectedPrimaryItem == 'Pengeluaran')
-                  return const PengeluaranScreen();
+                if (_selectedPrimaryItem == 'Pengeluaran') {
+                  if (_selectedSubItem == 'Daftar') return const Daftar();
+                  if (_selectedSubItem == 'Tambah') return const Tambah();
+                }
                 if (_selectedPrimaryItem == 'Laporan Keuangan')
                   return const LaporanKeuanganScreen();
                 if (_selectedPrimaryItem == 'Kegiatan & Broadcast')
@@ -121,8 +127,14 @@ class _MyHomePageState extends State<MyHomePage> {
                   return const PesanWargaScreen();
                 if (_selectedPrimaryItem == 'Penerimaan Warga')
                   return const PenerimaanWargaScreen();
-                if (_selectedPrimaryItem == 'Mutasi Keluarga')
-                  return const MutasiKeluargaScreen();
+                if (_selectedPrimaryItem == 'Mutasi Keluarga') {
+                  if (_selectedSubItem == 'Daftar') {
+                    return const MutasiKeluargaDaftar();
+                  }
+                  if (_selectedSubItem == 'Tambah') {
+                    return const MutasiKeluargaTambah();
+                  }
+                }
                 if (_selectedPrimaryItem == 'Log Aktifitas')
                   return const LogAktifitasScreen();
 
@@ -148,6 +160,59 @@ class _MyHomePageState extends State<MyHomePage> {
                 }
 
                 // Default content
+                // Pemasukan screens
+                if (_selectedPrimaryItem == 'Pemasukan') {
+                  return const PemasukanScreen();
+                }
+                // Pengeluaran screens
+                if (_selectedPrimaryItem == 'Pengeluaran') {
+                  if (_selectedSubItem == 'Daftar') {
+                    return const Daftar();
+                  }
+                  if (_selectedSubItem == 'Tambah') {
+                    return const Tambah();
+                  }
+                }
+                // Laporan Keuangan screens
+                if (_selectedPrimaryItem == 'Laporan Keuangan') {
+                  return const LaporanKeuanganScreen();
+                }
+                // Kegiatan & Broadcast screens
+                if (_selectedPrimaryItem == 'Kegiatan & Broadcast') {
+                  return const KegiatanBroadcastScreen();
+                }
+                // Pesan Warga screens
+                if (_selectedPrimaryItem == 'Pesan Warga') {
+                  return const PesanWargaScreen();
+                }
+                // Penerimaan Warga screens
+                if (_selectedPrimaryItem == 'Penerimaan Warga') {
+                  return const PenerimaanWargaScreen();
+                }
+                // Mutasi Keluarga screens
+                if (_selectedPrimaryItem == 'Mutasi Keluarga') {
+                  if (_selectedSubItem == 'Daftar') {
+                    return const MutasiKeluargaDaftar();
+                  }
+                  if (_selectedSubItem == 'Tambah') {
+                    return const MutasiKeluargaTambah();
+                  }
+                }
+                // Log Aktifitas screens
+                if (_selectedPrimaryItem == 'Log Aktifitas') {
+                  return const LogAktifitasScreen();
+                }
+                // Channel Transfer screens
+                if (_selectedPrimaryItem == 'Channel Transfer') {
+                  if (_selectedSubItem == 'Daftar Channel') {
+                    return const daftarChannelPage();
+                  }
+                  if (_selectedSubItem == 'Tambah Channel') {
+                    return const TambahChannelPage();
+                  }
+                }
+
+                // Default fallback
                 return MainContent(
                   selectedPrimaryItem: _selectedPrimaryItem,
                   selectedSubItem: _selectedSubItem,
