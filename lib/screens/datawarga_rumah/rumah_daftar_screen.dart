@@ -2,12 +2,156 @@ import 'package:flutter/material.dart';
 
 class RumahDaftarScreen extends StatelessWidget {
   const RumahDaftarScreen({super.key});
+
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Text(
-        'Rumah - Daftar',
-        style: Theme.of(context).textTheme.headlineMedium,
+    final rumahList = [
+      {'no': '1', 'alamat': 'sssss', 'status': 'Ditempati'},
+      {'no': '2', 'alamat': 'jalan suhat', 'status': 'Ditempati'},
+      {'no': '3', 'alamat': 'l', 'status': 'Ditempati'},
+      {'no': '4', 'alamat': 'Tes', 'status': 'Ditempati'},
+      {'no': '5', 'alamat': 'Jl. Merbabu', 'status': 'Tersedia'},
+      {'no': '6', 'alamat': 'Malang', 'status': 'Ditempati'},
+      {'no': '7', 'alamat': 'Griyashanta L203', 'status': 'Ditempati'},
+      {'no': '8', 'alamat': 'werwer', 'status': 'Tersedia'},
+      {'no': '9', 'alamat': 'Jl. Baru bangun', 'status': 'Ditempati'},
+      {'no': '10', 'alamat': 'fasda', 'status': 'Tersedia'},
+    ];
+
+    return Scaffold(
+      backgroundColor: const Color(0xFFF5F7FA),
+      body: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Header
+            Text(
+              "Data Rumah",
+              style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 22,
+                  ),
+            ),
+            const SizedBox(height: 24),
+
+            // Table container
+            Expanded(
+              child: Container(
+                decoration: BoxDecoration( 
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(10),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black12,
+                      blurRadius: 4,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
+                ),
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: SingleChildScrollView(
+                    scrollDirection: Axis.vertical,
+                    child: DataTable(
+                      headingTextStyle: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black87,
+                      ),
+                      columns: const [
+                        DataColumn(label: Text("No")),
+                        DataColumn(label: Text("Alamat")),
+                        DataColumn(label: Text("Status")),
+                        DataColumn(label: Text("Aksi")),
+                      ],
+                      rows: rumahList.map((rumah) {
+                        final isTersedia = rumah['status'] == 'Tersedia';
+                        return DataRow(
+                          cells: [
+                            DataCell(Text(rumah['no']!)),
+                            DataCell(Text(rumah['alamat']!)),
+                            DataCell(
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 12,
+                                  vertical: 6,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: isTersedia
+                                      ? Colors.green.shade50
+                                      : Colors.blue.shade50,
+                                  borderRadius: BorderRadius.circular(20),
+                                ),
+                                child: Text(
+                                  rumah['status']!,
+                                  style: TextStyle(
+                                    color: isTersedia
+                                        ? Colors.green
+                                        : Colors.blueAccent,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              ),
+                            ),
+                            DataCell(
+                              IconButton(
+                                onPressed: () {},
+                                icon: const Icon(Icons.more_horiz),
+                              ),
+                            ),
+                          ],
+                        );
+                      }).toList(),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+
+            const SizedBox(height: 20),
+
+            // Pagination (static sample)
+            Center(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  IconButton(
+                    onPressed: () {},
+                    icon: const Icon(Icons.arrow_left),
+                  ),
+                  Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: Colors.deepPurple,
+                      borderRadius: BorderRadius.circular(6),
+                    ),
+                    child: const Text(
+                      "1",
+                      style: TextStyle(color: Colors.white),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: Colors.grey.shade200,
+                      borderRadius: BorderRadius.circular(6),
+                    ),
+                    child: const Text(
+                      "2",
+                      style: TextStyle(color: Colors.black87),
+                    ),
+                  ),
+                  IconButton(
+                    onPressed: () {},
+                    icon: const Icon(Icons.arrow_right),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
