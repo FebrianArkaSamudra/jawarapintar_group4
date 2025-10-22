@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:jawarapintar/screens/pemasukan/pemasukan_tambah_screen.dart';
+import 'package:jawarapintar/screens/pemasukan/tagih_iuran_screen.dart';
+import 'package:jawarapintar/screens/pemasukan/tagihan_screen.dart';
 import '../widgets/sidebar.dart';
 import '../models/menu_item.dart';
 import 'dashboard/keuangan_screen.dart';
@@ -10,7 +13,7 @@ import 'datawarga_rumah/keluarga_screen.dart';
 import 'datawarga_rumah/rumah_daftar_screen.dart';
 import 'datawarga_rumah/rumah_tambah_screen.dart';
 import '../widgets/main_content.dart';
-import 'pemasukan/pemasukan_screen.dart';
+import 'pemasukan/kategori_iuran_screen.dart';
 import 'pengeluaran/pengeluaran_screen.dart';
 import 'laporan_keuangan/laporan_keuangan_screen.dart';
 import 'kegiatan_broadcast/kegiatan_broadcast_screen.dart';
@@ -18,6 +21,7 @@ import 'pesan_warga/pesan_warga_screen.dart';
 import 'penerimaan_warga/penerimaan_warga_screen.dart';
 import 'mutasi_keluarga/mutasi_keluarga_screen.dart';
 import 'log_aktifitas/log_aktifitas_screen.dart';
+import 'pemasukan/pemasukan_daftar_screen.dart';
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key});
@@ -106,7 +110,21 @@ class _MyHomePageState extends State<MyHomePage> {
                 }
                 // Pemasukan screens
                 if (_selectedPrimaryItem == 'Pemasukan') {
-                  return const PemasukanScreen();
+                  if (_selectedSubItem == 'Kategori Iuran') {
+                    return const KategoriIuranScreen();
+                  }
+                  if (_selectedSubItem == 'Tagih Iuran') {
+                    return const TagihIuranScreen();
+                  }
+                  if (_selectedSubItem == 'Tagihan') {
+                    return const TagihanScreen();
+                  }
+                  if (_selectedSubItem == 'Pemasukan Lain - Daftar') {
+                    return const PemasukanDaftarScreen();
+                  }
+                  if (_selectedSubItem == 'Pemasukan Lain - Tambah') {
+                    return const PemasukanTambahScreen();
+                  }
                 }
                 // Pengeluaran screens
                 if (_selectedPrimaryItem == 'Pengeluaran') {
