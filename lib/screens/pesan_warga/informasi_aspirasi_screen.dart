@@ -85,11 +85,13 @@ class _InformasiAspirasiScreenState extends State<InformasiAspirasiScreen> {
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Icon(Icons.assignment_turned_in_outlined, color: textColor, size: 14),
           const SizedBox(width: 6),
           Text(
             status,
+            textAlign: TextAlign.center,
             style: TextStyle(color: textColor, fontWeight: FontWeight.w600),
           ),
         ],
@@ -378,23 +380,58 @@ class _InformasiAspirasiScreenState extends State<InformasiAspirasiScreen> {
                         ),
                         Expanded(
                           flex: 2,
-                          child: Text('Pengirim', style: headerStyle),
+                          child: Align(
+                            alignment: Alignment.center,
+                            child: Text(
+                              'Pengirim',
+                              style: headerStyle,
+                              textAlign: TextAlign.center,
+                              ),
+                            ),
                         ),
                         Expanded(
                           flex: 3,
-                          child: Text('Judul', style: headerStyle),
+                          child: Align(
+                            alignment: Alignment.center,
+                            child: Text(
+                              'Judul',
+                              style: headerStyle,
+                              textAlign: TextAlign.center
+                              ),
+                            ),
                         ),
                         Expanded(
                           flex: 2,
-                          child: Text('Status', style: headerStyle),
+                          child: Align(
+                            alignment: Alignment.center,
+                            child: Text(
+                              'Status', 
+                              style: headerStyle,
+                              textAlign: TextAlign.center,
+                              ),
+                            ),  
                         ),
                         Expanded(
                           flex: 3,
-                          child: Text('Tanggal dibuat', style: headerStyle),
+                          child: Align(
+                            alignment: Alignment.center,
+                            child: Text(
+                            'Tanggal dibuat',
+                            style: headerStyle,
+                            textAlign: TextAlign.center,
+                            ),
+                          ),
                         ),
                         SizedBox(
                           width: 50,
-                          child: Text('Aksi', style: headerStyle),
+                          child: Align(
+                            alignment: Alignment.center,
+                          child: Text(
+                            'Aksi', 
+                            style: headerStyle,
+                            textAlign: TextAlign.center,
+                            ),
+                          ),
                         ),
                       ],
                     ),
@@ -490,25 +527,37 @@ class _HoverableRowState extends State<_HoverableRow> {
                     ),
                     Expanded(
                       flex: 2,
-                      child: Text(
-                        widget.data.pengirim,
-                        style: widget.bodyStyle,
+                      child: Align(
+                        alignment: Alignment.center,
+                        child: Text(
+                          widget.data.pengirim,
+                          style: widget.bodyStyle,
+                        ),
                       ),
                     ),
                     Expanded(
                       flex: 3,
+                      child: Align(
+                        alignment: Alignment.center,
                       child: Text(widget.data.judul, style: widget.bodyStyle),
+                      ),
                     ),
                     Expanded(
                       flex: 2,
-                      child: widget.buildStatusBadge(
-                        context,
-                        widget.data.status,
+                      child: Align(
+                        alignment: Alignment.center,
+                        child: widget.buildStatusBadge(
+                          context,
+                          widget.data.status,
+                        ),
                       ),
                     ),
                     Expanded(
                       flex: 3,
-                      child: Text(widget.data.tanggal, style: widget.bodyStyle),
+                      child: Align(
+                        alignment: Alignment.center,
+                        child: Text(widget.data.tanggal, style: widget.bodyStyle),
+                      ),
                     ),
                     SizedBox(
                       width: 50,

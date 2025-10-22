@@ -88,7 +88,7 @@ class _InformasiPenerimaanWargaScreenState
     }
 
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
+      padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 4.0),
       decoration: BoxDecoration(
         color: color,
         borderRadius: BorderRadius.circular(16),
@@ -96,11 +96,14 @@ class _InformasiPenerimaanWargaScreenState
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Icon(Icons.assignment_turned_in_outlined, color: textColor, size: 14),
           const SizedBox(width: 6),
           Text(
             status,
+            textAlign: TextAlign.center,
             style: TextStyle(color: textColor, fontWeight: FontWeight.w600),
           ),
         ],
@@ -171,7 +174,7 @@ class _InformasiPenerimaanWargaScreenState
                     TextField(
                       controller: KelaminController,
                       decoration: InputDecoration(
-                        hintText: '-- Pilih enis Kelamin --',
+                        hintText: '-- Pilih Jenis Kelamin --',
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(8),
                         ),
@@ -184,12 +187,10 @@ class _InformasiPenerimaanWargaScreenState
                     ),
                     const SizedBox(height: 8),
                     DropdownButtonFormField<String>(
-                      initialValue: selectedStatus,
+                      value: selectedStatus,
                       hint: const Text('-- Pilih Status --'),
                       items: const ['Pending', 'Diterima', 'Ditolak']
-                          .map(
-                            (s) => DropdownMenuItem(value: s, child: Text(s)),
-                          )
+                          .map((s) => DropdownMenuItem(value: s, child: Text(s)))
                           .toList(),
                       onChanged: (v) => setState(() => selectedStatus = v),
                     ),
@@ -224,14 +225,19 @@ class _InformasiPenerimaanWargaScreenState
     );
   }
 
+  // variable to hold selected item for detail view
+  _PenerimaanWargaItem? SelectedItem;
+
   // Action menu builder: triggers detail/edit/hapus
-  Widget _buildActionMenu(BuildContext context,_PenerimaanWargaItem item,int index) {
+  Widget _buildActionMenu(
+    BuildContext context,
+    _PenerimaanWargaItem item,
+    int index,
+  ) {
     return PopupMenuButton<String>(
       icon: const Icon(Icons.more_horiz, color: Color(0xFF999999)),
       offset: const Offset(0, 36),
-      onSelected: (value) async {
-        // No-op here; we handle actions in onTap of menu items to ensure immediate response
-      },
+      onSelected: (value) {},
       itemBuilder: (ctx) => [
         PopupMenuItem(
           value: 'Detail',
@@ -242,60 +248,87 @@ class _InformasiPenerimaanWargaScreenState
               Text('Detail'),
             ],
           ),
-          onTap: () async {
-            // Show inline detail dialog
-            if (!mounted) return;
-            final currentContext = context;
-            await showDialog(
-              context: currentContext,
-              builder: (dctx) => AlertDialog(
-                title: const Text('Detail Informasi / Penerimaan Warga'),
-                content: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text(
-                      'NIK:',
-                      style: TextStyle(fontWeight: FontWeight.w600),
-                    ),
-                    Text(item.NIK),
-                    const SizedBox(height: 12),
-                    const Text(
-                      'Deskripsi:',
-                      style: TextStyle(fontWeight: FontWeight.w600),
-                    ),
-                    Text('mobileigmana bang'),
-                    const SizedBox(height: 12),
-                    const Text(
-                      'Status:',
-                      style: TextStyle(fontWeight: FontWeight.w600),
-                    ),
-                    Text(item.status),
-                    const SizedBox(height: 12),
-                    const Text(
-                      'Dibuat oleh:',
-                      style: TextStyle(fontWeight: FontWeight.w600),
-                    ),
-                    Text('varizky naldiba rimra'),
-                    const SizedBox(height: 12),
-                    const Text(
-                      'Tanggal Dibuat:',
-                      style: TextStyle(fontWeight: FontWeight.w600),
-                    ),
-                    Text('16 Oktober 2025'),
-                  ],
-                ),
-                actions: [
-                  TextButton(
-                    onPressed: () => Navigator.pop(dctx),
-                    child: const Text('Tutup'),
-                  ),
-                ],
-              ),
-            );
+          onTap: () {
+            Future.delayed(Duration.zero, () {
+              setState(() {
+                SelectedItem = item;
+              });
+            });
           },
         ),
+      ],
+    );
+  }
+
+  // widget detail muncul di bawah tabel
+  Widget _buildDetailSection() {
+    if (SelectedItem == null) return const SizedBox();
+
+    return Padding(
+      padding: const EdgeInsets.only(top: 16.0),
+      child: Column(
+        children: [
+          const Divider(thickness: 1.5, height: 32),
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(16.0),
+            decoration: BoxDecoration(
+              color: const Color(0xFFF9F9F9),
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: const Color(0xFFE0E0E0)),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  'Detail Penerimaan Warga',
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                ),
+                const SizedBox(height: 12),
+                _buildDetailRow('Nama', SelectedItem!.Nama),
+                _buildDetailRow('NIK', SelectedItem!.NIK),
+                _buildDetailRow('Email', SelectedItem!.Email),
+                _buildDetailRow('Jenis Kelamin', SelectedItem!.Jenis_Kelamin),
+                _buildDetailRow('Foto Identitas', SelectedItem!.Foto_Identitas),
+                _buildDetailRow('Status', SelectedItem!.status),
+                const SizedBox(height: 12),
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: ElevatedButton.icon(
+                    onPressed: () {
+                      setState(() {
+                        SelectedItem = null;
+                      });
+                    },
+                    icon: const Icon(Icons.close),
+                    label: const Text('Tutup'),
+                  ),
+                ),
+              ],
+            ),
+          ),
         ],
+      ),
+    );
+  }
+
+  // helper untuk membangun baris detail
+  Widget _buildDetailRow(String label, String value) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8.0),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(
+            width: 130,
+            child: Text(
+              '$label:',
+              style: const TextStyle(fontWeight: FontWeight.w600),
+            ),
+          ),
+          Expanded(child: Text(value)),
+        ],
+      ),
     );
   }
 
@@ -349,31 +382,80 @@ class _InformasiPenerimaanWargaScreenState
                         ),
                         Expanded(
                           flex: 3,
-                          child: Text(' Nama', style: headerStyle),
+                          child: Align(
+                            alignment: Alignment.center,
+                            child: Text(
+                              'Nama',
+                              style: headerStyle,
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
                         ),
                         Expanded(
                           flex: 3,
-                          child: Text('NIK', style: headerStyle),
+                          child: Align(
+                            alignment: Alignment.center,
+                            child: Text(
+                              'NIK',
+                              style: headerStyle,
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
                         ),
                         Expanded(
                           flex: 3,
-                          child: Text('Email', style: headerStyle),
+                          child: Align(
+                            alignment: Alignment.center,
+                            child: Text(
+                              'Email',
+                              style: headerStyle,
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
                         ),
                         Expanded(
                           flex: 3,
-                          child: Text('Jenis Kelamin', style: headerStyle),
+                          child: Align(
+                            alignment: Alignment.center,
+                            child: Text(
+                              'Jenis Kelamin',
+                              style: headerStyle,
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
                         ),
                         Expanded(
                           flex: 3,
-                          child: Text('Foto Identitas', style: headerStyle),
+                          child: Align(
+                            alignment: Alignment.center,
+                            child: Text(
+                              'Foto Identitas',
+                              style: headerStyle,
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
                         ),
                         Expanded(
                           flex: 2,
-                          child: Text('Status', style: headerStyle),
+                          child: Align(
+                            alignment: Alignment.center,
+                            child: Text(
+                              'Status',
+                              style: headerStyle,
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
                         ),
                         SizedBox(
                           width: 50,
-                          child: Text('Aksi', style: headerStyle),
+                          child: Align(
+                            alignment: Alignment.center,
+                            child: Text(
+                              'Aksi',
+                              style: headerStyle,
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
                         ),
                       ],
                     ),
@@ -385,18 +467,25 @@ class _InformasiPenerimaanWargaScreenState
                   ),
                   const SizedBox(height: 6),
                   Expanded(
-                    child: ListView.builder(
-                      itemCount: _items.length,
-                      itemBuilder: (context, index) {
-                        final it = _items[index];
-                        return _HoverableRow(
-                          data: it,
-                          bodyStyle: bodyStyle,
-                          buildStatusBadge: _buildStatusBadge,
-                          buildActionButton: _buildActionMenu,
-                          index: index,
-                        );
-                      },
+                    child: Column(
+                      children: [
+                        Expanded(
+                          child: ListView.builder(
+                            itemCount: _items.length,
+                            itemBuilder: (context, index) {
+                              final it = _items[index];
+                              return _HoverableRow(
+                                data: it,
+                                bodyStyle: bodyStyle,
+                                buildStatusBadge: _buildStatusBadge,
+                                buildActionButton: _buildActionMenu,
+                                index: index,
+                              );
+                            },
+                          ),
+                        ),
+                        _buildDetailSection(),
+                      ],
                     ),
                   ),
                 ],
@@ -414,7 +503,7 @@ class _HoverableRow extends StatefulWidget {
   final TextStyle bodyStyle;
   final Widget Function(BuildContext, String) buildStatusBadge;
   final Widget Function(BuildContext, _PenerimaanWargaItem, int)
-  buildActionButton;
+      buildActionButton;
   final int index;
 
   const _HoverableRow({
@@ -470,23 +559,48 @@ class _HoverableRowState extends State<_HoverableRow> {
                     ),
                     Expanded(
                       flex: 3,
-                      child: Text(widget.data.Nama, style: widget.bodyStyle),
+                      child: Align(
+                        alignment: Alignment.center,
+                        child: Text(
+                          widget.data.Nama,
+                          style: widget.bodyStyle,
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
                     ),
                     Expanded(
                       flex: 3,
-                      child: Text(widget.data.NIK, style: widget.bodyStyle),
+                      child: Align(
+                        alignment: Alignment.center,
+                        child: Text(widget.data.NIK, style: widget.bodyStyle),
+                      ),
                     ),
                     Expanded(
                       flex: 3,
-                      child: Text(widget.data.Email, style: widget.bodyStyle),
+                      child: Align(
+                        alignment: Alignment.center,
+                        child: Text(widget.data.Email, style: widget.bodyStyle),
+                      ),
                     ),
                     Expanded(
                       flex: 3,
-                      child: Text(widget.data.Jenis_Kelamin, style: widget.bodyStyle),
+                      child: Align(
+                        alignment: Alignment.center,
+                        child: Text(
+                          widget.data.Jenis_Kelamin,
+                          style: widget.bodyStyle,
+                        ),
+                      ),
                     ),
                     Expanded(
                       flex: 3,
-                      child: Text(widget.data.Foto_Identitas, style: widget.bodyStyle),
+                      child: Align(
+                        alignment: Alignment.center,
+                        child: Text(
+                          widget.data.Foto_Identitas,
+                          style: widget.bodyStyle,
+                        ),
+                      ),
                     ),
                     Expanded(
                       flex: 2,
