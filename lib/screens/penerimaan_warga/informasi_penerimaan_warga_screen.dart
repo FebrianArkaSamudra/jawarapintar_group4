@@ -31,45 +31,125 @@ class InformasiPenerimaanWargaScreen extends StatefulWidget {
 
 class _InformasiPenerimaanWargaScreenState
     extends State<InformasiPenerimaanWargaScreen> {
-  // use a mutable list of model objects
+  // Data utama
   final List<_PenerimaanWargaItem> _items = [
     _PenerimaanWargaItem(
-      no: 1,
-      Nama: 'Slamet',
-      NIK: '23417202556',
-      Email: 'Slamet@gmail.com',
-      Jenis_Kelamin: 'Laki-laki',
-      Foto_Identitas: '-',
-      status: 'Diterima',
-    ),
+        no: 1,
+        Nama: 'Slamet',
+        NIK: '23417202556',
+        Email: 'Slamet@gmail.com',
+        Jenis_Kelamin: 'Laki-laki',
+        Foto_Identitas: '-',
+        status: 'Diterima'),
     _PenerimaanWargaItem(
-      no: 2,
-      Nama: 'Murjoko',
-      NIK: '23417202552',
-      Email: 'Joko@gmail.com',
-      Jenis_Kelamin: 'Laki-laki',
-      Foto_Identitas: '-',
-      status: 'Pending',
-    ),
+        no: 2,
+        Nama: 'Murjoko',
+        NIK: '23417202552',
+        Email: 'Joko@gmail.com',
+        Jenis_Kelamin: 'Laki-laki',
+        Foto_Identitas: '-',
+        status: 'Pending'),
     _PenerimaanWargaItem(
-      no: 3,
-      Nama: 'Budianto',
-      NIK: '23417202550',
-      Email: 'Budianti@gmail.com',
-      Jenis_Kelamin: 'Laki-Laki',
-      Foto_Identitas: '-',
-      status: 'Ditolak',
-    ),
+        no: 3,
+        Nama: 'Budianto',
+        NIK: '23417202550',
+        Email: 'Budianti@gmail.com',
+        Jenis_Kelamin: 'Laki-Laki',
+        Foto_Identitas: '-',
+        status: 'Ditolak'),
+    _PenerimaanWargaItem(
+        no: 4,
+        Nama: 'Mamat Edi',
+        NIK: '23417202550',
+        Email: 'Madimamat@gmail.com',
+        Jenis_Kelamin: 'Laki-Laki',
+        Foto_Identitas: '-',
+        status: 'Diterima'),
+    _PenerimaanWargaItem(
+        no: 5,
+        Nama: 'Putri Ikan',
+        NIK: '23417202550',
+        Email: 'Syahputri@gmail.com',
+        Jenis_Kelamin: 'Perempuan',
+        Foto_Identitas: '-',
+        status: 'Pending'),
+    _PenerimaanWargaItem(
+        no: 6,
+        Nama: 'Siti Aminah',
+        NIK: '23417202550',
+        Email: 'sitimiminah@gmail.com',
+        Jenis_Kelamin: 'Perempuan',
+        Foto_Identitas: '-',
+        status: 'Ditolak'),
+    _PenerimaanWargaItem(
+        no: 7,
+        Nama: 'Andi Susanto',
+        NIK: '23417202551',
+        Email: 'Andiabi@gmail.com',
+        Jenis_Kelamin: 'Laki-Laki',
+        Foto_Identitas: '-',
+        status: 'Diterima'),
+    _PenerimaanWargaItem(
+        no: 8,
+        Nama: 'Dewi Lestari',
+        NIK: '23417202553',
+        Email: 'dewisrilestari@gmail.com',
+        Jenis_Kelamin: 'Perempuan',
+        Foto_Identitas: '-',
+        status: 'Pending'),
+    _PenerimaanWargaItem(
+        no: 9,
+        Nama: 'Rina Marlina',
+        NIK: '23417202554',
+        Email: 'RinaMarsuki@gmail.com',
+        Jenis_Kelamin: 'Perempuan',
+        Foto_Identitas: '-', 
+        status: 'Ditolak'),
+    _PenerimaanWargaItem(
+        no: 10,
+        Nama: 'Agus Salim',
+        NIK: '23417202555',
+        Email: 'Agussamania@gmail.com',
+        Jenis_Kelamin: 'Laki-Laki',
+        Foto_Identitas: '-',
+        status: 'Diterima'),
   ];
 
-  // Build status badge like in the attachment
+  // Tambahkan list filtered
+  List<_PenerimaanWargaItem> _filteredItems = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _filteredItems = List.from(_items); // awal: tampil semua
+  }
+
+  // Fungsi untuk menerapkan filter
+  void _applyFilter(String? nama, String? kelamin, String? status) {
+    setState(() {
+      _filteredItems = _items.where((item) {
+        final matchNama = nama == null || nama.isEmpty
+            ? true
+            : item.Nama.toLowerCase().contains(nama.toLowerCase());
+        final matchKelamin = kelamin == null || kelamin.isEmpty
+            ? true
+            : item.Jenis_Kelamin.toLowerCase().contains(kelamin.toLowerCase());
+        final matchStatus = status == null || status.isEmpty
+            ? true
+            : item.status.toLowerCase() == status.toLowerCase();
+
+        return matchNama && matchKelamin && matchStatus;
+      }).toList();
+    });
+  }
+
+  // Widget status badge
   Widget _buildStatusBadge(BuildContext context, String status) {
     Color color;
     Color textColor;
 
     switch (status.toLowerCase()) {
       case 'diterima':
-      case 'approved':
         color = const Color(0xFFE6F3EE);
         textColor = const Color(0xFF1E8449);
         break;
@@ -78,7 +158,6 @@ class _InformasiPenerimaanWargaScreenState
         textColor = const Color(0xFFF39C12);
         break;
       case 'ditolak':
-      case 'rejected':
         color = const Color(0xFFFBEAEA);
         textColor = const Color(0xFFDC3545);
         break;
@@ -88,30 +167,24 @@ class _InformasiPenerimaanWargaScreenState
     }
 
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 4.0),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
       decoration: BoxDecoration(
         color: color,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: color, width: 1.5),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Icon(Icons.assignment_turned_in_outlined, color: textColor, size: 14),
           const SizedBox(width: 6),
-          Text(
-            status,
-            textAlign: TextAlign.center,
-            style: TextStyle(color: textColor, fontWeight: FontWeight.w600),
-          ),
+          Text(status,
+              style: TextStyle(color: textColor, fontWeight: FontWeight.w600)),
         ],
       ),
     );
   }
 
-  // Filter modal from attachment
+  // ===================== FILTER MODAL =====================
   void _showFilterModal(BuildContext context) {
     String? selectedStatus;
     final TextEditingController NamaController = TextEditingController();
@@ -131,19 +204,16 @@ class _InformasiPenerimaanWargaScreenState
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Text(
-                  'Filter Penerimaan Warga',
-                  style: TextStyle(fontWeight: FontWeight.bold),
-                ),
+                const Text('Filter Penerimaan Warga',
+                    style: TextStyle(fontWeight: FontWeight.bold)),
                 InkWell(
-                  onTap: () => Navigator.of(dialogCtx).pop(),
-                  child: const Icon(Icons.close),
-                ),
+                    onTap: () => Navigator.of(dialogCtx).pop(),
+                    child: const Icon(Icons.close)),
               ],
             ),
           ),
           content: StatefulBuilder(
-            builder: (context, setState) {
+            builder: (context, setStateSB) {
               return SizedBox(
                 width: 500,
                 child: Column(
@@ -151,48 +221,43 @@ class _InformasiPenerimaanWargaScreenState
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const SizedBox(height: 12),
-                    const Text(
-                      'Nama',
-                      style: TextStyle(fontWeight: FontWeight.w600),
-                    ),
+                    const Text('Nama',
+                        style: TextStyle(fontWeight: FontWeight.w600)),
                     const SizedBox(height: 8),
                     TextField(
                       controller: NamaController,
                       decoration: InputDecoration(
                         hintText: 'Cari Nama',
                         border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                        ),
+                            borderRadius: BorderRadius.circular(8)),
                       ),
                     ),
                     const SizedBox(height: 12),
-                    const Text(
-                      'Jenis Kelamin',
-                      style: TextStyle(fontWeight: FontWeight.w600),
-                    ),
+                    const Text('Jenis Kelamin',
+                        style: TextStyle(fontWeight: FontWeight.w600)),
                     const SizedBox(height: 8),
                     TextField(
                       controller: KelaminController,
                       decoration: InputDecoration(
                         hintText: '-- Pilih Jenis Kelamin --',
                         border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                        ),
+                            borderRadius: BorderRadius.circular(8)),
                       ),
                     ),
                     const SizedBox(height: 16),
-                    const Text(
-                      'Status',
-                      style: TextStyle(fontWeight: FontWeight.w600),
-                    ),
+                    const Text('Status',
+                        style: TextStyle(fontWeight: FontWeight.w600)),
                     const SizedBox(height: 8),
                     DropdownButtonFormField<String>(
                       value: selectedStatus,
                       hint: const Text('-- Pilih Status --'),
                       items: const ['Pending', 'Diterima', 'Ditolak']
-                          .map((s) => DropdownMenuItem(value: s, child: Text(s)))
+                          .map((s) => DropdownMenuItem(
+                                value: s,
+                                child: Text(s),
+                              ))
                           .toList(),
-                      onChanged: (v) => setState(() => selectedStatus = v),
+                      onChanged: (v) => setStateSB(() => selectedStatus = v),
                     ),
                     const SizedBox(height: 20),
                     Row(
@@ -201,7 +266,11 @@ class _InformasiPenerimaanWargaScreenState
                         OutlinedButton(
                           onPressed: () {
                             NamaController.clear();
+                            KelaminController.clear();
                             setState(() {
+                              _filteredItems = List.from(_items);
+                            });
+                            setStateSB(() {
                               selectedStatus = null;
                             });
                           },
@@ -209,6 +278,8 @@ class _InformasiPenerimaanWargaScreenState
                         ),
                         ElevatedButton(
                           onPressed: () {
+                            _applyFilter(NamaController.text,
+                                KelaminController.text, selectedStatus);
                             Navigator.of(dialogCtx).pop();
                           },
                           child: const Text('Terapkan'),
@@ -225,19 +296,14 @@ class _InformasiPenerimaanWargaScreenState
     );
   }
 
-  // variable to hold selected item for detail view
+  // Variable detail view
   _PenerimaanWargaItem? SelectedItem;
 
-  // Action menu builder: triggers detail/edit/hapus
   Widget _buildActionMenu(
-    BuildContext context,
-    _PenerimaanWargaItem item,
-    int index,
-  ) {
+      BuildContext context, _PenerimaanWargaItem item, int index) {
     return PopupMenuButton<String>(
       icon: const Icon(Icons.more_horiz, color: Color(0xFF999999)),
       offset: const Offset(0, 36),
-      onSelected: (value) {},
       itemBuilder: (ctx) => [
         PopupMenuItem(
           value: 'Detail',
@@ -250,9 +316,7 @@ class _InformasiPenerimaanWargaScreenState
           ),
           onTap: () {
             Future.delayed(Duration.zero, () {
-              setState(() {
-                SelectedItem = item;
-              });
+              setState(() => SelectedItem = item);
             });
           },
         ),
@@ -260,18 +324,16 @@ class _InformasiPenerimaanWargaScreenState
     );
   }
 
-  // widget detail muncul di bawah tabel
   Widget _buildDetailSection() {
     if (SelectedItem == null) return const SizedBox();
-
     return Padding(
-      padding: const EdgeInsets.only(top: 16.0),
+      padding: const EdgeInsets.only(top: 16),
       child: Column(
         children: [
           const Divider(thickness: 1.5, height: 32),
           Container(
             width: double.infinity,
-            padding: const EdgeInsets.all(16.0),
+            padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
               color: const Color(0xFFF9F9F9),
               borderRadius: BorderRadius.circular(12),
@@ -280,52 +342,41 @@ class _InformasiPenerimaanWargaScreenState
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
-                  'Detail Penerimaan Warga',
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
-                ),
+                const Text('Detail Penerimaan Warga',
+                    style:
+                        TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
                 const SizedBox(height: 12),
                 _buildDetailRow('Nama', SelectedItem!.Nama),
                 _buildDetailRow('NIK', SelectedItem!.NIK),
                 _buildDetailRow('Email', SelectedItem!.Email),
                 _buildDetailRow('Jenis Kelamin', SelectedItem!.Jenis_Kelamin),
-                _buildDetailRow('Foto Identitas', SelectedItem!.Foto_Identitas),
                 _buildDetailRow('Status', SelectedItem!.status),
                 const SizedBox(height: 12),
                 Align(
                   alignment: Alignment.centerRight,
                   child: ElevatedButton.icon(
-                    onPressed: () {
-                      setState(() {
-                        SelectedItem = null;
-                      });
-                    },
+                    onPressed: () => setState(() => SelectedItem = null),
                     icon: const Icon(Icons.close),
                     label: const Text('Tutup'),
                   ),
-                ),
+                )
               ],
             ),
-          ),
+          )
         ],
       ),
     );
   }
 
-  // helper untuk membangun baris detail
   Widget _buildDetailRow(String label, String value) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 8.0),
+      padding: const EdgeInsets.only(bottom: 8),
       child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           SizedBox(
-            width: 130,
-            child: Text(
-              '$label:',
-              style: const TextStyle(fontWeight: FontWeight.w600),
-            ),
-          ),
+              width: 130,
+              child:
+                  Text('$label:', style: const TextStyle(fontWeight: FontWeight.w600))),
           Expanded(child: Text(value)),
         ],
       ),
@@ -335,31 +386,26 @@ class _InformasiPenerimaanWargaScreenState
   @override
   Widget build(BuildContext context) {
     const headerStyle = TextStyle(
-      fontWeight: FontWeight.w600,
-      color: Color(0xFF666666),
-      fontSize: 14,
-    );
+        fontWeight: FontWeight.w600, color: Color(0xFF666666), fontSize: 14);
     const bodyStyle = TextStyle(color: Color(0xFF333333), fontSize: 14);
 
     return Padding(
-      padding: const EdgeInsets.all(24.0),
+      padding: const EdgeInsets.all(24),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Expanded(
             child: Container(
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(12),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.04),
-                    blurRadius: 10,
-                    offset: const Offset(0, 5),
-                  ),
-                ],
-              ),
               padding: const EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(12),
+                  boxShadow: [
+                    BoxShadow(
+                        color: Colors.black.withOpacity(0.04),
+                        blurRadius: 10,
+                        offset: const Offset(0, 5))
+                  ]),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
@@ -372,108 +418,43 @@ class _InformasiPenerimaanWargaScreenState
                     ),
                   ),
                   const SizedBox(height: 8),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 8.0),
-                    child: Row(
-                      children: const [
-                        SizedBox(
-                          width: 50,
-                          child: Text('No', style: headerStyle),
-                        ),
-                        Expanded(
+                  // header tabel
+                  Row(
+                    children: const [
+                      SizedBox(width: 50, child: Text('No', style: headerStyle)),
+                      Expanded(
                           flex: 3,
-                          child: Align(
-                            alignment: Alignment.center,
-                            child: Text(
-                              'Nama',
-                              style: headerStyle,
-                              textAlign: TextAlign.center,
-                            ),
-                          ),
-                        ),
-                        Expanded(
+                          child: Center(child: Text('Nama', style: headerStyle))),
+                      Expanded(
                           flex: 3,
-                          child: Align(
-                            alignment: Alignment.center,
-                            child: Text(
-                              'NIK',
-                              style: headerStyle,
-                              textAlign: TextAlign.center,
-                            ),
-                          ),
-                        ),
-                        Expanded(
+                          child: Center(child: Text('NIK', style: headerStyle))),
+                      Expanded(
                           flex: 3,
-                          child: Align(
-                            alignment: Alignment.center,
-                            child: Text(
-                              'Email',
-                              style: headerStyle,
-                              textAlign: TextAlign.center,
-                            ),
-                          ),
-                        ),
-                        Expanded(
+                          child:
+                              Center(child: Text('Email', style: headerStyle))),
+                      Expanded(
                           flex: 3,
-                          child: Align(
-                            alignment: Alignment.center,
-                            child: Text(
-                              'Jenis Kelamin',
-                              style: headerStyle,
-                              textAlign: TextAlign.center,
-                            ),
-                          ),
-                        ),
-                        Expanded(
-                          flex: 3,
-                          child: Align(
-                            alignment: Alignment.center,
-                            child: Text(
-                              'Foto Identitas',
-                              style: headerStyle,
-                              textAlign: TextAlign.center,
-                            ),
-                          ),
-                        ),
-                        Expanded(
+                          child: Center(
+                              child: Text('Jenis Kelamin', style: headerStyle))),
+                      Expanded(
                           flex: 2,
-                          child: Align(
-                            alignment: Alignment.center,
-                            child: Text(
-                              'Status',
-                              style: headerStyle,
-                              textAlign: TextAlign.center,
-                            ),
-                          ),
-                        ),
-                        SizedBox(
+                          child: Center(
+                              child: Text('Status', style: headerStyle))),
+                      SizedBox(
                           width: 50,
-                          child: Align(
-                            alignment: Alignment.center,
-                            child: Text(
-                              'Aksi',
-                              style: headerStyle,
-                              textAlign: TextAlign.center,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
+                          child: Center(
+                              child: Text('Aksi', style: headerStyle))),
+                    ],
                   ),
-                  const Divider(
-                    height: 1,
-                    thickness: 1,
-                    color: Color(0xFFE0E0E0),
-                  ),
-                  const SizedBox(height: 6),
+                  const Divider(thickness: 1, color: Color(0xFFE0E0E0)),
                   Expanded(
                     child: Column(
                       children: [
                         Expanded(
                           child: ListView.builder(
-                            itemCount: _items.length,
+                            itemCount: _filteredItems.length,
                             itemBuilder: (context, index) {
-                              final it = _items[index];
+                              final it = _filteredItems[index];
                               return _HoverableRow(
                                 data: it,
                                 bodyStyle: bodyStyle,
@@ -525,15 +506,6 @@ class _HoverableRowState extends State<_HoverableRow> {
   Widget build(BuildContext context) {
     final decoration = BoxDecoration(
       color: _hover ? const Color(0xFFF9F9F9) : Colors.white,
-      boxShadow: _hover
-          ? [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.04),
-                blurRadius: 5,
-                offset: const Offset(0, 3),
-              ),
-            ]
-          : null,
     );
 
     return Column(
@@ -541,89 +513,37 @@ class _HoverableRowState extends State<_HoverableRow> {
         MouseRegion(
           onEnter: (_) => setState(() => _hover = true),
           onExit: (_) => setState(() => _hover = false),
-          cursor: SystemMouseCursors.click,
           child: Container(
             decoration: decoration,
-            child: InkWell(
-              onTap: () {},
-              child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 12.0),
-                child: Row(
-                  children: [
-                    SizedBox(
-                      width: 50,
-                      child: Text(
-                        '${widget.data.no}.',
-                        style: widget.bodyStyle,
-                      ),
-                    ),
-                    Expanded(
-                      flex: 3,
-                      child: Align(
-                        alignment: Alignment.center,
-                        child: Text(
-                          widget.data.Nama,
-                          style: widget.bodyStyle,
-                          textAlign: TextAlign.center,
-                        ),
-                      ),
-                    ),
-                    Expanded(
-                      flex: 3,
-                      child: Align(
-                        alignment: Alignment.center,
-                        child: Text(widget.data.NIK, style: widget.bodyStyle),
-                      ),
-                    ),
-                    Expanded(
-                      flex: 3,
-                      child: Align(
-                        alignment: Alignment.center,
-                        child: Text(widget.data.Email, style: widget.bodyStyle),
-                      ),
-                    ),
-                    Expanded(
-                      flex: 3,
-                      child: Align(
-                        alignment: Alignment.center,
-                        child: Text(
-                          widget.data.Jenis_Kelamin,
-                          style: widget.bodyStyle,
-                        ),
-                      ),
-                    ),
-                    Expanded(
-                      flex: 3,
-                      child: Align(
-                        alignment: Alignment.center,
-                        child: Text(
-                          widget.data.Foto_Identitas,
-                          style: widget.bodyStyle,
-                        ),
-                      ),
-                    ),
-                    Expanded(
-                      flex: 2,
-                      child: widget.buildStatusBadge(
-                        context,
-                        widget.data.status,
-                      ),
-                    ),
-                    SizedBox(
-                      width: 50,
-                      child: widget.buildActionButton(
-                        context,
-                        widget.data,
-                        widget.index,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+            padding: const EdgeInsets.symmetric(vertical: 12),
+            child: Row(
+              children: [
+                SizedBox(width: 50, child: Text('${widget.data.no}.')),
+                Expanded(
+                    flex: 3,
+                    child: Center(child: Text(widget.data.Nama))),
+                Expanded(
+                    flex: 3,
+                    child: Center(child: Text(widget.data.NIK))),
+                Expanded(
+                    flex: 3,
+                    child: Center(child: Text(widget.data.Email))),
+                Expanded(
+                    flex: 3,
+                    child: Center(child: Text(widget.data.Jenis_Kelamin))),
+                Expanded(
+                    flex: 2,
+                    child:
+                        widget.buildStatusBadge(context, widget.data.status)),
+                SizedBox(
+                    width: 50,
+                    child: widget.buildActionButton(
+                        context, widget.data, widget.index)),
+              ],
             ),
           ),
         ),
-        const Divider(height: 1, thickness: 0.5, color: Color(0xFFF0F0F0)),
+        const Divider(height: 1, thickness: 0.5, color: Color(0xFFF0F0F0))
       ],
     );
   }
