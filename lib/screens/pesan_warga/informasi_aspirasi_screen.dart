@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-// Small local model mirroring the attachment version
+// ===== MODEL =====
 class _AspirasiItem {
   int no;
   String pengirim;
@@ -17,6 +17,7 @@ class _AspirasiItem {
   });
 }
 
+// ===== MAIN SCREEN =====
 class InformasiAspirasiScreen extends StatefulWidget {
   const InformasiAspirasiScreen({super.key});
 
@@ -26,7 +27,6 @@ class InformasiAspirasiScreen extends StatefulWidget {
 }
 
 class _InformasiAspirasiScreenState extends State<InformasiAspirasiScreen> {
-  // use a mutable list of model objects
   final List<_AspirasiItem> _items = [
     _AspirasiItem(
       no: 1,
@@ -51,14 +51,16 @@ class _InformasiAspirasiScreenState extends State<InformasiAspirasiScreen> {
     ),
   ];
 
-  // Build status badge like in the attachment
+  _AspirasiItem? _selectedItem;
+  bool _isEditing = false;
+
+  // ===== BADGE STATUS =====
   Widget _buildStatusBadge(BuildContext context, String status) {
     Color color;
     Color textColor;
 
     switch (status.toLowerCase()) {
       case 'diterima':
-      case 'approved':
         color = const Color(0xFFE6F3EE);
         textColor = const Color(0xFF1E8449);
         break;
@@ -67,7 +69,6 @@ class _InformasiAspirasiScreenState extends State<InformasiAspirasiScreen> {
         textColor = const Color(0xFFF39C12);
         break;
       case 'ditolak':
-      case 'rejected':
         color = const Color(0xFFFBEAEA);
         textColor = const Color(0xFFDC3545);
         break;
@@ -85,7 +86,6 @@ class _InformasiAspirasiScreenState extends State<InformasiAspirasiScreen> {
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
-        mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Icon(Icons.assignment_turned_in_outlined, color: textColor, size: 14),
           const SizedBox(width: 6),
@@ -99,7 +99,7 @@ class _InformasiAspirasiScreenState extends State<InformasiAspirasiScreen> {
     );
   }
 
-  // Filter modal from attachment
+  // ===== FILTER MODAL =====
   void _showFilterModal(BuildContext context) {
     String? selectedStatus;
     final TextEditingController judulController = TextEditingController();
@@ -148,7 +148,7 @@ class _InformasiAspirasiScreenState extends State<InformasiAspirasiScreen> {
                       decoration: InputDecoration(
                         hintText: 'Cari judul...',
                         border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
+                          borderRadius: BorderRadius.circular(15),
                         ),
                       ),
                     ),
@@ -163,7 +163,8 @@ class _InformasiAspirasiScreenState extends State<InformasiAspirasiScreen> {
                       hint: const Text('-- Pilih Status --'),
                       items: const ['Pending', 'Diterima', 'Ditolak']
                           .map(
-                            (s) => DropdownMenuItem(value: s, child: Text(s)),
+                            (s) =>
+                                DropdownMenuItem(value: s, child: Text(s)),
                           )
                           .toList(),
                       onChanged: (v) => setState(() => selectedStatus = v),
@@ -175,16 +176,12 @@ class _InformasiAspirasiScreenState extends State<InformasiAspirasiScreen> {
                         OutlinedButton(
                           onPressed: () {
                             judulController.clear();
-                            setState(() {
-                              selectedStatus = null;
-                            });
+                            setState(() => selectedStatus = null);
                           },
                           child: const Text('Reset Filter'),
                         ),
                         ElevatedButton(
-                          onPressed: () {
-                            Navigator.of(dialogCtx).pop();
-                          },
+                          onPressed: () => Navigator.of(dialogCtx).pop(),
                           child: const Text('Terapkan'),
                         ),
                       ],
@@ -199,99 +196,51 @@ class _InformasiAspirasiScreenState extends State<InformasiAspirasiScreen> {
     );
   }
 
-  // Action menu builder: triggers detail/edit/hapus
+  // ===== ACTION MENU =====
   Widget _buildActionMenu(BuildContext context, _AspirasiItem item, int index) {
     return PopupMenuButton<String>(
       icon: const Icon(Icons.more_horiz, color: Color(0xFF999999)),
       offset: const Offset(0, 36),
-      onSelected: (value) async {
-        // No-op here; we handle actions in onTap of menu items to ensure immediate response
-      },
+      onSelected: (value) {},
       itemBuilder: (ctx) => [
         PopupMenuItem(
           value: 'Detail',
-          child: Row(
-            children: const [
+          child: const Row(
+            children: [
               Icon(Icons.visibility_outlined, size: 18),
               SizedBox(width: 50),
               Text('Detail'),
             ],
           ),
-          onTap: () {
-            // Show inline detail dialog
-            Future.delayed(Duration.zero, () {
-              showDialog(
-                context: context,
-                builder: (dctx) => AlertDialog(
-                  title: const Text('Detail Informasi'),
-                  content: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text('Pengirim: ${item.pengirim}'),
-                      const SizedBox(height: 6),
-                      Text('Judul: ${item.judul}'),
-                      const SizedBox(height: 6),
-                      Text('Status: ${item.status}'),
-                      const SizedBox(height: 6),
-                      Text('Tanggal: ${item.tanggal}'),
-                    ],
-                  ),
-                  actions: [
-                    TextButton(
-                      onPressed: () => Navigator.pop(dctx),
-                      child: const Text('Tutup'),
-                    ),
-                  ],
-                ),
-              );
-            });
-          },
+          onTap: () => Future.delayed(
+            Duration.zero,
+            () => setState(() {
+              _selectedItem = item;
+              _isEditing = false;
+            }),
+          ),
         ),
         PopupMenuItem(
           value: 'Edit',
-          child: Row(
-            children: const [
+          child: const Row(
+            children: [
               Icon(Icons.edit_outlined, size: 18),
               SizedBox(width: 50),
               Text('Edit'),
             ],
           ),
-          onTap: () async {
-            // Show edit dialog and update the item
-            await Future.delayed(Duration.zero); // allow menu to close
-            final controller = TextEditingController(text: item.judul);
-            final res = await showDialog<bool>(
-              context: context,
-              builder: (dctx) => AlertDialog(
-                title: const Text('Edit Judul'),
-                content: TextField(controller: controller),
-                actions: [
-                  TextButton(
-                    onPressed: () => Navigator.pop(dctx, false),
-                    child: const Text('Batal'),
-                  ),
-                  TextButton(
-                    onPressed: () => Navigator.pop(dctx, true),
-                    child: const Text('Simpan'),
-                  ),
-                ],
-              ),
-            );
-            if (res == true) {
-              setState(() {
-                item.judul = controller.text;
-              });
-              ScaffoldMessenger.of(
-                context,
-              ).showSnackBar(const SnackBar(content: Text('Judul diperbarui')));
-            }
-          },
+          onTap: () => Future.delayed(
+            Duration.zero,
+            () => setState(() {
+              _selectedItem = item;
+              _isEditing = true;
+            }),
+          ),
         ),
         PopupMenuItem(
           value: 'Hapus',
-          child: Row(
-            children: const [
+          child: const Row(
+            children: [
               Icon(Icons.delete_outline_rounded, size: 18),
               SizedBox(width: 50),
               Text('Hapus'),
@@ -316,13 +265,16 @@ class _InformasiAspirasiScreenState extends State<InformasiAspirasiScreen> {
                 ],
               ),
             );
+
             if (confirm == true) {
               setState(() {
                 _items.removeAt(index);
+                _selectedItem = null;
               });
-              ScaffoldMessenger.of(
-                context,
-              ).showSnackBar(const SnackBar(content: Text('Item dihapus')));
+
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Item dihapus')),
+              );
             }
           },
         ),
@@ -330,6 +282,159 @@ class _InformasiAspirasiScreenState extends State<InformasiAspirasiScreen> {
     );
   }
 
+  // ===== DETAIL / EDIT SECTION =====
+  Widget _buildDetailSection() {
+    if (_selectedItem == null) return const SizedBox();
+    final item = _selectedItem!;
+
+    return Padding(
+      padding: const EdgeInsets.only(top: 16.0),
+      child: Column(
+        children: [
+          const Divider(thickness: 1.5, height: 32),
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(16.0),
+            decoration: BoxDecoration(
+              color: const Color(0xFFF9F9F9),
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: const Color(0xFFE0E0E0)),
+            ),
+            child: _isEditing
+                ? _buildEditForm(item)
+                : _buildDetailView(item),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // ===== DETAIL VIEW =====
+  Widget _buildDetailView(_AspirasiItem item) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text(
+          'Detail Informasi Aspirasi',
+          style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+        ),
+        const SizedBox(height: 12),
+        _buildDetailRow('Pengirim', item.pengirim),
+        _buildDetailRow('Judul', item.judul),
+        _buildDetailRow('Status', item.status),
+        _buildDetailRow('Tanggal', item.tanggal),
+        const SizedBox(height: 12),
+        Align(
+          alignment: Alignment.centerRight,
+          child: ElevatedButton.icon(
+            onPressed: () => setState(() => _selectedItem = null),
+            icon: const Icon(Icons.close),
+            label: const Text('Tutup'),
+          ),
+        ),
+      ],
+    );
+  }
+
+  // ===== FORM EDIT =====
+  Widget _buildEditForm(_AspirasiItem item) {
+    final TextEditingController judulController =
+        TextEditingController(text: item.judul);
+    String? selectedStatus = item.status;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text(
+          'Edit Informasi Aspirasi',
+          style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+        ),
+        const SizedBox(height: 12),
+
+        // === Field Judul ===
+        TextField(
+          controller: judulController,
+          decoration: InputDecoration(
+            labelText: 'Judul Aspirasi',
+            border: OutlineInputBorder(borderRadius: BorderRadius.circular(15)),
+          ),
+        ),
+        const SizedBox(height: 12),
+
+        // === Dropdown Status ===
+        DropdownButtonFormField<String>(
+          value: selectedStatus,
+          decoration: InputDecoration(
+            labelText: 'Status Aspirasi',
+            border: OutlineInputBorder(borderRadius: BorderRadius.circular(15)),
+          ),
+          items: const [
+            DropdownMenuItem(value: 'Pending', child: Text('Pending')),
+            DropdownMenuItem(value: 'Diterima', child: Text('Diterima')),
+            DropdownMenuItem(value: 'Ditolak', child: Text('Ditolak')),
+          ],
+          onChanged: (value) {
+            selectedStatus = value;
+          },
+        ),
+        const SizedBox(height: 16),
+
+        // === Tombol Aksi ===
+        Align(
+          alignment: Alignment.centerRight,
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              OutlinedButton(
+                onPressed: () => setState(() {
+                  _selectedItem = null;
+                  _isEditing = false;
+                }),
+                child: const Text('Batal'),
+              ),
+              const SizedBox(width: 8),
+              ElevatedButton.icon(
+                onPressed: () {
+                  setState(() {
+                    item.judul = judulController.text;
+                    item.status = selectedStatus ?? item.status;
+                    _isEditing = false;
+                  });
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Perubahan disimpan')),
+                  );
+                },
+                icon: const Icon(Icons.save_outlined),
+                label: const Text('Update'),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  // ===== DETAIL ROW HELPER =====
+  Widget _buildDetailRow(String label, String value) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8.0),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(
+            width: 130,
+            child: Text(
+              '$label:',
+              style: const TextStyle(fontWeight: FontWeight.w600),
+            ),
+          ),
+          Expanded(child: Text(value)),
+        ],
+      ),
+    );
+  }
+
+  // ===== MAIN BUILD =====
   @override
   Widget build(BuildContext context) {
     const headerStyle = TextStyle(
@@ -337,7 +442,10 @@ class _InformasiAspirasiScreenState extends State<InformasiAspirasiScreen> {
       color: Color(0xFF666666),
       fontSize: 14,
     );
-    const bodyStyle = TextStyle(color: Color(0xFF333333), fontSize: 14);
+    const bodyStyle = TextStyle(
+      color: Color(0xFF333333),
+      fontSize: 14,
+    );
 
     return Padding(
       padding: const EdgeInsets.all(24.0),
@@ -375,72 +483,34 @@ class _InformasiAspirasiScreenState extends State<InformasiAspirasiScreen> {
                     child: Row(
                       children: const [
                         SizedBox(
-                          width: 50,
-                          child: Text('No', style: headerStyle),
-                        ),
+                            width: 50, child: Text('No', style: headerStyle)),
                         Expanded(
                           flex: 2,
-                          child: Align(
-                            alignment: Alignment.center,
-                            child: Text(
-                              'Pengirim',
-                              style: headerStyle,
-                              textAlign: TextAlign.center,
-                              ),
-                            ),
+                          child:
+                              Center(child: Text('Pengirim', style: headerStyle)),
                         ),
                         Expanded(
                           flex: 3,
-                          child: Align(
-                            alignment: Alignment.center,
-                            child: Text(
-                              'Judul',
-                              style: headerStyle,
-                              textAlign: TextAlign.center
-                              ),
-                            ),
+                          child: Center(child: Text('Judul', style: headerStyle)),
                         ),
                         Expanded(
                           flex: 2,
-                          child: Align(
-                            alignment: Alignment.center,
-                            child: Text(
-                              'Status', 
-                              style: headerStyle,
-                              textAlign: TextAlign.center,
-                              ),
-                            ),  
+                          child: Center(child: Text('Status', style: headerStyle)),
                         ),
                         Expanded(
                           flex: 3,
-                          child: Align(
-                            alignment: Alignment.center,
-                            child: Text(
-                            'Tanggal dibuat',
-                            style: headerStyle,
-                            textAlign: TextAlign.center,
-                            ),
-                          ),
+                          child: Center(
+                              child: Text('Tanggal Dibuat', style: headerStyle)),
                         ),
                         SizedBox(
                           width: 50,
-                          child: Align(
-                            alignment: Alignment.center,
-                          child: Text(
-                            'Aksi', 
-                            style: headerStyle,
-                            textAlign: TextAlign.center,
-                            ),
-                          ),
+                          child:
+                              Center(child: Text('Aksi', style: headerStyle)),
                         ),
                       ],
                     ),
                   ),
-                  const Divider(
-                    height: 1,
-                    thickness: 1,
-                    color: Color(0xFFE0E0E0),
-                  ),
+                  const Divider(height: 1, thickness: 1, color: Color(0xFFE0E0E0)),
                   const SizedBox(height: 6),
                   Expanded(
                     child: ListView.builder(
@@ -457,6 +527,7 @@ class _InformasiAspirasiScreenState extends State<InformasiAspirasiScreen> {
                       },
                     ),
                   ),
+                  _buildDetailSection(),
                 ],
               ),
             ),
@@ -467,6 +538,7 @@ class _InformasiAspirasiScreenState extends State<InformasiAspirasiScreen> {
   }
 }
 
+// ===== HOVERABLE ROW =====
 class _HoverableRow extends StatefulWidget {
   final _AspirasiItem data;
   final TextStyle bodyStyle;
@@ -512,148 +584,57 @@ class _HoverableRowState extends State<_HoverableRow> {
           cursor: SystemMouseCursors.click,
           child: Container(
             decoration: decoration,
-            child: InkWell(
-              onTap: () {},
-              child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 12.0),
-                child: Row(
-                  children: [
-                    SizedBox(
-                      width: 50,
-                      child: Text(
-                        '${widget.data.no}.',
-                        style: widget.bodyStyle,
-                      ),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 12.0),
+              child: Row(
+                children: [
+                  SizedBox(
+                    width: 50,
+                    child: Text('${widget.data.no}.',
+                        style: widget.bodyStyle),
+                  ),
+                  Expanded(
+                    flex: 2,
+                    child: Center(
+                      child:
+                          Text(widget.data.pengirim, style: widget.bodyStyle),
                     ),
-                    Expanded(
-                      flex: 2,
-                      child: Align(
-                        alignment: Alignment.center,
-                        child: Text(
-                          widget.data.pengirim,
-                          style: widget.bodyStyle,
-                        ),
-                      ),
-                    ),
-                    Expanded(
-                      flex: 3,
-                      child: Align(
-                        alignment: Alignment.center,
+                  ),
+                  Expanded(
+                    flex: 3,
+                    child: Center(
                       child: Text(widget.data.judul, style: widget.bodyStyle),
-                      ),
                     ),
-                    Expanded(
-                      flex: 2,
-                      child: Align(
-                        alignment: Alignment.center,
-                        child: widget.buildStatusBadge(
-                          context,
-                          widget.data.status,
-                        ),
-                      ),
+                  ),
+                  Expanded(
+                    flex: 2,
+                    child: Center(
+                      child:
+                          widget.buildStatusBadge(context, widget.data.status),
                     ),
-                    Expanded(
-                      flex: 3,
-                      child: Align(
-                        alignment: Alignment.center,
-                        child: Text(widget.data.tanggal, style: widget.bodyStyle),
-                      ),
+                  ),
+                  Expanded(
+                    flex: 3,
+                    child: Center(
+                      child:
+                          Text(widget.data.tanggal, style: widget.bodyStyle),
                     ),
-                    SizedBox(
-                      width: 50,
-                      child: widget.buildActionButton(
-                        context,
-                        widget.data,
-                        widget.index,
-                      ),
+                  ),
+                  SizedBox(
+                    width: 50,
+                    child: widget.buildActionButton(
+                      context,
+                      widget.data,
+                      widget.index,
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
           ),
         ),
         const Divider(height: 1, thickness: 0.5, color: Color(0xFFF0F0F0)),
       ],
-    );
-  }
-}
-
-// Keep StatusChip as earlier (kept for compatibility where used elsewhere)
-class StatusChip extends StatelessWidget {
-  final String status;
-
-  const StatusChip({required this.status, super.key});
-
-  Color _background(String s) {
-    switch (s.toLowerCase()) {
-      case 'approved':
-      case 'diterima':
-        return const Color(0xFFDFF7E6);
-      case 'pending':
-        return const Color(0xFFFFF4D9);
-      case 'ditolak':
-        return const Color(0xFFFEECEC);
-      default:
-        return const Color(0xFFECEFF6);
-    }
-  }
-
-  Color _textColor(String s) {
-    switch (s.toLowerCase()) {
-      case 'approved':
-      case 'diterima':
-        return const Color(0xFF1B7A3A);
-      case 'pending':
-        return const Color(0xFFB97A00);
-      case 'ditolak':
-        return const Color(0xFFB00020);
-      default:
-        return Colors.black87;
-    }
-  }
-
-  IconData _icon(String s) {
-    switch (s.toLowerCase()) {
-      case 'approved':
-      case 'diterima':
-        return Icons.check_circle_outline;
-      case 'pending':
-        return Icons.access_time;
-      case 'ditolak':
-        return Icons.close;
-      default:
-        return Icons.info_outline;
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final bg = _background(status);
-    final tc = _textColor(status);
-    final icon = _icon(status);
-
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-      decoration: BoxDecoration(
-        color: bg,
-        borderRadius: BorderRadius.circular(20),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(icon, size: 14, color: tc),
-          const SizedBox(width: 6),
-          Text(
-            status,
-            style: TextStyle(
-              color: tc,
-              fontSize: 13,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-        ],
-      ),
     );
   }
 }
