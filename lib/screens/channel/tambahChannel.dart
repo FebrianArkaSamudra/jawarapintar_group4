@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 
@@ -12,46 +13,61 @@ class TambahChannelPage extends StatefulWidget {
 class _TambahChannelPageState extends State<TambahChannelPage> {
   final _formKey = GlobalKey<FormState>();
   final _nameCtrl = TextEditingController();
-  String? _type;
   final _accountCtrl = TextEditingController();
   final _ownerCtrl = TextEditingController();
-  final _qrUrlCtrl = TextEditingController();
-  final _thumbUrlCtrl = TextEditingController();
-  final _noteCtrl = TextEditingController();
+  final _notesCtrl = TextEditingController();
+
+  String? _type;
+  String? _status;
+  File? _qrFile;
+  File? _thumbFile;
+
+  final List<String> _types = ['Bank', 'E-Wallet', 'QRIS'];
+  final List<String> _statuses = ['Aktif', 'Non-Aktif'];
 
   @override
   void initState() {
     super.initState();
-    final d = widget.initialData ?? {};
-    if (d.isNotEmpty) {
+    final d = widget.initialData;
+    if (d != null) {
       _nameCtrl.text = d['name'] ?? '';
-      _type = d['type'];
       _accountCtrl.text = d['account'] ?? '';
       _ownerCtrl.text = d['owner'] ?? '';
-      _thumbUrlCtrl.text = d['thumbnail'] ?? '';
-      _qrUrlCtrl.text = d['qr'] ?? '';
-      _noteCtrl.text = d['desc'] ?? '';
+      _notesCtrl.text = d['desc'] ?? '';
+      _type = d['type'];
+      _status = d['status'] ?? 'Aktif';
+      // initialData may contain local paths or URLs; leave files null (user can pick)
     }
   }
 
-  Future<String?> _pickFile() async {
-    final result = await FilePicker.platform.pickFiles(type: FileType.image);
-    if (result == null || result.files.isEmpty) return null;
-    return result.files.first.path;
+  Future<void> _pickFile(bool isQr) async {
+    final res = await FilePicker.platform.pickFiles(type: FileType.any);
+    if (res == null) return;
+    final path = res.files.single.path;
+    if (path == null) return;
+    setState(() {
+      if (isQr) {
+        _qrFile = File(path);
+      } else {
+        _thumbFile = File(path);
+      }
+    });
   }
 
-  void _onSave() {
+  void _save() {
     if (!_formKey.currentState!.validate()) return;
-    final result = {
+    final map = <String, String>{
       'name': _nameCtrl.text.trim(),
       'type': _type ?? '',
       'account': _accountCtrl.text.trim(),
       'owner': _ownerCtrl.text.trim(),
-      'thumbnail': _thumbUrlCtrl.text.trim(),
-      'qr': _qrUrlCtrl.text.trim(),
-      'desc': _noteCtrl.text.trim(),
+      'desc': _notesCtrl.text.trim(),
+      'status': _status ?? 'Aktif',
+      // For simplicity we return file paths if chosen
+      'qr': _qrFile?.path ?? (widget.initialData?['qr'] ?? ''),
+      'thumb': _thumbFile?.path ?? (widget.initialData?['thumb'] ?? ''),
     };
-    Navigator.of(context).pop(result);
+    Navigator.of(context).pop(map);
   }
 
   @override
@@ -59,188 +75,250 @@ class _TambahChannelPageState extends State<TambahChannelPage> {
     _nameCtrl.dispose();
     _accountCtrl.dispose();
     _ownerCtrl.dispose();
-    _qrUrlCtrl.dispose();
-    _thumbUrlCtrl.dispose();
-    _noteCtrl.dispose();
+    _notesCtrl.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    // Constrain layout for wide screens but remain mobile friendly
+    final maxWidth = MediaQuery.of(context).size.width > 900
+        ? 900.0
+        : double.infinity;
     return Scaffold(
-      appBar: AppBar(title: const Text('Buat Transfer Channel')),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Form(
-          key: _formKey,
-          child: ListView(
-            children: [
-              const Text(
-                'Nama Channel',
-                style: TextStyle(fontWeight: FontWeight.bold),
+      appBar: AppBar(
+        title: Text(
+          widget.initialData == null
+              ? 'Buat Transfer Channel'
+              : 'Edit Transfer Channel',
+        ),
+        backgroundColor: const Color(0xFFEFF1F8),
+        foregroundColor: const Color(0xFF2B3674),
+        elevation: 0,
+      ),
+      body: Center(
+        child: ConstrainedBox(
+          constraints: BoxConstraints(maxWidth: maxWidth),
+          child: Padding(
+            padding: const EdgeInsets.all(20.0),
+            child: Card(
+              elevation: 2,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
               ),
-              const SizedBox(height: 8),
-              TextFormField(
-                controller: _nameCtrl,
-                decoration: const InputDecoration(
-                  hintText: 'Contoh: BCA, Dana, QRIS RT',
+              child: Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 20.0,
+                  vertical: 18,
                 ),
-                validator: (v) => (v == null || v.trim().isEmpty)
-                    ? 'Harap isi nama channel'
-                    : null,
-              ),
-              const SizedBox(height: 16),
-
-              const Text('Tipe', style: TextStyle(fontWeight: FontWeight.bold)),
-              const SizedBox(height: 8),
-              DropdownButtonFormField<String>(
-                value: _type,
-                items: const [
-                  DropdownMenuItem(value: 'Bank', child: Text('Bank')),
-                  DropdownMenuItem(value: 'E-Wallet', child: Text('E-Wallet')),
-                  DropdownMenuItem(value: 'QRIS', child: Text('QRIS')),
-                ],
-                onChanged: (v) => setState(() => _type = v),
-                decoration: const InputDecoration(hintText: '-- Pilih Tipe --'),
-                validator: (v) =>
-                    (v == null || v.isEmpty) ? 'Pilih tipe channel' : null,
-              ),
-              const SizedBox(height: 16),
-
-              const Text(
-                'Nomor Rekening / Akun',
-                style: TextStyle(fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 8),
-              TextFormField(
-                controller: _accountCtrl,
-                decoration: const InputDecoration(
-                  hintText: 'Contoh: 1234567890',
+                child: Form(
+                  key: _formKey,
+                  child: ListView(
+                    shrinkWrap: true,
+                    children: [
+                      TextFormField(
+                        controller: _nameCtrl,
+                        decoration: const InputDecoration(
+                          labelText: 'Nama Channel',
+                          hintText: 'Contoh: BCA, Dana, QRIS RT',
+                        ),
+                        validator: (v) => (v == null || v.trim().isEmpty)
+                            ? 'Nama channel tidak boleh kosong'
+                            : null,
+                      ),
+                      const SizedBox(height: 16),
+                      DropdownButtonFormField<String>(
+                        value: _type,
+                        items: _types
+                            .map(
+                              (t) => DropdownMenuItem(value: t, child: Text(t)),
+                            )
+                            .toList(),
+                        decoration: const InputDecoration(labelText: 'Tipe'),
+                        onChanged: (v) => setState(() => _type = v),
+                        validator: (v) => (v == null || v.isEmpty)
+                            ? 'Pilih tipe channel'
+                            : null,
+                      ),
+                      const SizedBox(height: 16),
+                      TextFormField(
+                        controller: _accountCtrl,
+                        decoration: const InputDecoration(
+                          labelText: 'Nomor Rekening / Akun',
+                          hintText: 'Contoh: 1234567890 atau ID QR',
+                        ),
+                        validator: (v) => (v == null || v.trim().isEmpty)
+                            ? 'Nomor akun tidak boleh kosong'
+                            : null,
+                      ),
+                      const SizedBox(height: 16),
+                      TextFormField(
+                        controller: _ownerCtrl,
+                        decoration: const InputDecoration(
+                          labelText: 'Nama Pemilik',
+                          hintText: 'Contoh: Bendahara RT',
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const Text(
+                                  'QR',
+                                  style: TextStyle(fontWeight: FontWeight.w600),
+                                ),
+                                const SizedBox(height: 8),
+                                _qrPreview(),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          OutlinedButton(
+                            onPressed: () => _pickFile(true),
+                            child: const Text('Pilih File'),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 16),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const Text(
+                                  'Thumbnail',
+                                  style: TextStyle(fontWeight: FontWeight.w600),
+                                ),
+                                const SizedBox(height: 8),
+                                _thumbPreview(),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          OutlinedButton(
+                            onPressed: () => _pickFile(false),
+                            child: const Text('Pilih File'),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 16),
+                      DropdownButtonFormField<String>(
+                        value:
+                            _status ?? widget.initialData?['status'] ?? 'Aktif',
+                        items: _statuses
+                            .map(
+                              (s) => DropdownMenuItem(value: s, child: Text(s)),
+                            )
+                            .toList(),
+                        decoration: const InputDecoration(labelText: 'Status'),
+                        onChanged: (v) => setState(() => _status = v),
+                      ),
+                      const SizedBox(height: 16),
+                      TextFormField(
+                        controller: _notesCtrl,
+                        decoration: const InputDecoration(
+                          labelText: 'Catatan (Opsional)',
+                          hintText:
+                              'Contoh: Transfer hanya dari bank yang sama agar instan',
+                        ),
+                        maxLines: 3,
+                      ),
+                      const SizedBox(height: 20),
+                      Row(
+                        children: [
+                          TextButton(
+                            onPressed: () => Navigator.of(context).pop(),
+                            child: const Text(
+                              'Batal',
+                              style: TextStyle(color: Colors.purple),
+                            ),
+                          ),
+                          const Spacer(),
+                          ElevatedButton(
+                            onPressed: _save,
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: const Color(0xFF4318FF),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 24,
+                                vertical: 12,
+                              ),
+                            ),
+                            child: const Text(
+                              'Simpan',
+                              style: TextStyle(color: Colors.white),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
-                keyboardType: TextInputType.text,
               ),
-              const SizedBox(height: 16),
-
-              const Text(
-                'Nama Pemilik',
-                style: TextStyle(fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 8),
-              TextFormField(
-                controller: _ownerCtrl,
-                decoration: const InputDecoration(hintText: 'Contoh: John Doe'),
-                validator: (v) => (v == null || v.trim().isEmpty)
-                    ? 'Harap isi nama pemilik'
-                    : null,
-              ),
-              const SizedBox(height: 16),
-
-              const Text('QR', style: TextStyle(fontWeight: FontWeight.bold)),
-              const SizedBox(height: 8),
-              Row(
-                children: [
-                  Expanded(
-                    child: TextFormField(
-                      controller: _qrUrlCtrl,
-                      decoration: const InputDecoration(
-                        hintText:
-                            'Path file QR atau URL — kosongkan jika tidak ada',
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  OutlinedButton(
-                    onPressed: () async {
-                      final p = await _pickFile();
-                      if (p != null) setState(() => _qrUrlCtrl.text = p);
-                    },
-                    child: const Text('Pilih File'),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 16),
-
-              const Text(
-                'Thumbnail',
-                style: TextStyle(fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 8),
-              Row(
-                children: [
-                  Expanded(
-                    child: TextFormField(
-                      controller: _thumbUrlCtrl,
-                      decoration: const InputDecoration(
-                        hintText:
-                            'Path file thumbnail atau URL — kosongkan jika tidak ada',
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  OutlinedButton(
-                    onPressed: () async {
-                      final p = await _pickFile();
-                      if (p != null) setState(() => _thumbUrlCtrl.text = p);
-                    },
-                    child: const Text('Pilih File'),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 16),
-
-              const Text(
-                'Catatan (Opsional)',
-                style: TextStyle(fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 8),
-              TextFormField(
-                controller: _noteCtrl,
-                maxLines: 4,
-                decoration: const InputDecoration(
-                  hintText:
-                      'Contoh: Transfer hanya dari bank yang sama agar instan',
-                ),
-              ),
-              const SizedBox(height: 20),
-
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  TextButton(
-                    onPressed: () => Navigator.pop(context),
-                    child: const Text('Batal'),
-                    style: TextButton.styleFrom(foregroundColor: Colors.purple),
-                  ),
-                  ElevatedButton(
-                    onPressed: _onSave,
-                    child: const Text('Simpan'),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.purple[100],
-                      foregroundColor: Colors.purple[800],
-                      elevation: 0,
-                      shape: const StadiumBorder(),
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 20,
-                        vertical: 12,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ],
+            ),
           ),
         ),
       ),
     );
   }
+
+  Widget _qrPreview() {
+    final initialPath = widget.initialData?['qr'];
+    if (_qrFile != null) {
+      return _imageBox(File(_qrFile!.path));
+    } else if (initialPath != null && initialPath.isNotEmpty) {
+      return _textPathBox(initialPath);
+    } else {
+      return const Text(
+        'Path file QR atau URL — kosongkan jika tidak ada',
+        style: TextStyle(color: Colors.grey),
+      );
+    }
+  }
+
+  Widget _thumbPreview() {
+    final initialPath = widget.initialData?['thumb'];
+    if (_thumbFile != null) {
+      return _imageBox(File(_thumbFile!.path));
+    } else if (initialPath != null && initialPath.isNotEmpty) {
+      return _textPathBox(initialPath);
+    } else {
+      return const Text(
+        'Path file thumbnail atau URL — kosongkan jika tidak ada',
+        style: TextStyle(color: Colors.grey),
+      );
+    }
+  }
+
+  Widget _imageBox(File file) {
+    return Container(
+      height: 72,
+      width: 120,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(8),
+        color: const Color(0xFFF4F6FF),
+        image: DecorationImage(image: FileImage(file), fit: BoxFit.cover),
+      ),
+    );
+  }
+
+  Widget _textPathBox(String path) {
+    return Container(
+      height: 72,
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: const Color(0xFFE6E9F2)),
+        color: const Color(0xFFF8F9FC),
+      ),
+      child: Text(
+        path,
+        style: const TextStyle(fontSize: 13),
+        overflow: TextOverflow.ellipsis,
+      ),
+    );
+  }
 }
-
-// Backwards compatible wrapper for navigation if used elsewhere
-class tambahChannelPage extends StatelessWidget {
-  const tambahChannelPage({super.key});
-
-  @override
-  Widget build(BuildContext context) => const TambahChannelPage();
-}
-
-// End of file

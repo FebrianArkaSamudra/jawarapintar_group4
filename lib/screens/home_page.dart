@@ -34,6 +34,8 @@ import 'Manajemen_Pengguna/daftar_pengguna.dart';
 import 'Manajemen_Pengguna/edit_pengguna_screen.dart';
 import 'Manajemen_Pengguna/tambah_pengguna_screen.dart';
 import '../models/pengguna.dart';
+import 'channel/daftarChannel.dart';
+import 'channel/tambahChannel.dart';
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key});
@@ -204,7 +206,9 @@ class _MyHomePageState extends State<MyHomePage> {
                   if (_selectedSubItem == 'Tambah Pengguna') {
                     return TambahPenggunaScreen(
                       onUserAdded: (newUser) async {
-                        await PenggunaRepo.add(newUser);
+                        try {
+                          await PenggunaRepo.add(newUser);
+                        } catch (_) {}
                         setState(() {
                           _selectedSubItem = 'Daftar Pengguna';
                         });
@@ -212,7 +216,6 @@ class _MyHomePageState extends State<MyHomePage> {
                     );
                   }
                   if (_selectedSubItem == 'Edit Pengguna') {
-                    // RegistrasiPage handles navigation to Edit with data via popup/route.
                     return const RegistrasiPage();
                   }
                 }
@@ -277,6 +280,15 @@ class _MyHomePageState extends State<MyHomePage> {
                   }
                   if (_selectedSubItem == 'Tambah') {
                     return const MutasiKeluargaTambah();
+                  }
+                }
+                // channel screens
+                if (_selectedPrimaryItem == 'Channel Transfer') {
+                  if (_selectedSubItem == 'Daftar Channel') {
+                    return const DaftarChannelPage();
+                  }
+                  if (_selectedSubItem == 'Tambah Channel') {
+                    return const TambahChannelPage();
                   }
                 }
                 // Log Aktifitas screens

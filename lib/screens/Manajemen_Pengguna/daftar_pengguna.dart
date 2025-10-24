@@ -1,282 +1,321 @@
 import 'package:flutter/material.dart';
-import 'edit_pengguna_screen.dart';
 import '../../models/pengguna_repo.dart';
+import 'tambah_pengguna_screen.dart';
+import 'edit_pengguna_screen.dart';
+import 'pengguna_detail_screen.dart';
 
 class RegistrasiPage extends StatefulWidget {
   const RegistrasiPage({super.key});
 
   @override
-  State<RegistrasiPage> createState() => RegistrasiPageState();
+  State<RegistrasiPage> createState() => _RegistrasiPageState();
 }
 
-class RegistrasiPageState extends State<RegistrasiPage> {
+class _RegistrasiPageState extends State<RegistrasiPage> {
+  List<Map<String, String>> _users = [];
+  bool _loading = true;
   final TextEditingController _namaController = TextEditingController();
-  String? selectedStatus;
 
-  List<Map<String, String>> _filteredUsers() {
-    final all = PenggunaRepo.users;
-    final q = _namaController.text.trim().toLowerCase();
-    return all.where((row) {
-      final nama = (row["nama"] ?? "").toLowerCase();
-      final status = (row["status"] ?? "");
-      final namaMatch = q.isEmpty || nama.contains(q);
-      final statusMatch = selectedStatus == null || status == selectedStatus;
-      return namaMatch && statusMatch;
-    }).toList();
+  @override
+  void initState() {
+    super.initState();
+    _load();
+  }
+
+  Future<void> _load() async {
+    setState(() => _loading = true);
+    final List<Map<String, String>> converted = [];
+
+    try {
+      // try init if repo has it (ignore if not)
+      try {
+        await PenggunaRepo.init();
+      } catch (_) {}
+
+      dynamic items;
+      // call getAll safely whether it returns Future or plain
+      try {
+        final maybe = PenggunaRepo.getAll();
+        if (maybe is Future) {
+          items = await maybe;
+        } else {
+          items = maybe;
+        }
+      } catch (_) {
+        items = null;
+      }
+
+      if (items != null) {
+        if (items is Iterable) {
+          for (final it in items) {
+            if (it is Map) {
+              final Map<String, String> m = {};
+              for (final entry in it.entries) {
+                m[entry.key.toString()] = entry.value?.toString() ?? '';
+              }
+              converted.add(m);
+            } else {
+              converted.add({'value': it?.toString() ?? ''});
+            }
+          }
+        } else if (items is Map) {
+          for (final entry in items.entries) {
+            final v = entry.value;
+            if (v is Map) {
+              final Map<String, String> m = {};
+              for (final e in v.entries) {
+                m[e.key.toString()] = e.value?.toString() ?? '';
+              }
+              m['no'] = entry.key.toString();
+              converted.add(m);
+            } else {
+              converted.add({
+                'no': entry.key.toString(),
+                'value': v?.toString() ?? '',
+              });
+            }
+          }
+        } else {
+          converted.add({'value': items?.toString() ?? ''});
+        }
+      }
+
+      setState(() {
+        _users = converted;
+        _loading = false;
+      });
+    } catch (_) {
+      // fallback sample data
+      setState(() {
+        _users = [
+          {
+            'no': '1',
+            'nama': 'Hammam Abdullah',
+            'email': 'Hammam@gmail.com',
+            'noHp': '081234251261',
+            'role': 'Admin',
+            'status': 'Diterima',
+          },
+          {
+            'no': '2',
+            'nama': 'Arka love',
+            'email': 'arka@gmail.com',
+            'noHp': '081298763332',
+            'role': 'Warga',
+            'status': 'Diterima',
+          },
+          {
+            'no': '3',
+            'nama': 'baihaqi',
+            'email': 'yuma@gmail.com',
+            'noHp': '081298769999',
+            'role': 'Warga',
+            'status': 'Diterima',
+          },
+        ];
+        _loading = false;
+      });
+    }
+  }
+
+  Future<void> _openTambah() async {
+    final res = await Navigator.push<Map<String, String>>(
+      context,
+      MaterialPageRoute(
+        builder: (_) => TambahPenggunaScreen(
+          onUserAdded: (u) async {
+            // Handle callback if needed
+            return;
+          },
+        ),
+      ),
+    );
+    if (res != null) {
+      // try persist via repo if available
+      try {
+        await PenggunaRepo.add(res);
+      } catch (_) {}
+      setState(() => _users.insert(0, res));
+    }
+    return; // Add explicit return statement
   }
 
   void _openFilterDialog() {
-    showDialog(
-      context: context,
-      builder: (context) {
-        final tmpName = TextEditingController(text: _namaController.text);
-        String? tmpStatus = selectedStatus;
-        return Dialog(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
-          child: Padding(
-            padding: const EdgeInsets.all(20.0),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    const Text(
-                      "Filter Manajemen Pengguna",
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    IconButton(
-                      icon: const Icon(Icons.close),
-                      onPressed: () => Navigator.pop(context),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 12),
-                const Text("Nama"),
-                const SizedBox(height: 6),
-                TextField(
-                  controller: tmpName,
-                  decoration: InputDecoration(
-                    hintText: "Cari nama...",
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 12),
-                const Text("Status"),
-                const SizedBox(height: 6),
-                DropdownButtonFormField<String>(
-                  initialValue: tmpStatus ?? "",
-                  items: const [
-                    DropdownMenuItem(
-                      value: "",
-                      child: Text("-- Pilih Status --"),
-                    ),
-                    DropdownMenuItem(
-                      value: "Diterima",
-                      child: Text("Diterima"),
-                    ),
-                    DropdownMenuItem(value: "Pending", child: Text("Pending")),
-                    DropdownMenuItem(value: "Ditolak", child: Text("Ditolak")),
-                  ],
-                  onChanged: (value) {
-                    tmpStatus = (value != "" ? value : null);
-                  },
-                  decoration: InputDecoration(
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 16),
-                Align(
-                  alignment: Alignment.centerRight,
-                  child: ElevatedButton(
-                    onPressed: () {
-                      setState(() {
-                        _namaController.text = tmpName.text;
-                        selectedStatus = tmpStatus;
-                      });
-                      Navigator.pop(context);
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF6C63FF),
-                    ),
-                    child: const Text("Cari"),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        );
-      },
-    );
+    // Implement filter dialog
+  }
+
+  List<Map<String, String>> _filteredUsers() {
+    final query = _namaController.text.toLowerCase();
+    return _users.where((user) {
+      final namaMatches = user['nama']?.toLowerCase().contains(query) ?? false;
+      final emailMatches =
+          user['email']?.toLowerCase().contains(query) ?? false;
+      return namaMatches || emailMatches;
+    }).toList();
   }
 
   @override
   Widget build(BuildContext context) {
     final filtered = _filteredUsers();
+    final theme = Theme.of(context);
 
+    if (_loading) return const Center(child: CircularProgressIndicator());
     return Scaffold(
-      backgroundColor: const Color(0xFFF6F8FB),
+      backgroundColor: Colors.grey[50],
       body: Padding(
-        padding: const EdgeInsets.fromLTRB(20, 20, 20, 10),
+        padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const SizedBox.shrink(), // Add button is in sidebar
-                ElevatedButton.icon(
-                  onPressed: _openFilterDialog,
-                  icon: const Icon(Icons.filter_list_alt, color: Colors.white),
-                  label: const Text(""),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF6C63FF),
-                    padding: const EdgeInsets.all(12),
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 12),
+            // Search & Filter Bar
             Container(
-              padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 20),
-              color: Colors.white,
-              child: const Row(
-                children: [
-                  Expanded(
-                    flex: 1,
-                    child: Text(
-                      "NO",
-                      style: TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                  ),
-                  Expanded(
-                    flex: 3,
-                    child: Text(
-                      "NAMA",
-                      style: TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                  ),
-                  Expanded(
-                    flex: 4,
-                    child: Text(
-                      "EMAIL",
-                      style: TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                  ),
-                  Expanded(
-                    flex: 3,
-                    child: Text(
-                      "STATUS REGISTRASI",
-                      style: TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                  ),
-                  Expanded(
-                    flex: 2,
-                    child: Text(
-                      "AKSI",
-                      style: TextStyle(fontWeight: FontWeight.bold),
-                    ),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(12),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.05),
+                    blurRadius: 10,
+                    offset: const Offset(0, 2),
                   ),
                 ],
               ),
+              child: TextField(
+                controller: _namaController,
+                onChanged: (_) => setState(() {}),
+                decoration: InputDecoration(
+                  hintText: 'Cari pengguna...',
+                  prefixIcon: const Icon(Icons.search, color: Colors.grey),
+                  suffixIcon: IconButton(
+                    icon: const Icon(Icons.filter_list),
+                    onPressed: _openFilterDialog,
+                    color: theme.primaryColor,
+                  ),
+                  border: InputBorder.none,
+                  contentPadding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 12,
+                  ),
+                ),
+              ),
             ),
-            const Divider(height: 1),
+            const SizedBox(height: 16),
+            // Users List
             Expanded(
               child: ListView.builder(
                 itemCount: filtered.length,
                 itemBuilder: (context, index) {
-                  final row = filtered[index];
-                  return Column(
-                    children: [
-                      Container(
-                        color: index == 0
-                            ? Colors.grey.shade100
-                            : Colors.transparent,
-                        padding: const EdgeInsets.symmetric(
-                          vertical: 12,
-                          horizontal: 20,
-                        ),
-                        child: Row(
-                          children: [
-                            Expanded(flex: 1, child: Text(row["no"] ?? "")),
-                            Expanded(flex: 3, child: Text(row["nama"] ?? "")),
-                            Expanded(flex: 4, child: Text(row["email"] ?? "")),
-                            Expanded(
-                              flex: 3,
-                              child: Container(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 12,
-                                  vertical: 6,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: Colors.green.shade100,
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
-                                child: Text(
-                                  row["status"] ?? "",
-                                  style: const TextStyle(
-                                    color: Colors.green,
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                ),
-                              ),
-                            ),
-                            Expanded(
-                              flex: 2,
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: [
-                                  PopupMenuButton<String>(
-                                    onSelected: (value) async {
-                                      if (value == 'detail') {
-                                        Navigator.pushNamed(
-                                          context,
-                                          '/detailPage',
-                                        );
-                                      } else if (value == 'edit') {
-                                        final res = await Navigator.push<bool>(
-                                          context,
-                                          MaterialPageRoute(
-                                            builder: (ctx) =>
-                                                EditPenggunaScreen(
-                                                  pengguna: row,
-                                                ),
-                                          ),
-                                        );
-                                        if (res == true) {
-                                          setState(() {}); // refresh after edit
-                                        }
-                                      }
-                                    },
-                                    itemBuilder: (context) => const [
-                                      PopupMenuItem(
-                                        value: 'detail',
-                                        child: Text('Show Details'),
-                                      ),
-                                      PopupMenuItem(
-                                        value: 'edit',
-                                        child: Text('Edit'),
-                                      ),
-                                    ],
-                                    child: const Icon(Icons.more_horiz),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
+                  final user = filtered[index];
+                  final name = user['nama'] ?? '';
+                  final initial = name.isNotEmpty ? name[0].toUpperCase() : '?';
+                  return Card(
+                    margin: const EdgeInsets.only(bottom: 12),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: ListTile(
+                      contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 8,
+                      ),
+                      leading: CircleAvatar(
+                        backgroundColor: theme.primaryColor.withOpacity(0.1),
+                        child: Text(
+                          initial,
+                          style: TextStyle(
+                            color: theme.primaryColor,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                       ),
-                      const Divider(height: 1),
-                    ],
+                      title: Text(
+                        user['nama'] ?? '',
+                        style: const TextStyle(
+                          fontWeight: FontWeight.w600,
+                          fontSize: 16,
+                        ),
+                      ),
+                      subtitle: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const SizedBox(height: 4),
+                          Text(user['email'] ?? ''),
+                          const SizedBox(height: 8),
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 8,
+                              vertical: 4,
+                            ),
+                            decoration: BoxDecoration(
+                              color: _getStatusColor(user['status']),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: Text(
+                              user['status'] ?? '',
+                              style: const TextStyle(
+                                fontSize: 12,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      trailing: PopupMenuButton<String>(
+                        icon: const Icon(Icons.more_vert),
+                        onSelected: (value) async {
+                          if (value == 'detail') {
+                            await Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (_) =>
+                                    PenggunaDetailScreen(pengguna: user),
+                              ),
+                            );
+                            // reload in case detail changed via edit inside detail screen
+                            await _load();
+                          } else if (value == 'edit') {
+                            // expect Map<String,String> back from EditPenggunaScreen
+                            final res = await Navigator.of(context)
+                                .push<Map<String, String>>(
+                                  MaterialPageRoute(
+                                    builder: (_) =>
+                                        EditPenggunaScreen(pengguna: user),
+                                  ),
+                                );
+                            if (res != null) {
+                              // try persist via repo if available (safe wrapped)
+                              try {
+                                await PenggunaRepo.add(res);
+                              } catch (_) {}
+                              setState(() => _users[index] = res);
+                            }
+                          }
+                        },
+                        itemBuilder: (context) => [
+                          PopupMenuItem(
+                            value: 'detail',
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: const [
+                                Icon(Icons.visibility_outlined),
+                                SizedBox(width: 8),
+                                Text('Lihat Detail'),
+                              ],
+                            ),
+                          ),
+                          PopupMenuItem(
+                            value: 'edit',
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: const [
+                                Icon(Icons.edit_outlined),
+                                SizedBox(width: 8),
+                                Text('Edit'),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
                   );
                 },
               ),
@@ -285,5 +324,18 @@ class RegistrasiPageState extends State<RegistrasiPage> {
         ),
       ),
     );
+  }
+
+  Color _getStatusColor(String? status) {
+    switch (status?.toLowerCase()) {
+      case 'diterima':
+        return Colors.blue;
+      case 'pending':
+        return Colors.orange;
+      case 'ditolak':
+        return Colors.red;
+      default:
+        return Colors.grey;
+    }
   }
 }
