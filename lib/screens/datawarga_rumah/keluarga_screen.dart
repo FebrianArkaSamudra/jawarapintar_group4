@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class KeluargaScreen extends StatelessWidget {
+class KeluargaScreen extends StatefulWidget {
   const KeluargaScreen({super.key});
 
   @override
@@ -202,5 +202,61 @@ class KeluargaScreen extends StatelessWidget {
         ), // ✅ closes Column
       ), // ✅ closes Padding
     ); // ✅ closes Scaffold
+  }
+
+  Widget _buildPagination() {
+    const int totalPages = 1;
+    List<Widget> pageButtons = [];
+
+    for (int i = 1; i <= totalPages; i++) {
+      final bool isActive = i == _currentPage;
+      pageButtons.add(
+        GestureDetector(
+          onTap: () {
+            if (!isActive) {
+              setState(() => _currentPage = i);
+            }
+          },
+          child: Container(
+            margin: const EdgeInsets.symmetric(horizontal: 4),
+            width: 32,
+            height: 32,
+            decoration: BoxDecoration(
+              color: isActive
+                  ? const Color(0xFF673AB7).withOpacity(0.14)
+                  : Colors.transparent,
+              shape: BoxShape.circle,
+            ),
+            alignment: Alignment.center,
+            child: Text(
+              '$i',
+              style: TextStyle(
+                color: isActive ? const Color(0xFF673AB7) : Colors.grey,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
+        ),
+      );
+    }
+
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        IconButton(
+          icon: const Icon(Icons.chevron_left),
+          color: _currentPage == 1 ? Colors.grey : const Color(0xFF673AB7),
+          onPressed:
+              _currentPage == 1 ? null : () => setState(() => _currentPage--),
+        ),
+        ...pageButtons,
+        IconButton(
+          icon: const Icon(Icons.chevron_right),
+          color: _currentPage == totalPages ? Colors.grey : const Color(0xFF673AB7),
+          onPressed:
+              _currentPage == totalPages ? null : () => setState(() => _currentPage++),
+        ),
+      ],
+    );
   }
 }

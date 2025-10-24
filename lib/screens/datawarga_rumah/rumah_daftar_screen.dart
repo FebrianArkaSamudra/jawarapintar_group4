@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class RumahDaftarScreen extends StatelessWidget {
+class RumahDaftarScreen extends StatefulWidget {
   const RumahDaftarScreen({super.key});
 
   @override
@@ -197,6 +197,83 @@ class RumahDaftarScreen extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildPagination() {
+    final int totalPages = (_rumahData.length / _itemsPerPage).ceil();
+    List<Widget> pageButtons = [];
+
+    // Left arrow
+    pageButtons.add(
+      IconButton(
+        icon: Icon(
+          Icons.chevron_left,
+          color: _currentPage == 1 ? Colors.grey : Colors.black87,
+        ),
+        onPressed: _currentPage == 1
+            ? null
+            : () {
+                setState(() {
+                  _currentPage--;
+                });
+              },
+      ),
+    );
+
+    for (int i = 1; i <= totalPages; i++) {
+      final bool isActive = i == _currentPage;
+      pageButtons.add(
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 4),
+          child: GestureDetector(
+            onTap: () {
+              setState(() {
+                _currentPage = i;
+              });
+            },
+            child: Container(
+              width: 36,
+              height: 36,
+              decoration: BoxDecoration(
+                color: isActive ? const Color(0xFF673AB7).withOpacity(0.14) : Colors.transparent,
+                shape: BoxShape.circle,
+              ),
+              alignment: Alignment.center,
+              child: Text(
+                '$i',
+                style: TextStyle(
+                  color: isActive ? const Color(0xFF673AB7) : Colors.grey,
+                  fontWeight: FontWeight.w600,
+                  fontSize: 14,
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+    }
+
+    // Right arrow
+    pageButtons.add(
+      IconButton(
+        icon: Icon(
+          Icons.chevron_right,
+          color: _currentPage == totalPages ? Colors.grey : Colors.black87,
+        ),
+        onPressed: _currentPage == totalPages
+            ? null
+            : () {
+                setState(() {
+                  _currentPage++;
+                });
+              },
+      ),
+    );
+
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: pageButtons,
     );
   }
 }

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class WargaDaftarScreen extends StatelessWidget {
+class WargaDaftarScreen extends StatefulWidget {
   const WargaDaftarScreen({super.key});
 
   @override
