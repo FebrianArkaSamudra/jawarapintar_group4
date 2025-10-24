@@ -17,7 +17,6 @@ class _TagihIuranScreenState extends State<TagihIuranScreen> {
     'Mingguan',
     'Bulanan',
     'Kerja Bakti',
-    'Suka Rela',
   ];
 
   @override

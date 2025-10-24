@@ -106,6 +106,16 @@ class TagihanScreen extends StatelessWidget {
         'periode': 'Januari 2025',
         'status': 'Belum Dibayar',
       },
+      {
+        'no': 11,
+        'nama': 'Keluarga Bambang Supriadi',
+        'statusKeluarga': 'Aktif',
+        'iuran': 'Bulanan',
+        'kodeTagihan': 'TG011',
+        'nominal': 'Rp 150.000',
+        'periode': 'Januari 2025',
+        'status': 'Belum Dibayar',
+      }
     ];
 
     Widget statusKeluargaPill(String text) {

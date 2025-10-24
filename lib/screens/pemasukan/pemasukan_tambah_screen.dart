@@ -15,7 +15,7 @@ class _PemasukanTambahScreenState extends State<PemasukanTambahScreen> {
   String? _selectedKategori;
   DateTime? _selectedDate;
 
-  final List<String> _kategoriList = ['Gaji', 'Bonus', 'Hadiah', 'Lainnya'];
+  final List<String> _kategoriList = ['Gaji', 'Bonus', 'Hadiah', 'Lainnya', 'Dana Bantuan Pemerintah', 'Pendapatan Lainnya'];
 
   void _pickDate() async {
     DateTime now = DateTime.now();

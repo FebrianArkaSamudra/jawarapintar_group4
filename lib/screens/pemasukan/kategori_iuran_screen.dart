@@ -36,6 +36,12 @@ class _KategoriIuranScreenState extends State<KategoriIuranScreen> {
       'jenis': 'Iuran Khusus',
       'nominal': 'Rp15,00',
     },
+    {
+      'no': 8,
+      'nama': 'Bulanan',
+      'jenis': 'Iuran Khusus',
+      'nominal': 'Rp20,000',
+    },
   ];
 
   void _showEditDialog(Map<String, dynamic> item) {

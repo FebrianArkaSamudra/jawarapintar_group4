@@ -30,6 +30,13 @@ class _PemasukanDaftarScreenState extends State<PemasukanDaftarScreen> {
       'tanggal': '12 Agustus 2025',
       'nominal': 'Rp10.000,00',
     },
+    {
+      'no': '4',
+      'nama': 'sumbangan warga',
+      'jenis': 'Dana Bantuan Pemerintah',
+      'tanggal': '10 Agustus 2025',
+      'nominal': 'Rp5.000,00',
+    },
   ];
 
   @override
