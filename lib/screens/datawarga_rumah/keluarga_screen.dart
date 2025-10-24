@@ -4,6 +4,13 @@ class KeluargaScreen extends StatefulWidget {
   const KeluargaScreen({super.key});
 
   @override
+  State<KeluargaScreen> createState() => _KeluargaScreenState();
+}
+
+class _KeluargaScreenState extends State<KeluargaScreen> {
+  int _currentPage = 1;
+
+  @override
   Widget build(BuildContext context) {
     final keluargaList = [
       {
@@ -51,11 +58,12 @@ class KeluargaScreen extends StatefulWidget {
             Text(
               "Data Keluarga",
               style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                fontWeight: FontWeight.bold,
-                fontSize: 22,
-              ),
+                    fontWeight: FontWeight.bold,
+                    fontSize: 22,
+                  ),
             ),
             const SizedBox(height: 16),
+
             Align(
               alignment: Alignment.topRight,
               child: ElevatedButton(
@@ -70,9 +78,9 @@ class KeluargaScreen extends StatefulWidget {
                     borderRadius: BorderRadius.circular(30),
                   ),
                 ),
-                child: Row(
+                child: const Row(
                   mainAxisSize: MainAxisSize.min,
-                  children: const [
+                  children: [
                     Icon(Icons.filter_list, size: 20, color: Colors.white),
                     SizedBox(width: 6),
                     Text(
@@ -102,10 +110,8 @@ class KeluargaScreen extends StatefulWidget {
                     ),
                   ],
                 ),
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 12,
-                ),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                 child: SingleChildScrollView(
                   scrollDirection: Axis.horizontal,
                   child: SingleChildScrollView(
@@ -148,7 +154,8 @@ class KeluargaScreen extends StatefulWidget {
                                 child: Text(
                                   keluarga['status']!,
                                   style: TextStyle(
-                                    color: isActive ? Colors.green : Colors.red,
+                                    color:
+                                        isActive ? Colors.green : Colors.red,
                                     fontWeight: FontWeight.w500,
                                   ),
                                 ),
@@ -171,37 +178,12 @@ class KeluargaScreen extends StatefulWidget {
 
             const SizedBox(height: 20),
 
-            // Pagination (static sample)
-            Center(
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  IconButton(
-                    onPressed: () {},
-                    icon: const Icon(Icons.arrow_left),
-                  ),
-                  Container(
-                    padding: const EdgeInsets.all(8),
-                    decoration: BoxDecoration(
-                      color: const Color(0xFF3E6FAA),
-                      borderRadius: BorderRadius.circular(6),
-                    ),
-                    child: const Text(
-                      "1",
-                      style: TextStyle(color: Colors.white),
-                    ),
-                  ),
-                  IconButton(
-                    onPressed: () {},
-                    icon: const Icon(Icons.arrow_right),
-                  ),
-                ],
-              ),
-            ),
+            // Pagination
+            _buildPagination(),
           ],
-        ), // ✅ closes Column
-      ), // ✅ closes Padding
-    ); // ✅ closes Scaffold
+        ),
+      ),
+    );
   }
 
   Widget _buildPagination() {
@@ -223,7 +205,7 @@ class KeluargaScreen extends StatefulWidget {
             height: 32,
             decoration: BoxDecoration(
               color: isActive
-                  ? const Color(0xFF673AB7).withOpacity(0.14)
+                  ? const Color(0xFF3E6FAA)
                   : Colors.transparent,
               shape: BoxShape.circle,
             ),
@@ -231,7 +213,7 @@ class KeluargaScreen extends StatefulWidget {
             child: Text(
               '$i',
               style: TextStyle(
-                color: isActive ? const Color(0xFF673AB7) : Colors.grey,
+                color: isActive ? Colors.white : Colors.grey,
                 fontWeight: FontWeight.w600,
               ),
             ),
@@ -245,14 +227,18 @@ class KeluargaScreen extends StatefulWidget {
       children: [
         IconButton(
           icon: const Icon(Icons.chevron_left),
-          color: _currentPage == 1 ? Colors.grey : const Color(0xFF673AB7),
+          color: _currentPage == 1
+              ? Colors.grey
+              : const Color(0xFF3E6FAA),
           onPressed:
               _currentPage == 1 ? null : () => setState(() => _currentPage--),
         ),
         ...pageButtons,
         IconButton(
           icon: const Icon(Icons.chevron_right),
-          color: _currentPage == totalPages ? Colors.grey : const Color(0xFF673AB7),
+          color: _currentPage == totalPages
+              ? Colors.grey
+              : const Color(0xFF3E6FAA),
           onPressed:
               _currentPage == totalPages ? null : () => setState(() => _currentPage++),
         ),
