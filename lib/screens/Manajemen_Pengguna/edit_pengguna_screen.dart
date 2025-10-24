@@ -91,7 +91,7 @@ class _EditPenggunaScreenState extends State<EditPenggunaScreen> {
             ),
             const SizedBox(height: 12),
             DropdownButtonFormField<String>(
-              value: _selectedRole!.isEmpty ? null : _selectedRole,
+              initialValue: _selectedRole!.isEmpty ? null : _selectedRole,
               items: roles
                   .map((r) => DropdownMenuItem(value: r, child: Text(r)))
                   .toList(),
@@ -100,7 +100,7 @@ class _EditPenggunaScreenState extends State<EditPenggunaScreen> {
             ),
             const SizedBox(height: 12),
             DropdownButtonFormField<String>(
-              value: _status,
+              initialValue: _status,
               items: statuses
                   .map((s) => DropdownMenuItem(value: s, child: Text(s)))
                   .toList(),

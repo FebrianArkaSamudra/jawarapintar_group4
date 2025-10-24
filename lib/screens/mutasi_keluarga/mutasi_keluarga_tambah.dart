@@ -4,8 +4,7 @@ import 'mutasi_keluarga_daftar.dart' show appendMutasi;
 class MutasiKeluargaTambah extends StatefulWidget {
   final String? initialKeluarga;
 
-  const MutasiKeluargaTambah({Key? key, this.initialKeluarga})
-    : super(key: key);
+  const MutasiKeluargaTambah({super.key, this.initialKeluarga});
 
   @override
   State<MutasiKeluargaTambah> createState() => _MutasiKeluargaTambahState();
@@ -41,11 +40,12 @@ class _MutasiKeluargaTambahState extends State<MutasiKeluargaTambah> {
       firstDate: DateTime(now.year - 10),
       lastDate: DateTime(now.year + 10),
     );
-    if (picked != null)
+    if (picked != null) {
       setState(() {
         _tanggalMutasi = picked;
         _showDateError = false; // hide error once user picks a date
       });
+    }
   }
 
   String _formatLongDate(DateTime d) {
@@ -183,7 +183,7 @@ class _MutasiKeluargaTambahState extends State<MutasiKeluargaTambah> {
 
                     label('Jenis Mutasi'),
                     DropdownButtonFormField<String>(
-                      value: _jenisMutasi,
+                      initialValue: _jenisMutasi,
                       items: [
                         const DropdownMenuItem(
                           value: null,
@@ -202,8 +202,9 @@ class _MutasiKeluargaTambahState extends State<MutasiKeluargaTambah> {
                       onChanged: (v) => setState(() => _jenisMutasi = v),
                       decoration: inputDecoration,
                       validator: (v) {
-                        if (v == null || v.isEmpty)
+                        if (v == null || v.isEmpty) {
                           return 'Jenis mutasi wajib dipilih';
+                        }
                         return null;
                       },
                     ),
@@ -211,7 +212,7 @@ class _MutasiKeluargaTambahState extends State<MutasiKeluargaTambah> {
                     const SizedBox(height: 18),
                     label('Keluarga'),
                     DropdownButtonFormField<String>(
-                      value: _keluarga,
+                      initialValue: _keluarga,
                       items: [
                         const DropdownMenuItem(
                           value: null,
@@ -232,8 +233,9 @@ class _MutasiKeluargaTambahState extends State<MutasiKeluargaTambah> {
                         enabledBorder: inputDecoration.border,
                       ),
                       validator: (v) {
-                        if (v == null || v.isEmpty)
+                        if (v == null || v.isEmpty) {
                           return 'Keluarga wajib dipilih';
+                        }
                         return null;
                       },
                     ),

@@ -73,7 +73,7 @@ class RegistrasiPageState extends State<RegistrasiPage> {
                 const Text("Status"),
                 const SizedBox(height: 6),
                 DropdownButtonFormField<String>(
-                  value: tmpStatus ?? "",
+                  initialValue: tmpStatus ?? "",
                   items: const [
                     DropdownMenuItem(
                       value: "",
@@ -252,8 +252,9 @@ class RegistrasiPageState extends State<RegistrasiPage> {
                                                 ),
                                           ),
                                         );
-                                        if (res == true)
+                                        if (res == true) {
                                           setState(() {}); // refresh after edit
+                                        }
                                       }
                                     },
                                     itemBuilder: (context) => const [
