@@ -102,10 +102,12 @@ class _TambahPenggunaScreenState extends State<TambahPenggunaScreen> {
                     controller: _emailController,
                     keyboardType: TextInputType.emailAddress,
                     validator: (v) {
-                      if (v == null || v.trim().isEmpty)
+                      if (v == null || v.trim().isEmpty) {
                         return 'Email wajib diisi';
-                      if (!RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(v.trim()))
+                      }
+                      if (!RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(v.trim())) {
                         return 'Email tidak valid';
+                      }
                       return null;
                     },
                   ),
@@ -119,7 +121,7 @@ class _TambahPenggunaScreenState extends State<TambahPenggunaScreen> {
                   const Text("Role"),
                   const SizedBox(height: 6),
                   DropdownButtonFormField<String>(
-                    value: _selectedRole,
+                    initialValue: _selectedRole,
                     decoration: InputDecoration(
                       hintText: '-- Pilih Role --',
                       border: OutlineInputBorder(
@@ -153,8 +155,9 @@ class _TambahPenggunaScreenState extends State<TambahPenggunaScreen> {
                     obscureText: true,
                     validator: (v) {
                       if (v == null || v.isEmpty) return 'Konfirmasi password';
-                      if (v != _passwordController.text)
+                      if (v != _passwordController.text) {
                         return 'Password tidak sama';
+                      }
                       return null;
                     },
                   ),

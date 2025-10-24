@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'detail_page.dart';
 
 class Daftar extends StatelessWidget {
-  const Daftar({Key? key}) : super(key: key);
+  const Daftar({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +22,7 @@ class Daftar extends StatelessWidget {
 }
 
 class TablePage extends StatefulWidget {
-  const TablePage({Key? key}) : super(key: key);
+  const TablePage({super.key});
 
   @override
   State<TablePage> createState() => _TablePageState();
@@ -136,7 +136,7 @@ void _showFilterDialog(BuildContext context) {
                   // Kategori
                   const Text('Kategori'),
                   DropdownButtonFormField<String>(
-                    value: selectedCategory,
+                    initialValue: selectedCategory,
                     items: const [
                       DropdownMenuItem(value: 'Pemeliharaan', child: Text('Pemeliharaan')),
                       DropdownMenuItem(value: 'Operasional', child: Text('Operasional')),
@@ -361,7 +361,7 @@ void _showFilterDialog(BuildContext context) {
                             ),
                           ),
                         );
-                      }).toList(),
+                      }),
                     ],
                   ),
                 ),

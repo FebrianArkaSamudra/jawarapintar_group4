@@ -33,7 +33,7 @@ final List<MenuItem> primaryMenuItems = [
   const MenuItem(
     title: 'Laporan Keuangan', 
     icon: Icons.analytics_outlined,
-    subItems: ['Semua Pemasukan', 'Semua Pemasukan', 'Cetak laporan'] 
+    subItems: ['Semua Pemasukan', 'Semua Pengeluaran', 'Cetak laporan'] 
   ),
   const MenuItem(
     title: 'Kegiatan & Broadcast',

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
-class DetailPage extends StatelessWidget {
+class detailPage extends StatelessWidget {
   final Map<String, String> item;
 
-  const DetailPage({super.key, required this.item});
+  const detailPage({super.key, required this.item});
 
   @override
   Widget build(BuildContext context) {
