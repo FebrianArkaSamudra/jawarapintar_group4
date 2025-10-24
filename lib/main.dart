@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'screens/home_page.dart';
+import 'screens/login_page.dart';
 import 'config/theme.dart';
 
 void main() {
@@ -15,7 +16,11 @@ class MyApp extends StatelessWidget {
       title: 'Jawara Pintar',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.lightTheme,
-      home: const MyHomePage(),
+      initialRoute: '/login',
+      routes: {
+        '/login': (context) => const LoginPage(),
+        '/home': (context) => const MyHomePage(),
+      },
     );
   }
 }

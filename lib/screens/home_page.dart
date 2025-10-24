@@ -32,9 +32,13 @@ import 'log_aktifitas/log_aktifitas_screen.dart';
 import 'pemasukan/pemasukan_daftar_screen.dart';
 import 'Manajemen_Pengguna/daftar_pengguna.dart';
 import 'Manajemen_Pengguna/tambah_pengguna_screen.dart';
+import '../models/pengguna.dart';
 
 class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key});
+  final String? initialPrimaryItem;
+  final String? initialSubItem;
+
+  const MyHomePage({super.key, this.initialPrimaryItem, this.initialSubItem});
 
   @override
   State<MyHomePage> createState() => _MyHomePageState();
@@ -50,6 +54,14 @@ class _MyHomePageState extends State<MyHomePage> {
     super.initState();
     // initialize repository (loads persisted users if any)
     PenggunaRepo.init().then((_) => setState(() {}));
+
+    // if the parent requested an initial selection, apply it
+    if (widget.initialPrimaryItem != null) {
+      _selectedPrimaryItem = widget.initialPrimaryItem!;
+    }
+    if (widget.initialSubItem != null) {
+      _selectedSubItem = widget.initialSubItem;
+    }
   }
 
   void _toggleSidebar() {
@@ -126,30 +138,13 @@ class _MyHomePageState extends State<MyHomePage> {
                 }
 
                 // Pemasukan / Pengeluaran / Laporan etc.
-                if (_selectedPrimaryItem == 'Pemasukan') {
-                  if (_selectedSubItem == 'Kategori Iuran') {
-                    return const KategoriIuranScreen();
-                  }
-                  if (_selectedSubItem == 'Tagih Iuran') {
-                    return const TagihIuranScreen();
-                  }
-                  if (_selectedSubItem == 'Tagihan') {
-                    return const TagihanScreen();
-                  }
-                  if (_selectedSubItem == 'Pemasukan Lain - Daftar') {
-                    return const PemasukanDaftarScreen();
-                  }
-                  if (_selectedSubItem == 'Pemasukan Lain - Tambah') {
-                    return const PemasukanTambahScreen();
-                  }
-                }
-                if (_selectedPrimaryItem == 'Pengeluaran') {
-                  if (_selectedSubItem == 'Daftar') {
-                    return const Daftar();
-                  }
-                  if (_selectedSubItem == 'Tambah') {
+                if (_selectedPrimaryItem == 'Pemasukan')
+                  return const PemasukanScreen();
+                if (_selectedPrimaryItem == 'Pengeluaran'){
+                  if (_selectedSubItem == 'Daftar')
+                     return const Daftar();
+                  if (_selectedSubItem == 'Tambah')
                     return const Tambah();
-                  }
                 }
                 if (_selectedPrimaryItem == 'Laporan Keuangan') {
                   if (_selectedSubItem == 'Cetak laporan') {

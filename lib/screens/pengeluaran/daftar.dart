@@ -73,10 +73,10 @@ class _TablePageState extends State<TablePage> {
     }
   }
 
-  void _showFilterDialog(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
-    final maxDialogWidth = 600.0; // agar tidak terlalu lebar
-    final containerPadding = 16.0; // sama dengan padding kontainer utama
+void _showFilterDialog(BuildContext context) {
+  final screenWidth = MediaQuery.of(context).size.width;
+  final maxDialogWidth = 600.0; // agar tidak terlalu lebar
+  final containerPadding = 16.0; // sama dengan padding kontainer utama
 
     showDialog(
       context: context,
@@ -129,28 +129,22 @@ class _TablePageState extends State<TablePage> {
                     ),
                     const SizedBox(height: 16),
 
-                    // Kategori
-                    const Text('Kategori'),
-                    DropdownButtonFormField<String>(
-                      initialValue: selectedCategory,
-                      items: const [
-                        DropdownMenuItem(
-                          value: 'Pemeliharaan',
-                          child: Text('Pemeliharaan'),
-                        ),
-                        DropdownMenuItem(
-                          value: 'Operasional',
-                          child: Text('Operasional'),
-                        ),
-                      ],
-                      onChanged: (value) {
-                        selectedCategory = value;
-                      },
-                      decoration: const InputDecoration(
-                        hintText: '-- Pilih Kategori --',
-                      ),
+                  // Kategori
+                  const Text('Kategori'),
+                  DropdownButtonFormField<String>(
+                    value: selectedCategory,
+                    items: const [
+                      DropdownMenuItem(value: 'Pemeliharaan', child: Text('Pemeliharaan')),
+                      DropdownMenuItem(value: 'Operasional', child: Text('Operasional')),
+                    ],
+                    onChanged: (value) {
+                      selectedCategory = value;
+                    },
+                    decoration: const InputDecoration(
+                      hintText: '-- Pilih Kategori --',
                     ),
-                    const SizedBox(height: 16),
+                  ),
+                  const SizedBox(height: 16),
 
                     // Dari Tanggal
                     const Text('Dari Tanggal'),
@@ -238,7 +232,6 @@ class _TablePageState extends State<TablePage> {
   Widget build(BuildContext context) {
     final double maxContentWidth = 1000;
     final screenWidth = MediaQuery.of(context).size.width;
-
     return Center(
       child: Container(
         width: screenWidth < maxContentWidth ? screenWidth : maxContentWidth,
