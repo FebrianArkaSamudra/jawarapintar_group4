@@ -350,6 +350,7 @@ class _InformasiPenerimaanWargaScreenState
                 _buildDetailRow('NIK', SelectedItem!.NIK),
                 _buildDetailRow('Email', SelectedItem!.Email),
                 _buildDetailRow('Jenis Kelamin', SelectedItem!.Jenis_Kelamin),
+                _buildDetailRow('Foto Identitas', SelectedItem!.Foto_Identitas),
                 _buildDetailRow('Status', SelectedItem!.status),
                 const SizedBox(height: 12),
                 Align(
@@ -436,6 +437,10 @@ class _InformasiPenerimaanWargaScreenState
                           flex: 3,
                           child: Center(
                               child: Text('Jenis Kelamin', style: headerStyle))),
+                      Expanded(
+                          flex: 3,
+                          child: Center(
+                              child: Text('Foto Identitas', style: headerStyle))),
                       Expanded(
                           flex: 2,
                           child: Center(
@@ -531,6 +536,9 @@ class _HoverableRowState extends State<_HoverableRow> {
                 Expanded(
                     flex: 3,
                     child: Center(child: Text(widget.data.Jenis_Kelamin))),
+                Expanded(
+                    flex: 3,
+                    child: Center(child: Text(widget.data.Foto_Identitas))),
                 Expanded(
                     flex: 2,
                     child:

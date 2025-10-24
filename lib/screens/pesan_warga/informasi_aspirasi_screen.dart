@@ -521,7 +521,7 @@ class _InformasiAspirasiScreenState extends State<InformasiAspirasiScreen> {
                     label: const Text('Filters'),
                   ),
                 ),
-                const SizedBox(height: 12),
+                const SizedBox(height: 6),
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 8.0),
                   child: Row(children: const [
