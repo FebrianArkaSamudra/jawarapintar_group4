@@ -57,7 +57,10 @@ class WargaDaftarScreen extends StatelessWidget {
               children: [
                 // Header with title and filter button
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 20,
+                    vertical: 16,
+                  ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -66,19 +69,38 @@ class WargaDaftarScreen extends StatelessWidget {
                         style: TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.bold,
+                          fontFamily: 'Poppins',
                         ),
                       ),
-                      ElevatedButton.icon(
+                      ElevatedButton(
                         onPressed: () {},
-                        icon: const Icon(Icons.filter_alt_outlined),
-                        label: const Text("Filter"),
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.deepPurple,
-                          foregroundColor: Colors.white,
+                          backgroundColor: const Color(0xFF3E6FAA),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(30),
                           ),
-                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 10,
+                          ),
+                        ),
+                        child: Row(
+                          children: const [
+                            Icon(
+                              Icons.filter_list,
+                              size: 20,
+                              color: Colors.white,
+                            ),
+                            SizedBox(width: 6),
+                            Text(
+                              'Filter',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.w600,
+                                fontFamily: 'Poppins',
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                     ],
@@ -90,26 +112,95 @@ class WargaDaftarScreen extends StatelessWidget {
                   scrollDirection: Axis.horizontal,
                   child: DataTable(
                     columns: const [
-                      DataColumn(label: Text('NO')),
-                      DataColumn(label: Text('NAMA')),
-                      DataColumn(label: Text('NIK')),
-                      DataColumn(label: Text('KELUARGA')),
-                      DataColumn(label: Text('JENIS KELAMIN')),
-                      DataColumn(label: Text('STATUS DOMISILI')),
-                      DataColumn(label: Text('STATUS HIDUP')),
-                      DataColumn(label: Text('AKSI')),
+                      DataColumn(
+                        label: Text(
+                          'NO',
+                          style: TextStyle(fontFamily: 'Poppins'),
+                        ),
+                      ),
+                      DataColumn(
+                        label: Text(
+                          'NAMA',
+                          style: TextStyle(fontFamily: 'Poppins'),
+                        ),
+                      ),
+                      DataColumn(
+                        label: Text(
+                          'NIK',
+                          style: TextStyle(fontFamily: 'Poppins'),
+                        ),
+                      ),
+                      DataColumn(
+                        label: Text(
+                          'KELUARGA',
+                          style: TextStyle(fontFamily: 'Poppins'),
+                        ),
+                      ),
+                      DataColumn(
+                        label: Text(
+                          'JENIS KELAMIN',
+                          style: TextStyle(fontFamily: 'Poppins'),
+                        ),
+                      ),
+                      DataColumn(
+                        label: Text(
+                          'STATUS DOMISILI',
+                          style: TextStyle(fontFamily: 'Poppins'),
+                        ),
+                      ),
+                      DataColumn(
+                        label: Text(
+                          'STATUS HIDUP',
+                          style: TextStyle(fontFamily: 'Poppins'),
+                        ),
+                      ),
+                      DataColumn(
+                        label: Text(
+                          'AKSI',
+                          style: TextStyle(fontFamily: 'Poppins'),
+                        ),
+                      ),
                     ],
                     rows: wargaData.map((data) {
-                      return DataRow(cells: [
-                        DataCell(Text(data['no']!)),
-                        DataCell(Text(data['nama']!)),
-                        DataCell(Text(data['nik']!)),
-                        DataCell(Text(data['keluarga']!)),
-                        DataCell(Text(data['jenisKelamin']!)),
-                        DataCell(_buildStatusChip(data['statusDomisili']!)),
-                        DataCell(_buildStatusChip(data['statusHidup']!)),
-                        const DataCell(Icon(Icons.more_horiz, color: Colors.grey)),
-                      ]);
+                      return DataRow(
+                        cells: [
+                          DataCell(
+                            Text(
+                              data['no']!,
+                              style: const TextStyle(fontFamily: 'Poppins'),
+                            ),
+                          ),
+                          DataCell(
+                            Text(
+                              data['nama']!,
+                              style: const TextStyle(fontFamily: 'Poppins'),
+                            ),
+                          ),
+                          DataCell(
+                            Text(
+                              data['nik']!,
+                              style: const TextStyle(fontFamily: 'Poppins'),
+                            ),
+                          ),
+                          DataCell(
+                            Text(
+                              data['keluarga']!,
+                              style: const TextStyle(fontFamily: 'Poppins'),
+                            ),
+                          ),
+                          DataCell(
+                            Text(
+                              data['jenisKelamin']!,
+                              style: const TextStyle(fontFamily: 'Poppins'),
+                            ),
+                          ),
+                          DataCell(_buildStatusChip(data['statusDomisili']!)),
+                          DataCell(_buildStatusChip(data['statusHidup']!)),
+                          const DataCell(
+                            Icon(Icons.more_horiz, color: Colors.grey),
+                          ),
+                        ],
+                      );
                     }).toList(),
                   ),
                 ),
@@ -152,7 +243,14 @@ class WargaDaftarScreen extends StatelessWidget {
         color: bgColor,
         borderRadius: BorderRadius.circular(20),
       ),
-      child: Text(status, style: TextStyle(color: textColor, fontWeight: FontWeight.w500)),
+      child: Text(
+        status,
+        style: TextStyle(
+          color: textColor,
+          fontWeight: FontWeight.w500,
+          fontFamily: 'Poppins',
+        ),
+      ),
     );
   }
 
@@ -165,14 +263,26 @@ class WargaDaftarScreen extends StatelessWidget {
           IconButton(onPressed: () {}, icon: const Icon(Icons.chevron_left)),
           Container(
             padding: const EdgeInsets.all(8),
-            decoration: const BoxDecoration(color: Colors.deepPurple, shape: BoxShape.circle),
-            child: const Text('1', style: TextStyle(color: Colors.white)),
+            decoration: const BoxDecoration(
+              color: Color(0xFF3E6FAA),
+              shape: BoxShape.circle,
+            ),
+            child: const Text(
+              '1',
+              style: TextStyle(color: Colors.white, fontFamily: 'Poppins'),
+            ),
           ),
           const SizedBox(width: 8),
           Container(
             padding: const EdgeInsets.all(8),
-            decoration: const BoxDecoration(color: Color(0xFFF0F0F0), shape: BoxShape.circle),
-            child: const Text('2', style: TextStyle(color: Colors.black)),
+            decoration: const BoxDecoration(
+              color: Color(0xFFF0F0F0),
+              shape: BoxShape.circle,
+            ),
+            child: const Text(
+              '2',
+              style: TextStyle(color: Colors.black, fontFamily: 'Poppins'),
+            ),
           ),
           IconButton(onPressed: () {}, icon: const Icon(Icons.chevron_right)),
         ],

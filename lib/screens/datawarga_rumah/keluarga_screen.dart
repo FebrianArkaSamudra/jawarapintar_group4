@@ -55,6 +55,37 @@ class KeluargaScreen extends StatelessWidget {
                 fontSize: 22,
               ),
             ),
+            const SizedBox(height: 16),
+            Align(
+              alignment: Alignment.topRight,
+              child: ElevatedButton(
+                onPressed: () {},
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF3E6FAA),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 10,
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(30),
+                  ),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: const [
+                    Icon(Icons.filter_list, size: 20, color: Colors.white),
+                    SizedBox(width: 6),
+                    Text(
+                      'Filter',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
             const SizedBox(height: 24),
 
             // Table container
@@ -152,7 +183,7 @@ class KeluargaScreen extends StatelessWidget {
                   Container(
                     padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
-                      color: Colors.deepPurple,
+                      color: const Color(0xFF3E6FAA),
                       borderRadius: BorderRadius.circular(6),
                     ),
                     child: const Text(

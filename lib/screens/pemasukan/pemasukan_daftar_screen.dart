@@ -71,19 +71,31 @@ class _PemasukanDaftarScreenState extends State<PemasukanDaftarScreen> {
                 child: ElevatedButton(
                   onPressed: () {},
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF6A3AB7),
+                    backgroundColor: const Color(0xFF3E6FAA),
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(6),
+                      borderRadius: BorderRadius.circular(30),
                     ),
-                    padding: const EdgeInsets.all(8),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 10,
+                    ),
                     minimumSize: Size.zero,
                     tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                     elevation: 0,
                   ),
-                  child: const Icon(
-                    Icons.filter_list,
-                    size: 20,
-                    color: Colors.white,
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: const [
+                      Icon(Icons.filter_list, size: 20, color: Colors.white),
+                      SizedBox(width: 6),
+                      Text(
+                        'Filter',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ),
@@ -169,7 +181,7 @@ class _PemasukanDaftarScreenState extends State<PemasukanDaftarScreen> {
                   ElevatedButton(
                     onPressed: () {},
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF6A3AB7),
+                      backgroundColor: const Color(0xFF3E6FAA),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(6),
                       ),

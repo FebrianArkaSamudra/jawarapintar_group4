@@ -38,9 +38,9 @@ class _RumahTambahScreenState extends State<RumahTambahScreen> {
             Text(
               "Tambah Rumah Baru",
               style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 22,
-                  ),
+                fontWeight: FontWeight.bold,
+                fontSize: 22,
+              ),
             ),
             const SizedBox(height: 24),
 
@@ -58,8 +58,7 @@ class _RumahTambahScreenState extends State<RumahTambahScreen> {
                   ),
                 ],
               ),
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
               child: Form(
                 key: _formKey,
                 child: Column(
@@ -90,14 +89,12 @@ class _RumahTambahScreenState extends State<RumahTambahScreen> {
                         ),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(6),
-                          borderSide: const BorderSide(
-                            color: Colors.black12,
-                          ),
+                          borderSide: const BorderSide(color: Colors.black12),
                         ),
                         focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(6),
                           borderSide: const BorderSide(
-                            color: Colors.deepPurple,
+                            color: Color(0xFF3E6FAA),
                             width: 1.5,
                           ),
                         ),
@@ -118,7 +115,7 @@ class _RumahTambahScreenState extends State<RumahTambahScreen> {
                         ElevatedButton(
                           onPressed: _handleSubmit,
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.deepPurple,
+                            backgroundColor: Color(0xFF3E6FAA),
                             padding: const EdgeInsets.symmetric(
                               horizontal: 24,
                               vertical: 12,

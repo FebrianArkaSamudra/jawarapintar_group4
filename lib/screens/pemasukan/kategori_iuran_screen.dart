@@ -180,7 +180,7 @@ class _KategoriIuranScreenState extends State<KategoriIuranScreen> {
                         Navigator.pop(context);
                       },
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.blue,
+                        backgroundColor: const Color(0xFF3E6FAA),
                         padding: const EdgeInsets.symmetric(
                           horizontal: 20,
                           vertical: 12,
@@ -245,12 +245,16 @@ class _KategoriIuranScreenState extends State<KategoriIuranScreen> {
             const SizedBox(height: 20),
 
             // Header row with title + filter button
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            Wrap(
+              alignment: WrapAlignment.spaceBetween,
+              crossAxisAlignment: WrapCrossAlignment.center,
+              spacing: 8,
+              runSpacing: 8,
               children: [
                 Row(
+                  mainAxisSize: MainAxisSize.min,
                   children: const [
-                    Icon(Icons.category, color: Colors.blue),
+                    Icon(Icons.category, color: Color(0xFF3E6FAA)),
                     SizedBox(width: 8),
                     Text(
                       "Kategori Iuran",
@@ -264,7 +268,7 @@ class _KategoriIuranScreenState extends State<KategoriIuranScreen> {
                 ElevatedButton.icon(
                   onPressed: () {},
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.blue,
+                    backgroundColor: const Color(0xFF3E6FAA),
                     padding: const EdgeInsets.symmetric(
                       horizontal: 16,
                       vertical: 10,
@@ -350,7 +354,7 @@ class _KategoriIuranScreenState extends State<KategoriIuranScreen> {
                                 IconButton(
                                   icon: const Icon(
                                     Icons.edit,
-                                    color: Colors.blue,
+                                    color: Color(0xFF3E6FAA),
                                   ),
                                   tooltip: 'Edit',
                                   onPressed: () => _showEditDialog(item),

@@ -258,7 +258,7 @@ class _PemasukanTambahScreenState extends State<PemasukanTambahScreen> {
                           child: ElevatedButton(
                             onPressed: _submitForm,
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.purple,
+                              backgroundColor: const Color(0xFF3E6FAA),
                               padding: const EdgeInsets.symmetric(vertical: 14),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(6),

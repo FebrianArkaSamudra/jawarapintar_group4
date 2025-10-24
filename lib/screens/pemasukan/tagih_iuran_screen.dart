@@ -96,7 +96,7 @@ class _TagihIuranScreenState extends State<TagihIuranScreen> {
                         // TODO: Add logic to tagih all families
                       },
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.blue,
+                        backgroundColor: const Color(0xFF3E6FAA),
                         padding: const EdgeInsets.symmetric(
                           horizontal: 24,
                           vertical: 12,

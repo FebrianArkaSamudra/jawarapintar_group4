@@ -121,6 +121,7 @@ class TagihanScreen extends StatelessWidget {
             color: Colors.green,
             fontWeight: FontWeight.w600,
             fontSize: 12,
+            fontFamily: 'Poppins',
           ),
         ),
       );
@@ -139,13 +140,14 @@ class TagihanScreen extends StatelessWidget {
             color: Colors.orange,
             fontWeight: FontWeight.w600,
             fontSize: 12,
+            fontFamily: 'Poppins',
           ),
         ),
       );
     }
 
     return Scaffold(
-      backgroundColor: Colors.grey[100],
+      backgroundColor: const Color(0xFFF6F8FC),
       body: Padding(
         padding: const EdgeInsets.all(24),
         child: Column(
@@ -157,8 +159,13 @@ class TagihanScreen extends StatelessWidget {
                 ElevatedButton.icon(
                   onPressed: () {},
                   icon: const Icon(Icons.filter_list),
-                  label: const Text('Filter'),
+                  label: const Text(
+                    'Filter',
+                    style: TextStyle(fontFamily: 'Poppins'),
+                  ),
                   style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF3E6FAA),
+                    foregroundColor: Colors.white,
                     padding: const EdgeInsets.symmetric(
                       horizontal: 16,
                       vertical: 12,
@@ -169,8 +176,13 @@ class TagihanScreen extends StatelessWidget {
                 OutlinedButton.icon(
                   onPressed: () {},
                   icon: const Icon(Icons.picture_as_pdf),
-                  label: const Text('Cetak PDF'),
+                  label: const Text(
+                    'Cetak PDF',
+                    style: TextStyle(fontFamily: 'Poppins'),
+                  ),
                   style: OutlinedButton.styleFrom(
+                    foregroundColor: const Color(0xFF3E6FAA),
+                    side: const BorderSide(color: Color(0xFF3E6FAA)),
                     padding: const EdgeInsets.symmetric(
                       horizontal: 16,
                       vertical: 12,
@@ -198,28 +210,103 @@ class TagihanScreen extends StatelessWidget {
                       headingRowHeight: 48,
                       dataRowHeight: 56,
                       columns: const [
-                        DataColumn(label: Text('No')),
-                        DataColumn(label: Text('Nama Keluarga')),
-                        DataColumn(label: Text('Status Keluarga')),
-                        DataColumn(label: Text('Iuran')),
-                        DataColumn(label: Text('Kode Tagihan')),
-                        DataColumn(label: Text('Nominal')),
-                        DataColumn(label: Text('Periode')),
-                        DataColumn(label: Text('Status')),
-                        DataColumn(label: Text('Aksi')),
+                        DataColumn(
+                          label: Text(
+                            'No',
+                            style: TextStyle(fontFamily: 'Poppins'),
+                          ),
+                        ),
+                        DataColumn(
+                          label: Text(
+                            'Nama Keluarga',
+                            style: TextStyle(fontFamily: 'Poppins'),
+                          ),
+                        ),
+                        DataColumn(
+                          label: Text(
+                            'Status Keluarga',
+                            style: TextStyle(fontFamily: 'Poppins'),
+                          ),
+                        ),
+                        DataColumn(
+                          label: Text(
+                            'Iuran',
+                            style: TextStyle(fontFamily: 'Poppins'),
+                          ),
+                        ),
+                        DataColumn(
+                          label: Text(
+                            'Kode Tagihan',
+                            style: TextStyle(fontFamily: 'Poppins'),
+                          ),
+                        ),
+                        DataColumn(
+                          label: Text(
+                            'Nominal',
+                            style: TextStyle(fontFamily: 'Poppins'),
+                          ),
+                        ),
+                        DataColumn(
+                          label: Text(
+                            'Periode',
+                            style: TextStyle(fontFamily: 'Poppins'),
+                          ),
+                        ),
+                        DataColumn(
+                          label: Text(
+                            'Status',
+                            style: TextStyle(fontFamily: 'Poppins'),
+                          ),
+                        ),
+                        DataColumn(
+                          label: Text(
+                            'Aksi',
+                            style: TextStyle(fontFamily: 'Poppins'),
+                          ),
+                        ),
                       ],
                       rows: data.map((item) {
                         return DataRow(
                           cells: [
-                            DataCell(Text(item['no'].toString())),
-                            DataCell(Text(item['nama'])),
+                            DataCell(
+                              Text(
+                                item['no'].toString(),
+                                style: const TextStyle(fontFamily: 'Poppins'),
+                              ),
+                            ),
+                            DataCell(
+                              Text(
+                                item['nama'],
+                                style: const TextStyle(fontFamily: 'Poppins'),
+                              ),
+                            ),
                             DataCell(
                               statusKeluargaPill(item['statusKeluarga']),
                             ),
-                            DataCell(Text(item['iuran'])),
-                            DataCell(Text(item['kodeTagihan'])),
-                            DataCell(Text(item['nominal'])),
-                            DataCell(Text(item['periode'])),
+                            DataCell(
+                              Text(
+                                item['iuran'],
+                                style: const TextStyle(fontFamily: 'Poppins'),
+                              ),
+                            ),
+                            DataCell(
+                              Text(
+                                item['kodeTagihan'],
+                                style: const TextStyle(fontFamily: 'Poppins'),
+                              ),
+                            ),
+                            DataCell(
+                              Text(
+                                item['nominal'],
+                                style: const TextStyle(fontFamily: 'Poppins'),
+                              ),
+                            ),
+                            DataCell(
+                              Text(
+                                item['periode'],
+                                style: const TextStyle(fontFamily: 'Poppins'),
+                              ),
+                            ),
                             DataCell(statusPill(item['status'])),
                             DataCell(
                               IconButton(
