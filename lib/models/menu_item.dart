@@ -45,7 +45,7 @@ final List<MenuItem> primaryMenuItems = [
   const MenuItem(
     title: 'Laporan Keuangan',
     icon: Icons.analytics_outlined,
-    subItems: ['Semua Pemasukan', 'Semua Pengeluaran', 'Cetak laporan'] 
+    subItems: ['Semua Pemasukan', 'Semua Pengeluaran', 'Cetak laporan'],
   ),
   const MenuItem(
     title: 'Kegiatan & Broadcast',
@@ -65,7 +65,7 @@ final List<MenuItem> primaryMenuItems = [
   const MenuItem(
     title: 'Penerimaan Warga',
     icon: Icons.people_outline,
-    subItems: ['Penerimaan Warga'],
+    subItems: ['Informasi Penerimaan Warga'],
   ),
   const MenuItem(
     title: 'Mutasi Keluarga',
