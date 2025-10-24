@@ -19,7 +19,7 @@ class SubSidebarItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (isMinimized) {
-      return const SizedBox.shrink(); // Sembunyikan saat minimize
+      return const SizedBox.shrink();
     }
 
     final selectedBgColor = Theme.of(context).colorScheme.primary;
@@ -27,11 +27,9 @@ class SubSidebarItem extends StatelessWidget {
     final unselectedColor = const Color(0xFF5C7E9D);
 
     return Padding(
-      padding: const EdgeInsets.only(
-        left: 4.0,
-      ), // Padding menyesuaikan garis leading
+      padding: const EdgeInsets.only(left: 4.0),
       child: Container(
-        margin: const EdgeInsets.only(right: 16),
+        margin: const EdgeInsets.only(right: 16, bottom: 2),
         decoration: BoxDecoration(
           color: isSelected ? selectedBgColor : Colors.transparent,
           borderRadius: const BorderRadius.only(
@@ -40,8 +38,8 @@ class SubSidebarItem extends StatelessWidget {
           ),
         ),
         child: ListTile(
-          dense: true, // Membuat item lebih ringkas
-          contentPadding: const EdgeInsets.fromLTRB(60.0, 0, 16.0, 0),
+          dense: true,
+          contentPadding: const EdgeInsets.fromLTRB(60.0, 8, 16.0, 8),
           title: Text(
             title,
             style: TextStyle(
@@ -79,56 +77,63 @@ class SidebarItem extends StatelessWidget {
     final unselectedColor = const Color(0xFF5C7E9D);
     final iconColor = isSelected ? selectedColor : unselectedColor;
 
-    // Tampilan hanya ikon saat minimize
     if (isMinimized) {
-      return InkWell(
-        onTap: onTap,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 8.0),
-          child: Icon(item.icon, color: iconColor, size: 24),
+      return Padding(
+        padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 8.0),
+        child: Tooltip(
+          message: item.title,
+          child: InkWell(
+            onTap: onTap,
+            borderRadius: BorderRadius.circular(8),
+            child: Container(
+              padding: const EdgeInsets.all(12.0),
+              decoration: BoxDecoration(
+                color: isSelected ? const Color(0xFFE5F1FF) : null,
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Icon(item.icon, color: iconColor, size: 24),
+            ),
+          ),
         ),
       );
     }
 
-    // Tampilan menu diperluas (tidak ada ExpansionTile di sini)
-    return ListTile(
-      contentPadding: const EdgeInsets.fromLTRB(16.0, 5.0, 16.0, 5.0),
-      tileColor: isSelected
-          ? const Color(0xFFE5F1FF)
-          : null, // Warna latar belakang saat aktif
-      hoverColor: isSelected
-          ? const Color(0xFFE5F1FF)
-          : Colors.blueGrey.withAlpha((0.05 * 255).round()),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
-      leading: isSelected
-          ? Container(
-              // Garis Biru Vertikal di kiri
-              width: 4,
-              height: 40,
-              decoration: BoxDecoration(
-                color: selectedColor,
-                borderRadius: BorderRadius.circular(2),
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 2.0),
+      child: Container(
+        decoration: BoxDecoration(
+          color: isSelected ? const Color(0xFFE5F1FF) : null,
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: ListTile(
+          contentPadding: const EdgeInsets.fromLTRB(12.0, 8.0, 16.0, 8.0),
+          leading: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                width: 4,
+                height: 40,
+                decoration: BoxDecoration(
+                  color: isSelected ? selectedColor : Colors.transparent,
+                  borderRadius: BorderRadius.circular(2),
+                ),
               ),
-            )
-          : const SizedBox(width: 4), // Placeholder agar ikon sejajar
-      title: Row(
-        children: [
-          Icon(item.icon, color: iconColor, size: 24),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Text(
-              item.title,
-              style: TextStyle(
-                color: iconColor,
-                fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
-                fontSize: 14,
-              ),
-              overflow: TextOverflow.ellipsis,
-            ),
+              const SizedBox(width: 12),
+              Icon(item.icon, color: iconColor, size: 24),
+            ],
           ),
-        ],
+          title: Text(
+            item.title,
+            style: TextStyle(
+              color: iconColor,
+              fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+              fontSize: 14,
+            ),
+            overflow: TextOverflow.ellipsis,
+          ),
+          onTap: onTap,
+        ),
       ),
-      onTap: onTap,
     );
   }
 }
@@ -140,6 +145,7 @@ class CustomSidebar extends StatefulWidget {
   final String selectedPrimaryItem;
   final String selectedSubItem;
   final Function(String, String?) onSelect;
+  final bool isMobile;
 
   const CustomSidebar({
     super.key,
@@ -148,6 +154,7 @@ class CustomSidebar extends StatefulWidget {
     required this.selectedPrimaryItem,
     required this.selectedSubItem,
     required this.onSelect,
+    this.isMobile = false,
   });
 
   @override
@@ -155,8 +162,40 @@ class CustomSidebar extends StatefulWidget {
 }
 
 class _CustomSidebarState extends State<CustomSidebar> {
-  static const double maxSidebarWidth = 280; // Diperluas sedikit
+  static const double maxSidebarWidth = 280;
   static const double minSidebarWidth = 72;
+
+  // Track expanded state for each menu item
+  final Map<String, bool> _expandedStates = {};
+
+  @override
+  void initState() {
+    super.initState();
+    // Initialize expanded states - hanya menu yang dipilih yang terbuka
+    for (var item in primaryMenuItems) {
+      if (item.subItems != null) {
+        _expandedStates[item.title] = item.title == widget.selectedPrimaryItem;
+      }
+    }
+  }
+
+  @override
+  void didUpdateWidget(CustomSidebar oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    // Update expanded state when selection changes
+    if (oldWidget.selectedPrimaryItem != widget.selectedPrimaryItem) {
+      setState(() {
+        // Tutup semua menu
+        for (var item in primaryMenuItems) {
+          if (item.subItems != null) {
+            _expandedStates[item.title] = false;
+          }
+        }
+        // Buka hanya menu yang dipilih
+        _expandedStates[widget.selectedPrimaryItem] = true;
+      });
+    }
+  }
 
   double get currentWidth =>
       widget.isMinimized ? minSidebarWidth : maxSidebarWidth;
@@ -168,23 +207,23 @@ class _CustomSidebarState extends State<CustomSidebar> {
 
     return AnimatedContainer(
       duration: const Duration(milliseconds: 300),
-      width: currentWidth,
+      width: widget.isMobile ? maxSidebarWidth : currentWidth,
       color: sidebarBgColor,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          // Header: Judul Aplikasi dan Ikon Toggle
+          // Header
           Padding(
             padding: EdgeInsets.fromLTRB(
               16,
               24,
-              widget.isMinimized ? 16 : 8,
+              widget.isMinimized && !widget.isMobile ? 16 : 8,
               24,
             ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                if (!widget.isMinimized)
+                if (!widget.isMinimized || widget.isMobile)
                   Row(
                     children: [
                       Icon(Icons.menu_book, color: mainColor, size: 28),
@@ -202,160 +241,182 @@ class _CustomSidebarState extends State<CustomSidebar> {
                 else
                   Icon(Icons.menu_book, color: mainColor, size: 28),
 
-                // Ikon Toggle
-                InkWell(
-                  onTap: widget.onToggleMinimize,
-                  borderRadius: BorderRadius.circular(50),
-                  child: Padding(
-                    padding: widget.isMinimized
-                        ? EdgeInsets.zero
-                        : const EdgeInsets.all(4.0),
-                    child: Icon(
-                      widget.isMinimized
-                          ? Icons.arrow_forward_ios_rounded
-                          : Icons.arrow_back_ios_rounded,
-                      color: mainColor,
-                      size: 20,
+                // Only show toggle on desktop
+                if (!widget.isMobile)
+                  InkWell(
+                    onTap: widget.onToggleMinimize,
+                    borderRadius: BorderRadius.circular(50),
+                    child: Padding(
+                      padding: widget.isMinimized
+                          ? EdgeInsets.zero
+                          : const EdgeInsets.all(4.0),
+                      child: Icon(
+                        widget.isMinimized
+                            ? Icons.arrow_forward_ios_rounded
+                            : Icons.arrow_back_ios_rounded,
+                        color: mainColor,
+                        size: 20,
+                      ),
                     ),
                   ),
-                ),
               ],
             ),
           ),
 
           const Divider(color: Color(0xFFF0F0F0), thickness: 2, height: 1),
 
-          // Daftar Menu
+          // Menu List
           Expanded(
             child: ListView(
               padding: const EdgeInsets.symmetric(vertical: 8.0),
               children: primaryMenuItems.map((item) {
                 final isSelected = item.title == widget.selectedPrimaryItem;
 
-                // Jika menu memiliki sub-item, gunakan ExpansionTile
+                // Menu with sub-items
                 if (item.subItems != null) {
+                  if (widget.isMinimized && !widget.isMobile) {
+                    // Show only icon when minimized on desktop
+                    return SidebarItem(
+                      item: item,
+                      isSelected: isSelected,
+                      isMinimized: true,
+                      onTap: () {
+                        // When clicked in minimized mode, select first sub-item
+                        widget.onSelect(item.title, item.subItems!.first);
+                      },
+                    );
+                  }
+
                   return Theme(
                     data: Theme.of(
                       context,
                     ).copyWith(dividerColor: Colors.transparent),
                     child: ExpansionTile(
-                      key: PageStorageKey(
-                        item.title,
-                      ), // Penting untuk mempertahankan status buka/tutup
-                      initiallyExpanded: isSelected,
-                      tilePadding: const EdgeInsets.symmetric(
-                        horizontal: 16.0,
-                        vertical: 5.0,
+                      key: ValueKey(
+                        '${item.title}_${_expandedStates[item.title]}',
                       ),
+                      initiallyExpanded: _expandedStates[item.title] ?? false,
+                      onExpansionChanged: (expanded) {
+                        setState(() {
+                          print(
+                            'Menu ${item.title} ${expanded ? "dibuka" : "ditutup"}',
+                          );
+                          // Tutup semua menu lain saat menu ini dibuka
+                          if (expanded) {
+                            for (var key in _expandedStates.keys) {
+                              if (key != item.title) {
+                                print('Menutup menu: $key');
+                                _expandedStates[key] = false;
+                              }
+                            }
+                          }
+                          _expandedStates[item.title] = expanded;
+                          print('State setelah update: $_expandedStates');
+                        });
+                      },
+                      tilePadding: const EdgeInsets.symmetric(
+                        horizontal: 4.0,
+                        vertical: 2.0,
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      collapsedShape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      backgroundColor: isSelected
+                          ? const Color(0xFFE5F1FF)
+                          : null,
+                      collapsedBackgroundColor: isSelected
+                          ? const Color(0xFFE5F1FF)
+                          : null,
 
-                      // Title item menu utama (tanpa teks saat minimize)
-                      title: isSelected && !widget.isMinimized
-                          ?
-                            // Item Aktif (dibuat mirip SidebarItem yang aktif)
-                            Row(
-                              children: [
-                                Container(
-                                  width: 4,
-                                  height: 40,
-                                  decoration: BoxDecoration(
-                                    color: mainColor,
-                                    borderRadius: BorderRadius.circular(2),
-                                  ),
-                                ),
-                                const SizedBox(width: 12),
-                                Icon(item.icon, color: mainColor, size: 24),
-                                const SizedBox(width: 12),
-                                Expanded(
-                                  child: Text(
-                                    item.title,
-                                    style: TextStyle(
-                                      color: mainColor,
-                                      fontWeight: FontWeight.w600,
-                                      fontSize: 14,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            )
-                          : isSelected && widget.isMinimized
-                          ? Icon(item.icon, color: mainColor, size: 24)
-                          : widget.isMinimized
-                          ? Icon(
-                              item.icon,
-                              color: const Color(0xFF5C7E9D),
-                              size: 24,
-                            )
-                          : Row(
-                              // Item Non-aktif
-                              children: [
-                                const SizedBox(width: 4),
-                                const SizedBox(width: 12),
-                                Icon(
-                                  item.icon,
-                                  color: const Color(0xFF5C7E9D),
-                                  size: 24,
-                                ),
-                                const SizedBox(width: 12),
-                                Expanded(
-                                  child: Text(
-                                    item.title,
-                                    style: const TextStyle(
-                                      color: Color(0xFF5C7E9D),
-                                      fontWeight: FontWeight.w500,
-                                      fontSize: 14,
-                                    ),
-                                  ),
-                                ),
-                              ],
+                      title: Padding(
+                        padding: const EdgeInsets.only(right: 0),
+                        child: Row(
+                          children: [
+                            Container(
+                              width: 4,
+                              height: 40,
+                              decoration: BoxDecoration(
+                                color: isSelected
+                                    ? mainColor
+                                    : Colors.transparent,
+                                borderRadius: BorderRadius.circular(2),
+                              ),
                             ),
-
-                      trailing: widget.isMinimized
-                          ? null
-                          : Icon(
-                              Icons.keyboard_arrow_down,
+                            const SizedBox(width: 12),
+                            Icon(
+                              item.icon,
                               color: isSelected
                                   ? mainColor
                                   : const Color(0xFF5C7E9D),
+                              size: 24,
                             ),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: Text(
+                                item.title,
+                                style: TextStyle(
+                                  color: isSelected
+                                      ? mainColor
+                                      : const Color(0xFF5C7E9D),
+                                  fontWeight: isSelected
+                                      ? FontWeight.w600
+                                      : FontWeight.w500,
+                                  fontSize: 14,
+                                ),
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
 
-                      // Children / Submenu
-                      children: [
-                        // 👇 PERBAIKAN: Gunakan kondisi untuk menyembunyikan sub-menu saat minimize
-                        if (!widget.isMinimized)
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: item.subItems!.map((subTitle) {
-                              return SubSidebarItem(
-                                title: subTitle,
-                                isSelected: subTitle == widget.selectedSubItem,
-                                isMinimized: widget.isMinimized,
-                                onTap: () =>
-                                    widget.onSelect(item.title, subTitle),
-                              );
-                            }).toList(),
-                          ),
-                      ],
+                      trailing: Padding(
+                        padding: const EdgeInsets.only(right: 8.0),
+                        child: Icon(
+                          _expandedStates[item.title] == true
+                              ? Icons.keyboard_arrow_up
+                              : Icons.keyboard_arrow_down,
+                          color: isSelected
+                              ? mainColor
+                              : const Color(0xFF5C7E9D),
+                        ),
+                      ),
+
+                      children: item.subItems!.map((subTitle) {
+                        return SubSidebarItem(
+                          title: subTitle,
+                          isSelected:
+                              subTitle == widget.selectedSubItem && isSelected,
+                          isMinimized: false,
+                          onTap: () => widget.onSelect(item.title, subTitle),
+                        );
+                      }).toList(),
                     ),
                   );
                 }
 
-                // Item menu tunggal (non-dropdown)
+                // Single menu item (no sub-items)
                 return SidebarItem(
                   item: item,
                   isSelected: isSelected,
-                  isMinimized: widget.isMinimized,
+                  isMinimized: widget.isMinimized && !widget.isMobile,
                   onTap: () => widget.onSelect(item.title, null),
                 );
               }).toList(),
             ),
           ),
 
-          // Area Profil Pengguna
+          // User Profile Area
           const Divider(color: Color(0xFFF0F0F0), thickness: 2, height: 1),
           Padding(
-            padding: EdgeInsets.all(widget.isMinimized ? 12.0 : 16.0),
+            padding: EdgeInsets.all(
+              widget.isMinimized && !widget.isMobile ? 12.0 : 16.0,
+            ),
             child: Row(
-              mainAxisAlignment: widget.isMinimized
+              mainAxisAlignment: widget.isMinimized && !widget.isMobile
                   ? MainAxisAlignment.center
                   : MainAxisAlignment.start,
               children: <Widget>[
@@ -364,27 +425,32 @@ class _CustomSidebarState extends State<CustomSidebar> {
                   radius: 18,
                   child: Icon(Icons.person, color: Color(0xFF3F6FAA), size: 20),
                 ),
-                if (!widget.isMinimized) const SizedBox(width: 8),
-                if (!widget.isMinimized)
-                  const Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Text(
-                        'Yuma Akhunza K.P',
-                        style: TextStyle(
-                          color: Color(0xFF333333),
-                          fontSize: 13,
-                          fontWeight: FontWeight.w600,
+                if (!widget.isMinimized || widget.isMobile)
+                  const SizedBox(width: 8),
+                if (!widget.isMinimized || widget.isMobile)
+                  const Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Text(
+                          'Yuma Akhunza K.P',
+                          style: TextStyle(
+                            color: Color(0xFF333333),
+                            fontSize: 13,
+                            fontWeight: FontWeight.w600,
+                          ),
+                          overflow: TextOverflow.ellipsis,
                         ),
-                      ),
-                      Text(
-                        'yuma.akhunza@gmail.com',
-                        style: TextStyle(
-                          color: Color(0xFF999999),
-                          fontSize: 11,
+                        Text(
+                          'yuma.akhunza@gmail.com',
+                          style: TextStyle(
+                            color: Color(0xFF999999),
+                            fontSize: 11,
+                          ),
+                          overflow: TextOverflow.ellipsis,
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
               ],
             ),
