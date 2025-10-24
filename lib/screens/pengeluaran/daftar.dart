@@ -9,7 +9,6 @@ class Daftar extends StatelessWidget {
     return Scaffold(
       backgroundColor: const Color(0xFFF5F5F7),
       appBar: AppBar(
-        title: const Text('Data Pengeluaran'),
         elevation: 0,
         centerTitle: true,
       ),
