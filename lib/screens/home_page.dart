@@ -138,8 +138,23 @@ class _MyHomePageState extends State<MyHomePage> {
                 }
 
                 // Pemasukan / Pengeluaran / Laporan etc.
-                if (_selectedPrimaryItem == 'Pemasukan')
-                  return const PemasukanScreen();
+                 if (_selectedPrimaryItem == 'Pemasukan') {
+                  if (_selectedSubItem == 'Kategori Iuran') {
+                    return const KategoriIuranScreen();
+                  }
+                  if (_selectedSubItem == 'Tagih Iuran') {
+                    return const TagihIuranScreen();
+                  }
+                  if (_selectedSubItem == 'Tagihan') {
+                    return const TagihanScreen();
+                  }
+                  if (_selectedSubItem == 'Pemasukan Lain - Daftar') {
+                    return const PemasukanDaftarScreen();
+                  }
+                  if (_selectedSubItem == 'Pemasukan Lain - Tambah') {
+                    return const PemasukanTambahScreen();
+                  }
+                }
                 if (_selectedPrimaryItem == 'Pengeluaran'){
                   if (_selectedSubItem == 'Daftar')
                      return const Daftar();
