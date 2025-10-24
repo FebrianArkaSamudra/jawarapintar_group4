@@ -5,6 +5,8 @@ import 'package:jawarapintar/screens/pemasukan/tagihan_screen.dart';
 import 'package:jawarapintar/screens/kegiatan_broadcast/Broadcast_daftar.dart';
 import 'package:jawarapintar/screens/kegiatan_broadcast/broadcast_tambah.dart';
 import 'package:jawarapintar/screens/kegiatan_broadcast/kegiatan_tambah.dart';
+import 'package:jawarapintar/screens/penerimaan_warga/informasi_penerimaan_warga_screen.dart';
+import 'package:jawarapintar/screens/pesan_warga/informasi_aspirasi_screen.dart';
 import '../widgets/sidebar.dart';
 import '../models/menu_item.dart';
 import '../models/pengguna_repo.dart';
@@ -24,8 +26,6 @@ import 'laporan_keuangan/cetak_laporan.dart';
 import 'laporan_keuangan/semua_pemasukan.dart';
 import 'laporan_keuangan/semua_pengeluaran.dart';
 import 'kegiatan_broadcast/kegiatan_daftar.dart';
-import 'pesan_warga/pesan_warga_screen.dart';
-import 'penerimaan_warga/penerimaan_warga_screen.dart';
 import 'mutasi_keluarga/mutasi_keluarga_daftar.dart';
 import 'mutasi_keluarga/mutasi_keluarga_tambah.dart';
 import 'log_aktifitas/log_aktifitas_screen.dart';
@@ -34,6 +34,8 @@ import 'Manajemen_Pengguna/daftar_pengguna.dart';
 import 'Manajemen_Pengguna/edit_pengguna_screen.dart';
 import 'Manajemen_Pengguna/tambah_pengguna_screen.dart';
 import '../models/pengguna.dart';
+import 'pesan_warga/informasi_aspirasi_screen.dart';
+import 'penerimaan_warga/informasi_penerimaan_warga_screen.dart';
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key});
@@ -179,10 +181,14 @@ class _MyHomePageState extends State<MyHomePage> {
                   }
                 }
                 if (_selectedPrimaryItem == 'Pesan Warga') {
-                  return const PesanWargaScreen();
+                  if (_selectedSubItem == 'Kegiatan - Daftar') {
+                    return const InformasiAspirasiScreen();
+                  }
                 }
                 if (_selectedPrimaryItem == 'Penerimaan Warga') {
-                  return const PenerimaanWargaScreen();
+                  if (_selectedSubItem == 'Kegiatan - Daftar') {
+                    return const InformasiPenerimaanWargaScreen();
+                  }
                 }
                 if (_selectedPrimaryItem == 'Mutasi Keluarga') {
                   if (_selectedSubItem == 'Daftar') {
@@ -264,11 +270,15 @@ class _MyHomePageState extends State<MyHomePage> {
                 }
                 // Pesan Warga screens
                 if (_selectedPrimaryItem == 'Pesan Warga') {
-                  return const PesanWargaScreen();
+                  if (_selectedSubItem == 'Informasi Aspirasi') {
+                    return const InformasiAspirasiScreen();
+                  }
                 }
                 // Penerimaan Warga screens
                 if (_selectedPrimaryItem == 'Penerimaan Warga') {
-                  return const PenerimaanWargaScreen();
+                  if (_selectedSubItem == 'Informasi Penerimaan Warga') {
+                    return const InformasiPenerimaanWargaScreen();
+                  }
                 }
                 // Mutasi Keluarga screens
                 if (_selectedPrimaryItem == 'Mutasi Keluarga') {

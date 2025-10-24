@@ -171,7 +171,7 @@ class _CustomSidebarState extends State<CustomSidebar> {
   @override
   void initState() {
     super.initState();
-    // Initialize expanded states
+    // Initialize expanded states - hanya menu yang dipilih yang terbuka
     for (var item in primaryMenuItems) {
       if (item.subItems != null) {
         _expandedStates[item.title] = item.title == widget.selectedPrimaryItem;
@@ -185,12 +185,14 @@ class _CustomSidebarState extends State<CustomSidebar> {
     // Update expanded state when selection changes
     if (oldWidget.selectedPrimaryItem != widget.selectedPrimaryItem) {
       setState(() {
+        // Tutup semua menu
         for (var item in primaryMenuItems) {
           if (item.subItems != null) {
-            _expandedStates[item.title] =
-                item.title == widget.selectedPrimaryItem;
+            _expandedStates[item.title] = false;
           }
         }
+        // Buka hanya menu yang dipilih
+        _expandedStates[widget.selectedPrimaryItem] = true;
       });
     }
   }
@@ -290,15 +292,30 @@ class _CustomSidebarState extends State<CustomSidebar> {
                       context,
                     ).copyWith(dividerColor: Colors.transparent),
                     child: ExpansionTile(
-                      key: PageStorageKey(item.title),
+                      key: ValueKey(
+                        '${item.title}_${_expandedStates[item.title]}',
+                      ),
                       initiallyExpanded: _expandedStates[item.title] ?? false,
                       onExpansionChanged: (expanded) {
                         setState(() {
+                          print(
+                            'Menu ${item.title} ${expanded ? "dibuka" : "ditutup"}',
+                          );
+                          // Tutup semua menu lain saat menu ini dibuka
+                          if (expanded) {
+                            for (var key in _expandedStates.keys) {
+                              if (key != item.title) {
+                                print('Menutup menu: $key');
+                                _expandedStates[key] = false;
+                              }
+                            }
+                          }
                           _expandedStates[item.title] = expanded;
+                          print('State setelah update: $_expandedStates');
                         });
                       },
                       tilePadding: const EdgeInsets.symmetric(
-                        horizontal: 8.0,
+                        horizontal: 4.0,
                         vertical: 2.0,
                       ),
                       shape: RoundedRectangleBorder(
@@ -314,49 +331,58 @@ class _CustomSidebarState extends State<CustomSidebar> {
                           ? const Color(0xFFE5F1FF)
                           : null,
 
-                      title: Row(
-                        children: [
-                          Container(
-                            width: 4,
-                            height: 40,
-                            decoration: BoxDecoration(
-                              color: isSelected
-                                  ? mainColor
-                                  : Colors.transparent,
-                              borderRadius: BorderRadius.circular(2),
-                            ),
-                          ),
-                          const SizedBox(width: 12),
-                          Icon(
-                            item.icon,
-                            color: isSelected
-                                ? mainColor
-                                : const Color(0xFF5C7E9D),
-                            size: 24,
-                          ),
-                          const SizedBox(width: 12),
-                          Expanded(
-                            child: Text(
-                              item.title,
-                              style: TextStyle(
+                      title: Padding(
+                        padding: const EdgeInsets.only(right: 0),
+                        child: Row(
+                          children: [
+                            Container(
+                              width: 4,
+                              height: 40,
+                              decoration: BoxDecoration(
                                 color: isSelected
                                     ? mainColor
-                                    : const Color(0xFF5C7E9D),
-                                fontWeight: isSelected
-                                    ? FontWeight.w600
-                                    : FontWeight.w500,
-                                fontSize: 14,
+                                    : Colors.transparent,
+                                borderRadius: BorderRadius.circular(2),
                               ),
                             ),
-                          ),
-                        ],
+                            const SizedBox(width: 12),
+                            Icon(
+                              item.icon,
+                              color: isSelected
+                                  ? mainColor
+                                  : const Color(0xFF5C7E9D),
+                              size: 24,
+                            ),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: Text(
+                                item.title,
+                                style: TextStyle(
+                                  color: isSelected
+                                      ? mainColor
+                                      : const Color(0xFF5C7E9D),
+                                  fontWeight: isSelected
+                                      ? FontWeight.w600
+                                      : FontWeight.w500,
+                                  fontSize: 14,
+                                ),
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
 
-                      trailing: Icon(
-                        _expandedStates[item.title] == true
-                            ? Icons.keyboard_arrow_up
-                            : Icons.keyboard_arrow_down,
-                        color: isSelected ? mainColor : const Color(0xFF5C7E9D),
+                      trailing: Padding(
+                        padding: const EdgeInsets.only(right: 8.0),
+                        child: Icon(
+                          _expandedStates[item.title] == true
+                              ? Icons.keyboard_arrow_up
+                              : Icons.keyboard_arrow_down,
+                          color: isSelected
+                              ? mainColor
+                              : const Color(0xFF5C7E9D),
+                        ),
                       ),
 
                       children: item.subItems!.map((subTitle) {
