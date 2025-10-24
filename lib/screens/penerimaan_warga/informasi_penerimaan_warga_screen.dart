@@ -417,7 +417,7 @@ class _InformasiPenerimaanWargaScreenState
                       label: const Text('Filters'),
                     ),
                   ),
-                  const SizedBox(height: 8),
+                  const SizedBox(height: 20),
                   // header tabel
                   Row(
                     children: const [
@@ -446,7 +446,7 @@ class _InformasiPenerimaanWargaScreenState
                               child: Text('Aksi', style: headerStyle))),
                     ],
                   ),
-                  const Divider(thickness: 1, color: Color(0xFFE0E0E0)),
+                  const Divider(height: 17,thickness: 1, color: Color(0xFFE0E0E0)),
                   Expanded(
                     child: Column(
                       children: [
@@ -543,7 +543,7 @@ class _HoverableRowState extends State<_HoverableRow> {
             ),
           ),
         ),
-        const Divider(height: 1, thickness: 0.5, color: Color(0xFFF0F0F0))
+        const Divider(height: 1, thickness: 1, color: Color(0xFFF0F0F0))
       ],
     );
   }

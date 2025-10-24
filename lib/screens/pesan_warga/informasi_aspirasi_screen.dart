@@ -7,6 +7,7 @@ class _AspirasiItem {
   String judul;
   String status;
   String tanggal;
+  String deskripsi; // ✅ Tambahan kolom deskripsi
 
   _AspirasiItem({
     required this.no,
@@ -14,6 +15,7 @@ class _AspirasiItem {
     required this.judul,
     required this.status,
     required this.tanggal,
+    required this.deskripsi,
   });
 }
 
@@ -34,6 +36,7 @@ class _InformasiAspirasiScreenState extends State<InformasiAspirasiScreen> {
       judul: 'Uji Coba',
       status: 'Diterima',
       tanggal: '26 September 2025',
+      deskripsi: 'Percobaan awal untuk sistem aspirasi warga.',
     ),
     _AspirasiItem(
       no: 2,
@@ -41,6 +44,7 @@ class _InformasiAspirasiScreenState extends State<InformasiAspirasiScreen> {
       judul: 'Tes Jaringan',
       status: 'Pending',
       tanggal: '27 September 2025',
+      deskripsi: 'Permintaan pengecekan jaringan di area kantor.',
     ),
     _AspirasiItem(
       no: 3,
@@ -48,6 +52,63 @@ class _InformasiAspirasiScreenState extends State<InformasiAspirasiScreen> {
       judul: 'Lampu Jalan Mati',
       status: 'Ditolak',
       tanggal: '28 September 2025',
+      deskripsi: 'Lampu jalan di blok C padam selama 3 hari terakhir.',
+    ),
+    _AspirasiItem(
+      no: 4,
+      pengirim: 'Dewi Lestari',
+      judul: 'Perbaikan Trotoar',
+      status: 'Diterima',
+      tanggal: '29 September 2025',
+      deskripsi: 'Trotoar di depan sekolah dasar rusak dan perlu diperbaiki.',
+    ),
+    _AspirasiItem(
+      no: 5,
+      pengirim: 'Andi Saputra',
+      judul: 'Penambahan Tempat Sampah',
+      status: 'Pending',
+      tanggal: '30 September 2025',
+      deskripsi: 'Usulan penambahan tempat sampah di taman kota.',
+    ),
+    _AspirasiItem(
+      no: 6,
+      pengirim: 'Siti Nurhaliza',
+      judul: 'Keamanan Lingkungan',
+      status: 'Ditolak',
+      tanggal: '1 Oktober 2025',
+      deskripsi: 'Permintaan peningkatan patroli keamanan di malam hari.',
+    ),
+    _AspirasiItem(
+      no: 7,
+      pengirim: 'Rudi Hartono',
+      judul: 'Perbaikan Saluran Air',
+      status: 'Diterima',
+      tanggal: '2 Oktober 2025',
+      deskripsi: 'Saluran air di jalan utama sering tersumbat saat hujan.',
+    ),
+    _AspirasiItem(
+      no: 8,
+      pengirim: 'Lina Marlina',
+      judul: 'Peningkatan Fasilitas Umum',
+      status: 'Pending',  
+      tanggal: '3 Oktober 2025',
+      deskripsi: 'Usulan penambahan fasilitas umum di area rekreasi.',
+    ),
+    _AspirasiItem( 
+      no: 9,
+      pengirim: 'Agus Salim',
+      judul: 'Perbaikan Jalan Rusak',
+      status: 'Ditolak',
+      tanggal: '4 Oktober 2025',
+      deskripsi: 'Jalan di lingkungan perumahan banyak yang berlubang.',
+    ),
+    _AspirasiItem(
+      no: 10,
+      pengirim: 'Maya Sari',
+      judul: 'Penghijauan Lingkungan',
+      status: 'Diterima',
+      tanggal: '5 Oktober 2025',
+      deskripsi: 'Usulan penanaman pohon di sepanjang jalan utama.',
     ),
   ];
 
@@ -115,9 +176,7 @@ class _InformasiAspirasiScreenState extends State<InformasiAspirasiScreen> {
       context: context,
       builder: (dialogCtx) {
         return AlertDialog(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
           titlePadding: EdgeInsets.zero,
           contentPadding: const EdgeInsets.all(20),
           title: Padding(
@@ -125,10 +184,8 @@ class _InformasiAspirasiScreenState extends State<InformasiAspirasiScreen> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Text(
-                  'Filter Pesan Warga',
-                  style: TextStyle(fontWeight: FontWeight.bold),
-                ),
+                const Text('Filter Pesan Warga',
+                    style: TextStyle(fontWeight: FontWeight.bold)),
                 InkWell(
                   onTap: () => Navigator.of(dialogCtx).pop(),
                   child: const Icon(Icons.close),
@@ -164,8 +221,7 @@ class _InformasiAspirasiScreenState extends State<InformasiAspirasiScreen> {
                       value: selectedStatus,
                       hint: const Text('-- Pilih Status --'),
                       items: const ['Pending', 'Diterima', 'Ditolak']
-                          .map((s) =>
-                              DropdownMenuItem(value: s, child: Text(s)))
+                          .map((s) => DropdownMenuItem(value: s, child: Text(s)))
                           .toList(),
                       onChanged: (v) => setStateSB(() => selectedStatus = v),
                     ),
@@ -225,13 +281,12 @@ class _InformasiAspirasiScreenState extends State<InformasiAspirasiScreen> {
               Text('Detail'),
             ],
           ),
-          onTap: () => Future.delayed(
-            Duration.zero,
-            () => setState(() {
+          onTap: () => Future.delayed(Duration.zero, () {
+            setState(() {
               _selectedItem = item;
               _isEditing = false;
-            }),
-          ),
+            });
+          }),
         ),
         PopupMenuItem(
           value: 'Edit',
@@ -242,13 +297,12 @@ class _InformasiAspirasiScreenState extends State<InformasiAspirasiScreen> {
               Text('Edit'),
             ],
           ),
-          onTap: () => Future.delayed(
-            Duration.zero,
-            () => setState(() {
+          onTap: () => Future.delayed(Duration.zero, () {
+            setState(() {
               _selectedItem = item;
               _isEditing = true;
-            }),
-          ),
+            });
+          }),
         ),
         PopupMenuItem(
           value: 'Hapus',
@@ -325,6 +379,7 @@ class _InformasiAspirasiScreenState extends State<InformasiAspirasiScreen> {
         _buildDetailRow('Judul', item.judul),
         _buildDetailRow('Status', item.status),
         _buildDetailRow('Tanggal', item.tanggal),
+        _buildDetailRow('Deskripsi', item.deskripsi),
         const SizedBox(height: 12),
         Align(
           alignment: Alignment.centerRight,
@@ -338,9 +393,12 @@ class _InformasiAspirasiScreenState extends State<InformasiAspirasiScreen> {
     );
   }
 
+  // ===== FORM EDIT =====
   Widget _buildEditForm(_AspirasiItem item) {
     final TextEditingController judulController =
         TextEditingController(text: item.judul);
+    final TextEditingController deskripsiController =
+        TextEditingController(text: item.deskripsi);
     String? selectedStatus = item.status;
 
     return Column(
@@ -353,6 +411,15 @@ class _InformasiAspirasiScreenState extends State<InformasiAspirasiScreen> {
           controller: judulController,
           decoration: InputDecoration(
             labelText: 'Judul Aspirasi',
+            border: OutlineInputBorder(borderRadius: BorderRadius.circular(15)),
+          ),
+        ),
+        const SizedBox(height: 12),
+        TextField(
+          controller: deskripsiController,
+          maxLines: 3,
+          decoration: InputDecoration(
+            labelText: 'Deskripsi Aspirasi',
             border: OutlineInputBorder(borderRadius: BorderRadius.circular(15)),
           ),
         ),
@@ -388,6 +455,7 @@ class _InformasiAspirasiScreenState extends State<InformasiAspirasiScreen> {
                 onPressed: () {
                   setState(() {
                     item.judul = judulController.text;
+                    item.deskripsi = deskripsiController.text;
                     item.status = selectedStatus ?? item.status;
                     _isEditing = false;
                   });
@@ -453,7 +521,7 @@ class _InformasiAspirasiScreenState extends State<InformasiAspirasiScreen> {
                     label: const Text('Filters'),
                   ),
                 ),
-                const SizedBox(height: 8),
+                const SizedBox(height: 12),
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 8.0),
                   child: Row(children: const [
@@ -472,9 +540,8 @@ class _InformasiAspirasiScreenState extends State<InformasiAspirasiScreen> {
                             Center(child: Text('Status', style: headerStyle))),
                     Expanded(
                         flex: 3,
-                        child: Center(
-                            child:
-                                Text('Tanggal Dibuat', style: headerStyle))),
+                        child:
+                            Center(child: Text('Tanggal Dibuat', style: headerStyle))),
                     SizedBox(
                         width: 50,
                         child: Center(child: Text('Aksi', style: headerStyle))),
@@ -555,40 +622,27 @@ class _HoverableRowState extends State<_HoverableRow> {
           child: Padding(
             padding: const EdgeInsets.symmetric(vertical: 12.0),
             child: Row(children: [
-              SizedBox(
-                width: 50,
-                child:
-                    Text('${widget.data.no}.', style: widget.bodyStyle),
+              SizedBox(width: 50, child: Text('${widget.data.no}.', style: widget.bodyStyle)),
+              Expanded(
+                flex: 2,
+                child: Center(child: Text(widget.data.pengirim, style: widget.bodyStyle)),
+              ),
+              Expanded(
+                flex: 3,
+                child: Center(child: Text(widget.data.judul, style: widget.bodyStyle)),
               ),
               Expanded(
                 flex: 2,
                 child: Center(
-                    child:
-                        Text(widget.data.pengirim, style: widget.bodyStyle)),
+                    child: widget.buildStatusBadge(context, widget.data.status)),
               ),
               Expanded(
                 flex: 3,
-                child: Center(
-                    child: Text(widget.data.judul, style: widget.bodyStyle)),
-              ),
-              Expanded(
-                flex: 2,
-                child: Center(
-                    child: widget.buildStatusBadge(
-                        context, widget.data.status)),
-              ),
-              Expanded(
-                flex: 3,
-                child: Center(
-                    child:
-                        Text(widget.data.tanggal, style: widget.bodyStyle)),
+                child: Center(child: Text(widget.data.tanggal, style: widget.bodyStyle)),
               ),
               SizedBox(
-                width: 50,
-                child: Center(
-                    child: widget.buildActionButton(
-                        context, widget.data, widget.index)),
-              ),
+                  width: 50,
+                  child: Center(child: widget.buildActionButton(context, widget.data, widget.index))),
             ]),
           ),
         ),
