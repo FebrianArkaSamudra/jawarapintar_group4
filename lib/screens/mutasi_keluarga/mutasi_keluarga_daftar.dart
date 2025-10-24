@@ -362,7 +362,8 @@ class _MutasiKeluargaDaftarState extends State<MutasiKeluargaDaftar> {
                                                     }
                                                     if (jenis ==
                                                             'pindah rumah' ||
-                                                        jenis == 'pindah masuk') {
+                                                        jenis ==
+                                                            'pindah masuk') {
                                                       return Colors
                                                           .green
                                                           .shade100;

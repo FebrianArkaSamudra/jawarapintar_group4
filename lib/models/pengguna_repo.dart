@@ -1,123 +1,53 @@
 import 'dart:convert';
 import 'dart:collection';
+import 'dart:async';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class PenggunaRepo {
-  static const _storageKey = 'pengguna_list_v1';
-  static final List<Map<String, String>> _users = [];
+  // simple in-memory stub so daftar_pengguna compiles and runs
+  static final List<Map<String, dynamic>> _store = <Map<String, dynamic>>[
+    {
+      'no': '1',
+      'nama': 'Rendha Putra Rahmadya',
+      'email': 'rendhazuper@gmail.com',
+      'noHp': '081234567890',
+      'role': 'Warga',
+      'status': 'Diterima',
+    },
+    {
+      'no': '2',
+      'nama': 'Afifah Khoirunnisa',
+      'email': 'afi@gmail.com',
+      'noHp': '081298765432',
+      'role': 'Warga',
+      'status': 'Diterima',
+    },
+  ];
 
-  // Call once at app startup (e.g. from home_page.initState)
   static Future<void> init() async {
-    final prefs = await SharedPreferences.getInstance();
-    final raw = prefs.getString(_storageKey);
-    if (raw == null) {
-      // seed default data
-      _users.clear();
-      _users.addAll([
-        {
-          "no": "1",
-          "nama": "Rendha Putra Rahmadya",
-          "email": "rendhazuper@gmail.com",
-          "status": "Diterima",
-          "role": "",
-        },
-        {
-          "no": "2",
-          "nama": "bla",
-          "email": "y@gmail.com",
-          "status": "Diterima",
-          "role": "",
-        },
-        {
-          "no": "3",
-          "nama": "Anti Micin",
-          "email": "antimicin3@gmail.com",
-          "status": "Diterima",
-          "role": "",
-        },
-        {
-          "no": "4",
-          "nama": "ijat4",
-          "email": "ijat4@gmail.com",
-          "status": "Diterima",
-          "role": "",
-        },
-        {
-          "no": "5",
-          "nama": "ijat3",
-          "email": "ijat3@gmail.com",
-          "status": "Diterima",
-          "role": "",
-        },
-        {
-          "no": "6",
-          "nama": "ijat2",
-          "email": "ijat2@gmail.com",
-          "status": "Diterima",
-          "role": "",
-        },
-        {
-          "no": "7",
-          "nama": "AFIFAH KHOIRUNNISA",
-          "email": "afi@gmail.com",
-          "status": "Diterima",
-          "role": "",
-        },
-        {
-          "no": "8",
-          "nama": "Raudhil Firdaus Naufal",
-          "email": "raudhilfirdausn@gmail.com",
-          "status": "Diterima",
-          "role": "",
-        },
-        {
-          "no": "9",
-          "nama": "varizky naldiba rimra",
-          "email": "zelectra1011@gmail.com",
-          "status": "Diterima",
-          "role": "",
-        },
-      ]);
-      await _saveToPrefs(prefs);
-    } else {
-      try {
-        final list = json.decode(raw) as List<dynamic>;
-        _users
-          ..clear()
-          ..addAll(list.map((e) => Map<String, String>.from(e as Map)));
-      } catch (_) {
-        _users.clear();
-      }
-    }
+    // no-op for stub
   }
 
-  static UnmodifiableListView<Map<String, String>> get users =>
-      UnmodifiableListView(_users);
+  // getAll may be sync or async in different implementations — support both
+  static Future<dynamic> getAll() async {
+    return List<dynamic>.from(_store);
+  }
 
   static Future<void> add(Map<String, String> user) async {
-    user["no"] = (_users.length + 1).toString();
-    _users.add(Map<String, String>.from(user));
-    final prefs = await SharedPreferences.getInstance();
-    await _saveToPrefs(prefs);
-  }
-
-  static Future<void> updateByNo(String no, Map<String, String> newData) async {
-    final idx = _users.indexWhere((u) => u["no"] == no);
-    if (idx != -1) {
-      newData["no"] = no;
-      _users[idx] = Map<String, String>.from(newData);
-      final prefs = await SharedPreferences.getInstance();
-      await _saveToPrefs(prefs);
+    final id = user['no'] ?? '';
+    if (id.isNotEmpty) {
+      final idx = _store.indexWhere((e) => (e['no'] ?? '') == id);
+      if (idx >= 0) {
+        _store[idx] = Map<String, dynamic>.from(user);
+        return;
+      }
     }
+    final Map<String, dynamic> u = Map<String, dynamic>.from(user);
+    u['no'] = u['no'] ?? DateTime.now().millisecondsSinceEpoch.toString();
+    _store.insert(0, u);
   }
 
-  static Future<void> _saveToPrefs(SharedPreferences prefs) async {
-    await prefs.setString(_storageKey, json.encode(_users));
-  }
-
-  static Future<void> clear() async {
-    _users.clear();
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.remove(_storageKey);
+  static Future<void> delete(String id) async {
+    _store.removeWhere((e) => (e['no'] ?? '') == id);
   }
 }

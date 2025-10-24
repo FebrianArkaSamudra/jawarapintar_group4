@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../../models/pengguna_repo.dart';
 
 class EditPenggunaScreen extends StatefulWidget {
   final Map<String, String> pengguna;
@@ -20,18 +19,18 @@ class _EditPenggunaScreenState extends State<EditPenggunaScreen> {
   @override
   void initState() {
     super.initState();
-    _nikController = TextEditingController(text: widget.pengguna["no"] ?? '');
-    _emailController = TextEditingController(
-      text: widget.pengguna["email"] ?? '',
-    );
+    _nikController = TextEditingController(text: widget.pengguna['nik'] ?? '');
     _namaController = TextEditingController(
-      text: widget.pengguna["nama"] ?? '',
+      text: widget.pengguna['nama'] ?? '',
+    );
+    _emailController = TextEditingController(
+      text: widget.pengguna['email'] ?? '',
     );
     _noHpController = TextEditingController(
-      text: widget.pengguna["noHp"] ?? '',
+      text: widget.pengguna['noHp'] ?? '',
     );
-    _selectedRole = widget.pengguna["role"] ?? '';
-    _status = widget.pengguna["status"] ?? 'Diterima';
+    _selectedRole = widget.pengguna['role'] ?? 'Warga';
+    _status = widget.pengguna['status'] ?? 'Diterima';
   }
 
   @override
@@ -45,75 +44,84 @@ class _EditPenggunaScreenState extends State<EditPenggunaScreen> {
 
   Future<void> _saveChanges() async {
     final updated = {
-      "no": widget.pengguna["no"] ?? '',
-      "nama": _namaController.text.trim(),
-      "email": _emailController.text.trim(),
-      "noHp": _noHpController.text.trim(),
-      "role": _selectedRole ?? '',
-      "status": _status ?? 'Diterima',
+      'nik': _nikController.text.trim(),
+      'nama': _namaController.text.trim(),
+      'email': _emailController.text.trim(),
+      'noHp': _noHpController.text.trim(),
+      'role': _selectedRole ?? 'Warga',
+      'status': _status ?? 'Diterima',
+      'no':
+          widget.pengguna['no'] ??
+          DateTime.now().millisecondsSinceEpoch.toString(),
     };
-
-    await PenggunaRepo.updateByNo(updated["no"]!, updated);
-    Navigator.pop(context, true);
+    Navigator.of(context).pop(updated);
   }
 
   @override
   Widget build(BuildContext context) {
-    final roles = ['Admin', 'Ketua RW', 'Ketua RT', 'Sekretaris', 'Bendahara'];
-    final statuses = ['Diterima', 'Pending', 'Ditolak'];
-
     return Scaffold(
-      appBar: AppBar(title: const Text("Edit Pengguna")),
+      appBar: AppBar(title: const Text('Edit Pengguna')),
       body: Padding(
-        padding: const EdgeInsets.all(20.0),
-        child: ListView(
-          children: [
-            TextFormField(
-              controller: _namaController,
-              decoration: const InputDecoration(labelText: "Nama"),
+        padding: const EdgeInsets.all(16),
+        child: Card(
+          child: Padding(
+            padding: const EdgeInsets.all(12),
+            child: ListView(
+              children: [
+                TextFormField(
+                  controller: _nikController,
+                  decoration: const InputDecoration(labelText: 'NIK'),
+                ),
+                const SizedBox(height: 12),
+                TextFormField(
+                  controller: _namaController,
+                  decoration: const InputDecoration(labelText: 'Nama'),
+                ),
+                const SizedBox(height: 12),
+                TextFormField(
+                  controller: _emailController,
+                  decoration: const InputDecoration(labelText: 'Email'),
+                ),
+                const SizedBox(height: 12),
+                TextFormField(
+                  controller: _noHpController,
+                  decoration: const InputDecoration(labelText: 'No HP'),
+                ),
+                const SizedBox(height: 12),
+                DropdownButtonFormField<String>(
+                  value: _selectedRole,
+                  items: ['Warga', 'Admin', 'Bendahara']
+                      .map((r) => DropdownMenuItem(value: r, child: Text(r)))
+                      .toList(),
+                  decoration: const InputDecoration(labelText: 'Role'),
+                  onChanged: (v) => setState(() => _selectedRole = v),
+                ),
+                const SizedBox(height: 12),
+                DropdownButtonFormField<String>(
+                  value: _status,
+                  items: ['Diterima', 'Pending', 'Ditolak']
+                      .map((s) => DropdownMenuItem(value: s, child: Text(s)))
+                      .toList(),
+                  decoration: const InputDecoration(labelText: 'Status'),
+                  onChanged: (v) => setState(() => _status = v),
+                ),
+                const SizedBox(height: 18),
+                Row(
+                  children: [
+                    TextButton(
+                      onPressed: () => Navigator.of(context).pop(),
+                      child: const Text('Batal'),
+                    ),
+                    const Spacer(),
+                    ElevatedButton(
+                      onPressed: _saveChanges,
+                      child: const Text('Simpan'),
+                    ),
+                  ],
+                ),
+              ],
             ),
-            const SizedBox(height: 12),
-            TextFormField(
-              controller: _nikController,
-              decoration: const InputDecoration(labelText: "NIK"),
-              keyboardType: TextInputType.number,
-            ),
-            const SizedBox(height: 12),
-            TextFormField(
-              controller: _emailController,
-              decoration: const InputDecoration(labelText: "Email"),
-            ),
-            const SizedBox(height: 12),
-            TextFormField(
-              controller: _noHpController,
-              decoration: const InputDecoration(labelText: "Nomor HP"),
-              keyboardType: TextInputType.phone,
-            ),
-            const SizedBox(height: 12),
-            DropdownButtonFormField<String>(
-              initialValue: _selectedRole!.isEmpty ? null : _selectedRole,
-              items: roles
-                  .map((r) => DropdownMenuItem(value: r, child: Text(r)))
-                  .toList(),
-              onChanged: (v) => setState(() => _selectedRole = v),
-              decoration: const InputDecoration(labelText: "Role"),
-            ),
-            const SizedBox(height: 12),
-            DropdownButtonFormField<String>(
-              initialValue: _status,
-              items: statuses
-                  .map((s) => DropdownMenuItem(value: s, child: Text(s)))
-                  .toList(),
-              onChanged: (v) => setState(() => _status = v),
-              decoration: const InputDecoration(labelText: "Status"),
-            ),
-            const SizedBox(height: 20),
-            ElevatedButton.icon(
-              onPressed: _saveChanges,
-              icon: const Icon(Icons.save),
-              label: const Text("Simpan"),
-            ),
-          ],
+          ),
         ),
       ),
     );

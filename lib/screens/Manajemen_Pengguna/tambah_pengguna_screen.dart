@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 
 class TambahPenggunaScreen extends StatefulWidget {
-  // onUserAdded callback is used by home_page to add to repo & switch view
-  final ValueChanged<Map<String, String>>? onUserAdded;
-  const TambahPenggunaScreen({super.key, this.onUserAdded});
+  final Future<void> Function(Map<String, String>)? onUserAdded;
+  const TambahPenggunaScreen({Key? key, this.onUserAdded}) : super(key: key);
 
   @override
   State<TambahPenggunaScreen> createState() => _TambahPenggunaScreenState();
@@ -11,177 +10,199 @@ class TambahPenggunaScreen extends StatefulWidget {
 
 class _TambahPenggunaScreenState extends State<TambahPenggunaScreen> {
   final _formKey = GlobalKey<FormState>();
-  final TextEditingController _namaController = TextEditingController();
-  final TextEditingController _emailController = TextEditingController();
-  final TextEditingController _noHpController = TextEditingController();
-  final TextEditingController _passwordController = TextEditingController();
-  final TextEditingController _konfirmasiPasswordController =
-      TextEditingController();
-
-  String? _selectedRole;
-  final List<String> _roles = [
-    'Admin',
-    'Ketua RW',
-    'Ketua RT',
-    'Sekretaris',
-    'Bendahara',
-  ];
+  final _nik = TextEditingController();
+  final _nama = TextEditingController();
+  final _email = TextEditingController();
+  final _noHp = TextEditingController();
+  String? _role;
+  String? _status;
 
   @override
   void dispose() {
-    _namaController.dispose();
-    _emailController.dispose();
-    _noHpController.dispose();
-    _passwordController.dispose();
-    _konfirmasiPasswordController.dispose();
+    _nik.dispose();
+    _nama.dispose();
+    _email.dispose();
+    _noHp.dispose();
     super.dispose();
   }
 
-  void _submitForm() {
-    if (_formKey.currentState!.validate()) {
-      final Map<String, String> newUser = {
-        "no": "", // repo will assign
-        "nama": _namaController.text.trim(),
-        "email": _emailController.text.trim(),
-        "status": "Diterima",
-        "role": _selectedRole ?? "",
-      };
-
-      if (widget.onUserAdded != null) {
-        widget.onUserAdded!(newUser);
-        // caller will switch to daftar page
-      } else {
-        // fallback: return via Navigator when used as route
-        Navigator.pop(context, newUser);
-      }
-    }
+  void _save() {
+    if (!_formKey.currentState!.validate()) return;
+    final map = {
+      'nik': _nik.text.trim(),
+      'nama': _nama.text.trim(),
+      'email': _email.text.trim(),
+      'noHp': _noHp.text.trim(),
+      'role': _role ?? 'Warga',
+      'status': _status ?? 'Diterima',
+      'no': DateTime.now().millisecondsSinceEpoch.toString(),
+    };
+    if (widget.onUserAdded != null) widget.onUserAdded!(map);
+    Navigator.of(context).pop(map);
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Tambah Pengguna")),
-      backgroundColor: const Color(0xFFF6F8FB),
+      backgroundColor: const Color(0xFFF6F6F6),
+      appBar: AppBar(
+        title: const Text(
+          'Tambah Pengguna',
+          style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+        ),
+        backgroundColor: Colors.white,
+        foregroundColor: Colors.black87,
+        elevation: 0.5,
+        centerTitle: true,
+      ),
       body: Center(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.all(24.0),
+          padding: const EdgeInsets.all(20),
           child: Container(
-            width: 500,
-            decoration: BoxDecoration(
+            constraints: const BoxConstraints(maxWidth: 500),
+            child: Card(
               color: Colors.white,
-              borderRadius: BorderRadius.circular(16),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.05),
-                  blurRadius: 8,
-                  offset: const Offset(0, 4),
+              elevation: 2,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(14),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 20,
+                  vertical: 24,
                 ),
-              ],
-            ),
-            padding: const EdgeInsets.all(24),
-            child: Form(
-              key: _formKey,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text(
-                    "Tambah Pengguna",
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(height: 20),
-                  const Text("Nama Lengkap"),
-                  TextFormField(
-                    controller: _namaController,
-                    validator: (v) => (v == null || v.trim().isEmpty)
-                        ? 'Nama wajib diisi'
-                        : null,
-                  ),
-                  const SizedBox(height: 16),
-                  const Text("Email"),
-                  TextFormField(
-                    controller: _emailController,
-                    keyboardType: TextInputType.emailAddress,
-                    validator: (v) {
-                      if (v == null || v.trim().isEmpty) {
-                        return 'Email wajib diisi';
-                      }
-                      if (!RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(v.trim())) {
-                        return 'Email tidak valid';
-                      }
-                      return null;
-                    },
-                  ),
-                  const SizedBox(height: 16),
-                  const Text("Nomor HP"),
-                  TextFormField(
-                    controller: _noHpController,
-                    keyboardType: TextInputType.phone,
-                  ),
-                  const SizedBox(height: 16),
-                  const Text("Role"),
-                  const SizedBox(height: 6),
-                  DropdownButtonFormField<String>(
-                    initialValue: _selectedRole,
-                    decoration: InputDecoration(
-                      hintText: '-- Pilih Role --',
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      contentPadding: const EdgeInsets.symmetric(
-                        horizontal: 12,
-                        vertical: 10,
-                      ),
-                    ),
-                    items: _roles
-                        .map((r) => DropdownMenuItem(value: r, child: Text(r)))
-                        .toList(),
-                    onChanged: (v) => setState(() => _selectedRole = v),
-                    validator: (v) =>
-                        (v == null || v.isEmpty) ? 'Pilih role' : null,
-                  ),
-                  const SizedBox(height: 16),
-                  const Text("Password"),
-                  TextFormField(
-                    controller: _passwordController,
-                    obscureText: true,
-                    validator: (v) => (v == null || v.length < 6)
-                        ? 'Minimal 6 karakter'
-                        : null,
-                  ),
-                  const SizedBox(height: 16),
-                  const Text("Konfirmasi Password"),
-                  TextFormField(
-                    controller: _konfirmasiPasswordController,
-                    obscureText: true,
-                    validator: (v) {
-                      if (v == null || v.isEmpty) return 'Konfirmasi password';
-                      if (v != _passwordController.text) {
-                        return 'Password tidak sama';
-                      }
-                      return null;
-                    },
-                  ),
-                  const SizedBox(height: 20),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      TextButton(
-                        onPressed: () => Navigator.pop(context),
-                        child: const Text("Batal"),
+                      const Text(
+                        'Form Tambah Pengguna',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: 15,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.black87,
+                        ),
                       ),
-                      const SizedBox(width: 8),
-                      ElevatedButton.icon(
-                        onPressed: _submitForm,
-                        icon: const Icon(Icons.save),
-                        label: const Text("Simpan"),
+                      const SizedBox(height: 22),
+
+                      // NIK
+                      TextFormField(
+                        controller: _nik,
+                        decoration: _inputDecoration('NIK'),
+                      ),
+                      const SizedBox(height: 14),
+
+                      // Nama
+                      TextFormField(
+                        controller: _nama,
+                        decoration: _inputDecoration('Nama'),
+                        validator: (v) => v == null || v.isEmpty
+                            ? 'Nama tidak boleh kosong'
+                            : null,
+                      ),
+                      const SizedBox(height: 14),
+
+                      // Email
+                      TextFormField(
+                        controller: _email,
+                        decoration: _inputDecoration('Email'),
+                      ),
+                      const SizedBox(height: 14),
+
+                      // No HP
+                      TextFormField(
+                        controller: _noHp,
+                        decoration: _inputDecoration('No HP'),
+                      ),
+                      const SizedBox(height: 14),
+
+                      // Role
+                      DropdownButtonFormField<String>(
+                        value: _role,
+                        items: ['Warga', 'Admin', 'Bendahara']
+                            .map(
+                              (r) => DropdownMenuItem(value: r, child: Text(r)),
+                            )
+                            .toList(),
+                        decoration: _inputDecoration('Role'),
+                        onChanged: (v) => setState(() => _role = v),
+                      ),
+                      const SizedBox(height: 14),
+
+                      // Status
+                      DropdownButtonFormField<String>(
+                        value: _status,
+                        items: ['Diterima', 'Pending', 'Ditolak']
+                            .map(
+                              (s) => DropdownMenuItem(value: s, child: Text(s)),
+                            )
+                            .toList(),
+                        decoration: _inputDecoration('Status'),
+                        onChanged: (v) => setState(() => _status = v),
+                      ),
+                      const SizedBox(height: 22),
+
+                      // Buttons
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          TextButton(
+                            onPressed: () => Navigator.of(context).pop(),
+                            style: TextButton.styleFrom(
+                              foregroundColor: Colors.grey[700],
+                            ),
+                            child: const Text('Batal'),
+                          ),
+                          ElevatedButton(
+                            onPressed: _save,
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.grey[800],
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 28,
+                                vertical: 12,
+                              ),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              elevation: 0,
+                            ),
+                            child: const Text(
+                              'Simpan',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 14,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                     ],
                   ),
-                ],
+                ),
               ),
             ),
           ),
         ),
+      ),
+    );
+  }
+
+  InputDecoration _inputDecoration(String label) {
+    return InputDecoration(
+      labelText: label,
+      labelStyle: const TextStyle(fontSize: 13, color: Colors.black87),
+      contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(10),
+        borderSide: const BorderSide(color: Colors.black26),
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(10),
+        borderSide: const BorderSide(color: Colors.black54, width: 1),
       ),
     );
   }
