@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:jawarapintar/screens/pemasukan/pemasukan_tambah_screen.dart';
+import 'package:jawarapintar/screens/pemasukan/tagih_iuran_screen.dart';
+import 'package:jawarapintar/screens/pemasukan/tagihan_screen.dart';
 import 'package:jawarapintar/screens/kegiatan_broadcast/Broadcast_daftar.dart';
 import 'package:jawarapintar/screens/kegiatan_broadcast/broadcast_tambah.dart';
 import 'package:jawarapintar/screens/kegiatan_broadcast/kegiatan_tambah.dart';
@@ -14,7 +17,7 @@ import 'datawarga_rumah/keluarga_screen.dart';
 import 'datawarga_rumah/rumah_daftar_screen.dart';
 import 'datawarga_rumah/rumah_tambah_screen.dart';
 import '../widgets/main_content.dart';
-import 'pemasukan/pemasukan_screen.dart';
+import 'pemasukan/kategori_iuran_screen.dart';
 import 'pengeluaran/daftar.dart';
 import 'pengeluaran/tambah.dart';
 import 'laporan_keuangan/cetak_laporan.dart';
@@ -26,6 +29,7 @@ import 'penerimaan_warga/penerimaan_warga_screen.dart';
 import 'mutasi_keluarga/mutasi_keluarga_daftar.dart';
 import 'mutasi_keluarga/mutasi_keluarga_tambah.dart';
 import 'log_aktifitas/log_aktifitas_screen.dart';
+import 'pemasukan/pemasukan_daftar_screen.dart';
 import 'Manajemen_Pengguna/daftar_pengguna.dart';
 import 'Manajemen_Pengguna/edit_pengguna_screen.dart';
 import 'Manajemen_Pengguna/tambah_pengguna_screen.dart';
@@ -125,7 +129,21 @@ class _MyHomePageState extends State<MyHomePage> {
 
                 // Pemasukan / Pengeluaran / Laporan etc.
                 if (_selectedPrimaryItem == 'Pemasukan') {
-                  return const PemasukanScreen();
+                  if (_selectedSubItem == 'Kategori Iuran') {
+                    return const KategoriIuranScreen();
+                  }
+                  if (_selectedSubItem == 'Tagih Iuran') {
+                    return const TagihIuranScreen();
+                  }
+                  if (_selectedSubItem == 'Tagihan') {
+                    return const TagihanScreen();
+                  }
+                  if (_selectedSubItem == 'Pemasukan Lain - Daftar') {
+                    return const PemasukanDaftarScreen();
+                  }
+                  if (_selectedSubItem == 'Pemasukan Lain - Tambah') {
+                    return const PemasukanTambahScreen();
+                  }
                 }
                 if (_selectedPrimaryItem == 'Pengeluaran') {
                   if (_selectedSubItem == 'Daftar') {
@@ -202,7 +220,21 @@ class _MyHomePageState extends State<MyHomePage> {
                 // Default content
                 // Pemasukan screens
                 if (_selectedPrimaryItem == 'Pemasukan') {
-                  return const PemasukanScreen();
+                  if (_selectedSubItem == 'Kategori Iuran') {
+                    return const KategoriIuranScreen();
+                  }
+                  if (_selectedSubItem == 'Tagih Iuran') {
+                    return const TagihIuranScreen();
+                  }
+                  if (_selectedSubItem == 'Tagihan') {
+                    return const TagihanScreen();
+                  }
+                  if (_selectedSubItem == 'Pemasukan Lain - Daftar') {
+                    return const PemasukanDaftarScreen();
+                  }
+                  if (_selectedSubItem == 'Pemasukan Lain - Tambah') {
+                    return const PemasukanTambahScreen();
+                  }
                 }
                 // Pengeluaran screens
                 if (_selectedPrimaryItem == 'Pengeluaran') {
