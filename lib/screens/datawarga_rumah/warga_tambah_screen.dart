@@ -8,311 +8,276 @@ class WargaTambahScreen extends StatefulWidget {
 }
 
 class _WargaTambahScreenState extends State<WargaTambahScreen> {
-  // Controllers for text input fields
-  final TextEditingController _nameController = TextEditingController();
-  final TextEditingController _nikController = TextEditingController();
-  final TextEditingController _phoneController = TextEditingController();
-  final TextEditingController _birthPlaceController = TextEditingController();
-  final TextEditingController _birthDateController =
-      TextEditingController(); // For displaying selected date
+  final _formKey = GlobalKey<FormState>();
 
-  // Selected values for dropdowns
-  String? _selectedFamily;
-  String? _selectedGender;
-  String? _selectedReligion;
-  String? _selectedBloodType;
-  String? _selectedFamilyRole;
-  String? _selectedEducation;
-  String? _selectedOccupation;
-  String? _selectedStatus;
+  String? selectedKeluarga;
+  String? selectedGender;
+  String? selectedAgama;
+  String? selectedDarah;
+  String? selectedPeran;
+  String? selectedPendidikan;
+  String? selectedPekerjaan;
+  String? selectedStatus;
+  DateTime? selectedDate;
 
-  // Sample data for dropdowns (UI placeholders)
-  final List<String> _families = [
-    'Keluarga Mara Nunez',
-    'Keluarga Vansky',
-    'Keluarga Ijat'
-  ];
-  final List<String> _genders = ['Laki-laki', 'Perempuan'];
-  final List<String> _religions = [
-    'Islam',
-    'Kristen Protestan',
-    'Kristen Katolik',
-    'Hindu',
-    'Buddha',
-    'Konghucu'
-  ];
-  final List<String> _bloodTypes = ['A', 'B', 'AB', 'O'];
-  final List<String> _familyRoles = [
-    'Kepala Keluarga',
-    'Istri',
-    'Anak',
-    'Lainnya'
-  ];
-  final List<String> _educations = [
-    'SD',
-    'SMP',
-    'SMA/SMK',
-    'Diploma',
-    'Sarjana',
-    'Magister',
-    'Doktor'
-  ];
-  final List<String> _occupations = [
-    'PNS',
-    'Swasta',
-    'Wirausaha',
-    'Pelajar/Mahasiswa',
-    'Tidak Bekerja'
-  ];
-  final List<String> _statuses = ['Hidup', 'Meninggal', 'Pindah'];
+  final _namaController = TextEditingController();
+  final _nikController = TextEditingController();
+  final _teleponController = TextEditingController();
+  final _tempatLahirController = TextEditingController();
 
-  // UI-only function to show date picker
-  Future<void> _selectDate(BuildContext context) async {
-    final DateTime? picked = await showDatePicker(
+  void _pickDate() async {
+    DateTime? date = await showDatePicker(
       context: context,
       initialDate: DateTime.now(),
       firstDate: DateTime(1900),
-      lastDate: DateTime.now(),
+      lastDate: DateTime(2100),
     );
-    if (picked != null) {
-      setState(() {
-        // Format the date as DD/MM/YYYY
-        _birthDateController.text =
-            "${picked.day.toString().padLeft(2, '0')}/${picked.month.toString().padLeft(2, '0')}/${picked.year}";
-      });
-    }
+    if (date != null) setState(() => selectedDate = date);
   }
 
-  @override
-  void dispose() {
-    // Dispose controllers to free up resources
-    _nameController.dispose();
-    _nikController.dispose();
-    _phoneController.dispose();
-    _birthPlaceController.dispose();
-    _birthDateController.dispose();
-    super.dispose();
-  }
-
-  // Placeholder function for Submit button
-  void _submitForm() {
-    // No backend logic, just print to console for demonstration
-    print('Submit button pressed! (UI only)');
-  }
-
-  // Resets all form fields to their initial state
   void _resetForm() {
-    setState(() {
-      _nameController.clear();
-      _nikController.clear();
-      _phoneController.clear();
-      _birthPlaceController.clear();
-      _birthDateController.clear();
-      _selectedFamily = null;
-      _selectedGender = null;
-      _selectedReligion = null;
-      _selectedBloodType = null;
-      _selectedFamilyRole = null;
-      _selectedEducation = null;
-      _selectedOccupation = null;
-      _selectedStatus = null;
-    });
+    _formKey.currentState?.reset();
+    _namaController.clear();
+    _nikController.clear();
+    _teleponController.clear();
+    _tempatLahirController.clear();
+    selectedKeluarga = selectedGender = selectedAgama = selectedDarah =
+        selectedPeran = selectedPendidikan = selectedPekerjaan =
+            selectedStatus = null;
+    selectedDate = null;
+    setState(() {});
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF5F6FA), // Light background to match daftar screen
+      backgroundColor: const Color(0xFFF5F7FA),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            Card(
-                elevation: 3,
-                shadowColor: Colors.black.withOpacity(0.1),
-                color: Colors.white,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(16.0),
+        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 40),
+        child: Align(
+          alignment: Alignment.topLeft,
+          child: Container(
+            width: double.infinity,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(10),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black12,
+                  blurRadius: 4,
+                  offset: const Offset(0, 2),
                 ),
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Tambah Warga',
-                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                            fontWeight: FontWeight.bold,
+              ],
+            ),
+            padding: const EdgeInsets.all(24),
+            child: Form(
+              key: _formKey,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Tambah Warga',
+                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  _buildDropdown(
+                    'Pilih Keluarga',
+                    selectedKeluarga,
+                    ['Keluarga A', 'Keluarga B'],
+                    (val) {
+                      setState(() => selectedKeluarga = val);
+                    },
+                  ),
+                  _buildTextField(
+                    'Nama',
+                    'Masukkan nama lengkap',
+                    _namaController,
+                  ),
+                  _buildTextField(
+                    'NIK',
+                    'Masukkan NIK sesuai KTP',
+                    _nikController,
+                  ),
+                  _buildTextField(
+                    'Nomor Telepon',
+                    '08xxxxxx',
+                    _teleponController,
+                  ),
+                  _buildTextField(
+                    'Tempat Lahir',
+                    'Masukkan tempat lahir',
+                    _tempatLahirController,
+                  ),
+                  _buildDatePickerField('Tanggal Lahir'),
+                  _buildDropdown(
+                    'Jenis Kelamin',
+                    selectedGender,
+                    ['Laki-laki', 'Perempuan'],
+                    (val) => setState(() => selectedGender = val),
+                  ),
+                  _buildDropdown(
+                    'Agama',
+                    selectedAgama,
+                    ['Islam', 'Kristen', 'Hindu', 'Budha'],
+                    (val) => setState(() => selectedAgama = val),
+                  ),
+                  _buildDropdown(
+                    'Golongan Darah',
+                    selectedDarah,
+                    ['A', 'B', 'AB', 'O'],
+                    (val) => setState(() => selectedDarah = val),
+                  ),
+                  _buildDropdown(
+                    'Peran Keluarga',
+                    selectedPeran,
+                    ['Ayah', 'Ibu', 'Anak'],
+                    (val) => setState(() => selectedPeran = val),
+                  ),
+                  _buildDropdown(
+                    'Pendidikan Terakhir',
+                    selectedPendidikan,
+                    ['SD', 'SMP', 'SMA', 'S1'],
+                    (val) => setState(() => selectedPendidikan = val),
+                  ),
+                  _buildDropdown(
+                    'Pekerjaan',
+                    selectedPekerjaan,
+                    ['Pelajar', 'Karyawan', 'Wiraswasta'],
+                    (val) => setState(() => selectedPekerjaan = val),
+                  ),
+                  _buildDropdown(
+                    'Status',
+                    selectedStatus,
+                    ['Aktif', 'Nonaktif'],
+                    (val) => setState(() => selectedStatus = val),
+                  ),
+                  const SizedBox(height: 20),
+                  Row(
+                    children: [
+                      ElevatedButton(
+                        onPressed: () {
+                          if (_formKey.currentState?.validate() ?? false) {
+                            // handle submit
+                          }
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFF3E6FAA),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 24,
+                            vertical: 12,
                           ),
-                    ),
-                    const SizedBox(height: 20),
-                    _buildDropdownField(
-                      label: 'Pilih Keluarga',
-                      hint: '-- Pilih Keluarga --',
-                      value: _selectedFamily,
-                      items: _families,
-                      onChanged: (String? newValue) {
-                        setState(() {
-                          _selectedFamily = newValue;
-                        });
-                      },
-                    ),
-                    const SizedBox(height: 16),
-                    _buildTextField(
-                      controller: _nameController,
-                      label: 'Nama',
-                      hint: 'Masukan nama lengkap',
-                    ),
-                    const SizedBox(height: 16),
-                    _buildTextField(
-                      controller: _nikController,
-                      label: 'NIK',
-                      hint: 'Masukan NIK sesuai KTP',
-                      keyboardType: TextInputType.number,
-                    ),
-                    const SizedBox(height: 16),
-                    _buildTextField(
-                      controller: _phoneController,
-                      label: 'Nomor Telepon',
-                      hint: '08xxxxxx',
-                      keyboardType: TextInputType.phone,
-                    ),
-                    const SizedBox(height: 16),
-                    _buildTextField(
-                      controller: _birthPlaceController,
-                      label: 'Tempat Lahir',
-                      hint: 'Masukan tempat lahir',
-                    ),
-                    const SizedBox(height: 16),
-                    _buildDateField(
-                      controller: _birthDateController,
-                      label: 'Tanggal Lahir',
-                      hint: '-- / -- / ----',
-                      onTap: () => _selectDate(context),
-                    ),
-                    const SizedBox(height: 16),
-                    _buildDropdownField(
-                      label: 'Jenis Kelamin',
-                      hint: '-- Pilih Jenis Kelamin --',
-                      value: _selectedGender,
-                      items: _genders,
-                      onChanged: (String? newValue) {
-                        setState(() {
-                          _selectedGender = newValue;
-                        });
-                      },
-                    ),
-                    const SizedBox(height: 16),
-                    _buildDropdownField(
-                      label: 'Agama',
-                      hint: '-- Pilih Agama --',
-                      value: _selectedReligion,
-                      items: _religions,
-                      onChanged: (String? newValue) {
-                        setState(() {
-                          _selectedReligion = newValue;
-                        });
-                      },
-                    ),
-                    const SizedBox(height: 16),
-                    _buildDropdownField(
-                      label: 'Golongan Darah',
-                      hint: '-- Pilih Golongan Darah --',
-                      value: _selectedBloodType,
-                      items: _bloodTypes,
-                      onChanged: (String? newValue) {
-                        setState(() {
-                          _selectedBloodType = newValue;
-                        });
-                      },
-                    ),
-                    const SizedBox(height: 16),
-                    _buildDropdownField(
-                      label: 'Peran Keluarga',
-                      hint: '-- Pilih Peran Keluarga --',
-                      value: _selectedFamilyRole,
-                      items: _familyRoles,
-                      onChanged: (String? newValue) {
-                        setState(() {
-                          _selectedFamilyRole = newValue;
-                        });
-                      },
-                    ),
-                    const SizedBox(height: 16),
-                    _buildDropdownField(
-                      label: 'Pendidikan Terakhir',
-                      hint: '-- Pilih Pendidikan Terakhir --',
-                      value: _selectedEducation,
-                      items: _educations,
-                      onChanged: (String? newValue) {
-                        setState(() {
-                          _selectedEducation = newValue;
-                        });
-                      },
-                    ),
-                    const SizedBox(height: 16),
-                    _buildDropdownField(
-                      label: 'Pekerjaan',
-                      hint: '-- Pilih Pekerjaan --',
-                      value: _selectedOccupation,
-                      items: _occupations,
-                      onChanged: (String? newValue) {
-                        setState(() {
-                          _selectedOccupation = newValue;
-                        });
-                      },
-                    ),
-                    const SizedBox(height: 16),
-                    _buildDropdownField(
-                      label: 'Status',
-                      hint: '-- Pilih Status --',
-                      value: _selectedStatus,
-                      items: _statuses,
-                      onChanged: (String? newValue) {
-                        setState(() {
-                          _selectedStatus = newValue;
-                        });
-                      },
-                    ),
-                    const SizedBox(height: 24),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        ElevatedButton(
-                          onPressed: _submitForm,
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.deepPurple,
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 24, vertical: 16),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(16.0),
-                            ),
-                          ),
-                          child: const Text('Submit',
-                              style: TextStyle(color: Colors.white)),
                         ),
-                        const SizedBox(width: 16),
-                        OutlinedButton(
-                          onPressed: _resetForm,
-                          style: OutlinedButton.styleFrom(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 24, vertical: 16),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8.0),
-                            ),
-                            side: BorderSide(color: Colors.grey.shade400),
-                          ),
-                          child: Text('Reset',
-                              style: TextStyle(color: Colors.grey.shade700)),
+                        child: const Text(
+                          'Submit',
+                          style: TextStyle(color: Colors.white),
                         ),
-                      ],
-                    ),
-                  ],
-                ),
+                      ),
+                      const SizedBox(width: 16),
+                      OutlinedButton(
+                        onPressed: _resetForm,
+                        style: OutlinedButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 24,
+                            vertical: 12,
+                          ),
+                        ),
+                        child: const Text('Reset'),
+                      ),
+                    ],
+                  ),
+                ],
               ),
             ),
-          ],
+          ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildTextField(
+    String label,
+    String hint,
+    TextEditingController controller,
+  ) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(label),
+          const SizedBox(height: 6),
+          TextFormField(
+            controller: controller,
+            decoration: InputDecoration(
+              hintText: hint,
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(6),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDropdown(
+    String label,
+    String? value,
+    List<String> items,
+    ValueChanged<String?> onChanged,
+  ) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(label),
+          const SizedBox(height: 6),
+          DropdownButtonFormField<String>(
+            value: value,
+            items: items
+                .map((e) => DropdownMenuItem<String>(value: e, child: Text(e)))
+                .toList(),
+            onChanged: onChanged,
+            decoration: InputDecoration(
+              hintText: '-- Pilih $label --',
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(6),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDatePickerField(String label) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(label),
+          const SizedBox(height: 6),
+          InkWell(
+            onTap: _pickDate,
+            child: InputDecorator(
+              decoration: InputDecoration(
+                hintText: 'Pilih tanggal lahir',
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(6),
+                ),
+              ),
+              child: Text(
+                selectedDate == null
+                    ? '--/--/--'
+                    : '${selectedDate!.day}/${selectedDate!.month}/${selectedDate!.year}',
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

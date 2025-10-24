@@ -4,198 +4,197 @@ class RumahDaftarScreen extends StatefulWidget {
   const RumahDaftarScreen({super.key});
 
   @override
-  State<RumahDaftarScreen> createState() => _RumahDaftarScreenState();
-}
+  Widget build(BuildContext context) {
+    final rumahList = [
+      {'no': '1', 'alamat': 'sssss', 'status': 'Ditempati'},
+      {'no': '2', 'alamat': 'jalan suhat', 'status': 'Ditempati'},
+      {'no': '3', 'alamat': 'l', 'status': 'Ditempati'},
+      {'no': '4', 'alamat': 'Tes', 'status': 'Ditempati'},
+      {'no': '5', 'alamat': 'Jl. Merbabu', 'status': 'Tersedia'},
+      {'no': '6', 'alamat': 'Malang', 'status': 'Ditempati'},
+      {'no': '7', 'alamat': 'Griyashanta L203', 'status': 'Ditempati'},
+      {'no': '8', 'alamat': 'werwer', 'status': 'Tersedia'},
+      {'no': '9', 'alamat': 'Jl. Baru bangun', 'status': 'Ditempati'},
+      {'no': '10', 'alamat': 'fasda', 'status': 'Tersedia'},
+    ];
 
-class _RumahDaftarScreenState extends State<RumahDaftarScreen> {
-  final List<Map<String, String>> _rumahData = [
-    {'no': '1', 'alamat': 'sssss', 'status': 'Ditempati'},
-    {'no': '2', 'alamat': 'jalan sehat', 'status': 'Ditempati'},
-    {'no': '3', 'alamat': 'i', 'status': 'Ditempati'},
-    {'no': '4', 'alamat': 'Tes', 'status': 'Ditempati'},
-    {'no': '5', 'alamat': 'Jl. Merbabu', 'status': 'Tersedia'},
-    {'no': '6', 'alamat': 'Malang', 'status': 'Ditempati'},
-    {'no': '7', 'alamat': 'Griyashanta L203', 'status': 'Ditempati'},
-    {'no': '8', 'alamat': 'werwer', 'status': 'Tersedia'},
-    {'no': '9', 'alamat': 'Jl. Baru Bangun', 'status': 'Ditempati'},
-    {'no': '10', 'alamat': 'faeda', 'status': 'Tersedia'},
-  ];
-
-  int _currentPage = 1;
-  final int _itemsPerPage = 10;
-
-  @override
-Widget build(BuildContext context) {
-  return Scaffold(
-    backgroundColor: const Color(0xFFF5F6FA),
-    body: SafeArea(
-      child: SingleChildScrollView(
-        physics: const AlwaysScrollableScrollPhysics(),
+    return Scaffold(
+      backgroundColor: const Color(0xFFF5F7FA),
+      body: SingleChildScrollView(
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch, // 👈 makes card full width
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Header row
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  const Text(
-                    'Data Rumah',
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.w700,
-                      color: Colors.black87,
-                    ),
-                  ),
-                  ElevatedButton.icon(
-                    onPressed: () {},
-                    icon: const Icon(Icons.filter_list, size: 18),
-                    label: const Text(
-                      'Filter',
-                      style:
-                          TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
-                    ),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF673AB7),
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 16, vertical: 10),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      elevation: 0,
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 20),
-
-              // Full-width Card
-              Card(
-                color: Colors.white,
-                elevation: 3,
-                shadowColor: Colors.black.withOpacity(0.1),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(16),
+              // Header
+              Text(
+                "Data Rumah",
+                style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 22,
                 ),
-                child: Padding(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-                  child: Column(
-                    children: [
-                      SingleChildScrollView(
-                        scrollDirection: Axis.horizontal,
-                        child: DataTable(
-                          columnSpacing: 24,
-                          headingRowHeight: 40,
-                          dataRowHeight: 48,
-                          headingRowColor:
-                              MaterialStateProperty.all(Colors.white),
-                          columns: [
-                            DataColumn(
-                              label: Text(
-                                'NO',
-                                style: TextStyle(
-                                  color: Colors.grey[600],
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: 12,
-                                ),
-                              ),
-                            ),
-                            DataColumn(
-                              label: Text(
-                                'ALAMAT',
-                                style: TextStyle(
-                                  color: Colors.grey[600],
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: 12,
-                                ),
-                              ),
-                            ),
-                            DataColumn(
-                              label: Text(
-                                'STATUS',
-                                style: TextStyle(
-                                  color: Colors.grey[600],
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: 12,
-                                ),
-                              ),
-                            ),
-                            DataColumn(
-                              label: Text(
-                                'AKSI',
-                                style: TextStyle(
-                                  color: Colors.grey[600],
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: 12,
-                                ),
-                              ),
-                            ),
-                          ],
-                          rows: _rumahData.map((data) {
-                            return DataRow(
-                              cells: [
-                                DataCell(Text(data['no']!,
-                                    style: const TextStyle(
-                                        color: Colors.black87, fontSize: 13))),
-                                DataCell(SizedBox(
-                                  width: 200,
-                                  child: Text(data['alamat']!,
-                                      style: const TextStyle(
-                                          color: Colors.black87, fontSize: 13),
-                                      overflow: TextOverflow.ellipsis),
-                                )),
-                                DataCell(_buildStatusChip(data['status']!)),
-                                const DataCell(Icon(Icons.more_horiz,
-                                    color: Colors.grey)),
-                              ],
-                            );
-                          }).toList(),
+              ),
+              const SizedBox(height: 12),
+
+              // Filter button
+              Align(
+                alignment: Alignment.topRight,
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF3E6FAA),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(30),
+                    ),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 10,
+                    ),
+                    elevation: 0,
+                  ),
+                  onPressed: () {},
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: const [
+                      Icon(Icons.filter_list, size: 20, color: Colors.white),
+                      SizedBox(width: 6),
+                      Text(
+                        'Filter',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w600,
                         ),
                       ),
-                      const SizedBox(height: 16),
-                      _buildPagination(),
                     ],
                   ),
                 ),
               ),
+              const SizedBox(height: 12),
+
+              // Table container
+              Container(
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(10),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black12,
+                      blurRadius: 4,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
+                ),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 24,
+                  vertical: 20,
+                ),
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.vertical,
+                  child: LayoutBuilder(
+                    builder: (context, constraints) {
+                      return ConstrainedBox(
+                        constraints: BoxConstraints(
+                          minWidth: constraints.maxWidth,
+                        ),
+                        child: DataTable(
+                          headingTextStyle: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black87,
+                          ),
+                          columns: const [
+                            DataColumn(label: Text("No")),
+                            DataColumn(label: Text("Alamat")),
+                            DataColumn(label: Text("Status")),
+                            DataColumn(label: Text("Aksi")),
+                          ],
+                          rows: rumahList.map((rumah) {
+                            final isTersedia = rumah['status'] == 'Tersedia';
+                            return DataRow(
+                              cells: [
+                                DataCell(Text(rumah['no']!)),
+                                DataCell(Text(rumah['alamat']!)),
+                                DataCell(
+                                  Container(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 12,
+                                      vertical: 6,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: isTersedia
+                                          ? Colors.green.shade50
+                                          : Colors.blue.shade50,
+                                      borderRadius: BorderRadius.circular(20),
+                                    ),
+                                    child: Text(
+                                      rumah['status']!,
+                                      style: TextStyle(
+                                        color: isTersedia
+                                            ? Colors.green
+                                            : Colors.blueAccent,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                DataCell(
+                                  IconButton(
+                                    onPressed: () {},
+                                    icon: const Icon(Icons.more_horiz),
+                                  ),
+                                ),
+                              ],
+                            );
+                          }).toList(),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              ),
+
+              const SizedBox(height: 20),
+
+              // Pagination (static sample)
+              Center(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    IconButton(
+                      onPressed: () {},
+                      icon: const Icon(Icons.arrow_left),
+                    ),
+                    Container(
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFF3E6FAA),
+                        borderRadius: BorderRadius.circular(6),
+                      ),
+                      child: const Text(
+                        "1",
+                        style: TextStyle(color: Colors.white),
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Container(
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: Colors.grey.shade200,
+                        borderRadius: BorderRadius.circular(6),
+                      ),
+                      child: const Text(
+                        "2",
+                        style: TextStyle(color: Colors.black87),
+                      ),
+                    ),
+                    IconButton(
+                      onPressed: () {},
+                      icon: const Icon(Icons.arrow_right),
+                    ),
+                  ],
+                ),
+              ),
             ],
           ),
-        ),
-      ),
-    ),
-  );
-}
-
-  Widget _buildStatusChip(String status) {
-    Color backgroundColor;
-    Color textColor;
-    switch (status) {
-      case 'Ditempati':
-        backgroundColor = const Color(0xFFE3F2FD);
-        textColor = const Color(0xFF1565C0);
-        break;
-      case 'Tersedia':
-        backgroundColor = const Color(0xFFE8F5E9);
-        textColor = const Color(0xFF4CAF50);
-        break;
-      default:
-        backgroundColor = Colors.grey.shade200;
-        textColor = Colors.black87;
-    }
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-      decoration: BoxDecoration(
-        color: backgroundColor,
-        borderRadius: BorderRadius.circular(20),
-      ),
-      child: Text(
-        status,
-        style: TextStyle(
-          fontSize: 12,
-          fontWeight: FontWeight.w600,
-          color: textColor,
         ),
       ),
     );

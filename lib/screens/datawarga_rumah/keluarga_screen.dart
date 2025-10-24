@@ -4,280 +4,204 @@ class KeluargaScreen extends StatefulWidget {
   const KeluargaScreen({super.key});
 
   @override
-  State<KeluargaScreen> createState() => _KeluargaScreenState();
-}
-
-class _KeluargaScreenState extends State<KeluargaScreen> {
-  // Sample data
-  final List<Map<String, String>> _keluargaData = [
-    {
-      'no': '1',
-      'nama_keluarga': 'Keluarga Varizky Naldiba Rimra',
-      'kepala_keluarga': 'Varizky Naldiba Rimra',
-      'alamat_rumah': 'i',
-      'status_kepemilikan': 'Pemilik',
-      'status': 'Aktif',
-    },
-    {
-      'no': '2',
-      'nama_keluarga': 'Keluarga Tes',
-      'kepala_keluarga': 'Tes',
-      'alamat_rumah': 'Tes',
-      'status_kepemilikan': 'Penyewa',
-      'status': 'Aktif',
-    },
-    {
-      'no': '3',
-      'nama_keluarga': 'Keluarga Farhan',
-      'kepala_keluarga': 'Farhan',
-      'alamat_rumah': 'Griyashanta L203',
-      'status_kepemilikan': 'Pemilik',
-      'status': 'Aktif',
-    },
-    {
-      'no': '4',
-      'nama_keluarga': 'Keluarga Rendha Putra Rahmadya',
-      'kepala_keluarga': 'Rendha Putra Rahmadya',
-      'alamat_rumah': 'Malang',
-      'status_kepemilikan': 'Pemilik',
-      'status': 'Aktif',
-    },
-    {
-      'no': '5',
-      'nama_keluarga': 'Keluarga Anti Micin',
-      'kepala_keluarga': 'Anti Micin',
-      'alamat_rumah': 'Malang',
-      'status_kepemilikan': 'Penyewa',
-      'status': 'Aktif',
-    },
-    {
-      'no': '6',
-      'nama_keluarga': 'Keluarga Varizky Naldiba Rimra',
-      'kepala_keluarga': 'Varizky Naldiba Rimra',
-      'alamat_rumah': 'i',
-      'status_kepemilikan': 'Pemilik',
-      'status': 'Aktif',
-    },
-    {
-      'no': '7',
-      'nama_keluarga': 'Keluarga Ijat',
-      'kepala_keluarga': 'Ijat',
-      'alamat_rumah': 'Keluar Wilayah',
-      'status_kepemilikan': 'Penyewa',
-      'status': 'Nonaktif',
-    },
-    {
-      'no': '8',
-      'nama_keluarga': 'Keluarga Raudhli Firdaus Naufal',
-      'kepala_keluarga': 'Raudhli Firdaus Naufal',
-      'alamat_rumah': 'Bogor Raya Permai FJ 2 no 11',
-      'status_kepemilikan': 'Pemilik',
-      'status': 'Aktif',
-    },
-    {
-      'no': '9',
-      'nama_keluarga': 'Keluarga Mara Nunez',
-      'kepala_keluarga': 'Mara Nunez',
-      'alamat_rumah': 'Malang',
-      'status_kepemilikan': 'Pemilik',
-      'status': 'Aktif',
-    },
-    {
-      'no': '10',
-      'nama_keluarga': 'Keluarga Habibie Ed Dien',
-      'kepala_keluarga': 'Habibie Ed Dien',
-      'alamat_rumah': 'Blok A49',
-      'status_kepemilikan': 'Pemilik',
-      'status': 'Aktif',
-    },
-  ];
-
-  int _currentPage = 1;
-
-  @override
   Widget build(BuildContext context) {
+    final keluargaList = [
+      {
+        'no': '1',
+        'nama': 'Keluarga Varizky Naldiba Rimra',
+        'kepala': 'Varizky Naldiba Rimra',
+        'alamat': 'i',
+        'kepemilikan': 'Pemilik',
+        'status': 'Aktif',
+      },
+      {
+        'no': '2',
+        'nama': 'Keluarga Tes',
+        'kepala': 'Tes',
+        'alamat': 'Tes',
+        'kepemilikan': 'Penyewa',
+        'status': 'Aktif',
+      },
+      {
+        'no': '3',
+        'nama': 'Keluarga Farhan',
+        'kepala': 'Farhan',
+        'alamat': 'Griyashanta L203',
+        'kepemilikan': 'Pemilik',
+        'status': 'Aktif',
+      },
+      {
+        'no': '7',
+        'nama': 'Keluarga Ijat',
+        'kepala': 'Ijat',
+        'alamat': 'Keluar Wilayah',
+        'kepemilikan': 'Penyewa',
+        'status': 'Nonaktif',
+      },
+    ];
+
     return Scaffold(
-      backgroundColor: const Color(0xFFF5F6FA),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          physics: const AlwaysScrollableScrollPhysics(),
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Center(
-              child: Card(
-                elevation: 3,
-                shadowColor: Colors.black.withOpacity(0.1),
-                color: Colors.white,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(16),
+      backgroundColor: const Color(0xFFF5F7FA),
+      body: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Header
+            Text(
+              "Data Keluarga",
+              style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                fontWeight: FontWeight.bold,
+                fontSize: 22,
+              ),
+            ),
+            const SizedBox(height: 16),
+            Align(
+              alignment: Alignment.topRight,
+              child: ElevatedButton(
+                onPressed: () {},
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF3E6FAA),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 10,
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(30),
+                  ),
                 ),
-                child: Padding(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      // Header
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          const Text(
-                            'Data Keluarga',
-                            style: TextStyle(
-                              fontWeight: FontWeight.w700,
-                              fontSize: 20,
-                              color: Colors.black87,
-                            ),
-                          ),
-                          ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: const Color(0xFF673AB7),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: const [
+                    Icon(Icons.filter_list, size: 20, color: Colors.white),
+                    SizedBox(width: 6),
+                    Text(
+                      'Filter',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            const SizedBox(height: 24),
+
+            // Table container
+            Expanded(
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(10),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black12,
+                      blurRadius: 4,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
+                ),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 12,
+                ),
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: SingleChildScrollView(
+                    scrollDirection: Axis.vertical,
+                    child: DataTable(
+                      headingTextStyle: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black87,
+                      ),
+                      columns: const [
+                        DataColumn(label: Text("No")),
+                        DataColumn(label: Text("Nama Keluarga")),
+                        DataColumn(label: Text("Kepala Keluarga")),
+                        DataColumn(label: Text("Alamat Rumah")),
+                        DataColumn(label: Text("Status Kepemilikan")),
+                        DataColumn(label: Text("Status")),
+                        DataColumn(label: Text("Aksi")),
+                      ],
+                      rows: keluargaList.map((keluarga) {
+                        final isActive = keluarga['status'] == 'Aktif';
+                        return DataRow(
+                          cells: [
+                            DataCell(Text(keluarga['no']!)),
+                            DataCell(Text(keluarga['nama']!)),
+                            DataCell(Text(keluarga['kepala']!)),
+                            DataCell(Text(keluarga['alamat']!)),
+                            DataCell(Text(keluarga['kepemilikan']!)),
+                            DataCell(
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 12,
+                                  vertical: 6,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: isActive
+                                      ? Colors.green.shade50
+                                      : Colors.red.shade50,
+                                  borderRadius: BorderRadius.circular(20),
+                                ),
+                                child: Text(
+                                  keluarga['status']!,
+                                  style: TextStyle(
+                                    color: isActive ? Colors.green : Colors.red,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
                               ),
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 12, vertical: 10),
-                              elevation: 0,
                             ),
-                            onPressed: () {
-                              // TODO: Add filter logic here
-                            },
-                            child: const Icon(Icons.filter_list,
-                                color: Colors.white, size: 22),
-                          ),
-                        ],
-                      ),
-                      const Divider(
-                          height: 1,
-                          thickness: 1,
-                          color: Color(0xFFF0F0F0)),
-                      const SizedBox(height: 8),
-
-                      // DataTable
-                      SingleChildScrollView(
-                        scrollDirection: Axis.horizontal,
-                        child: DataTable(
-                          headingRowHeight: 44,
-                          dataRowHeight: 48,
-                          columnSpacing: 24,
-                          headingRowColor:
-                              MaterialStateProperty.all(Colors.white),
-                          columns: const [
-                            DataColumn(
-                                label: Text('NO',
-                                    style: TextStyle(
-                                        color: Colors.grey,
-                                        fontWeight: FontWeight.w600,
-                                        fontSize: 12))),
-                            DataColumn(
-                                label: Text('NAMA KELUARGA',
-                                    style: TextStyle(
-                                        color: Colors.grey,
-                                        fontWeight: FontWeight.w600,
-                                        fontSize: 12))),
-                            DataColumn(
-                                label: Text('KEPALA KELUARGA',
-                                    style: TextStyle(
-                                        color: Colors.grey,
-                                        fontWeight: FontWeight.w600,
-                                        fontSize: 12))),
-                            DataColumn(
-                                label: Text('ALAMAT RUMAH',
-                                    style: TextStyle(
-                                        color: Colors.grey,
-                                        fontWeight: FontWeight.w600,
-                                        fontSize: 12))),
-                            DataColumn(
-                                label: Text('STATUS KEPEMILIKAN',
-                                    style: TextStyle(
-                                        color: Colors.grey,
-                                        fontWeight: FontWeight.w600,
-                                        fontSize: 12))),
-                            DataColumn(
-                                label: Text('STATUS',
-                                    style: TextStyle(
-                                        color: Colors.grey,
-                                        fontWeight: FontWeight.w600,
-                                        fontSize: 12))),
-                            DataColumn(
-                                label: Text('AKSI',
-                                    style: TextStyle(
-                                        color: Colors.grey,
-                                        fontWeight: FontWeight.w600,
-                                        fontSize: 12))),
+                            DataCell(
+                              IconButton(
+                                onPressed: () {},
+                                icon: const Icon(Icons.more_horiz),
+                              ),
+                            ),
                           ],
-                          rows: _keluargaData.map((data) {
-                            return DataRow(
-                              cells: [
-                                DataCell(Text(data['no'] ?? '',
-                                    style: const TextStyle(
-                                        color: Colors.black87, fontSize: 13))),
-                                DataCell(Text(data['nama_keluarga'] ?? '',
-                                    style: const TextStyle(
-                                        color: Colors.black87, fontSize: 13))),
-                                DataCell(Text(data['kepala_keluarga'] ?? '',
-                                    style: const TextStyle(
-                                        color: Colors.black87, fontSize: 13))),
-                                DataCell(Text(data['alamat_rumah'] ?? '',
-                                    style: const TextStyle(
-                                        color: Colors.black87, fontSize: 13))),
-                                DataCell(Text(data['status_kepemilikan'] ?? '',
-                                    style: const TextStyle(
-                                        color: Colors.black87, fontSize: 13))),
-                                DataCell(_buildStatusChip(data['status'] ?? '')),
-                                const DataCell(
-                                    Icon(Icons.more_horiz, color: Colors.grey)),
-                              ],
-                            );
-                          }).toList(),
-                        ),
-                      ),
-
-                      const SizedBox(height: 12),
-                      _buildPagination(),
-                    ],
+                        );
+                      }).toList(),
+                    ),
                   ),
                 ),
               ),
             ),
-          ),
-        ),
-      ),
-    );
-  }
 
-  Widget _buildStatusChip(String status) {
-    Color backgroundColor;
-    Color textColor;
-    switch (status) {
-      case 'Aktif':
-        backgroundColor = const Color(0xFFE8F5E9);
-        textColor = const Color(0xFF4CAF50);
-        break;
-      case 'Nonaktif':
-        backgroundColor = const Color(0xFFF2F2F2);
-        textColor = const Color(0xFF9E9E9E);
-        break;
-      default:
-        backgroundColor = Colors.grey.shade200;
-        textColor = Colors.black87;
-    }
+            const SizedBox(height: 20),
 
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-      decoration: BoxDecoration(
-        color: backgroundColor,
-        borderRadius: BorderRadius.circular(20),
-      ),
-      child: Text(
-        status,
-        style: TextStyle(
-          fontSize: 13,
-          fontWeight: FontWeight.w600,
-          color: textColor,
-        ),
-      ),
-    );
+            // Pagination (static sample)
+            Center(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  IconButton(
+                    onPressed: () {},
+                    icon: const Icon(Icons.arrow_left),
+                  ),
+                  Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF3E6FAA),
+                      borderRadius: BorderRadius.circular(6),
+                    ),
+                    child: const Text(
+                      "1",
+                      style: TextStyle(color: Colors.white),
+                    ),
+                  ),
+                  IconButton(
+                    onPressed: () {},
+                    icon: const Icon(Icons.arrow_right),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ), // ✅ closes Column
+      ), // ✅ closes Padding
+    ); // ✅ closes Scaffold
   }
 
   Widget _buildPagination() {
