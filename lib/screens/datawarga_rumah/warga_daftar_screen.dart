@@ -4,37 +4,44 @@ class WargaDaftarScreen extends StatefulWidget {
   const WargaDaftarScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    final List<Map<String, String>> wargaData = [
-      {
-        "no": "1",
-        "nama": "yyyyy",
-        "nik": "1234567891234567",
-        "keluarga": "Keluarga Mara Nunez",
-        "jenisKelamin": "Perempuan",
-        "statusDomisili": "Aktif",
-        "statusHidup": "Hidup",
-      },
-      {
-        "no": "2",
-        "nama": "Varizky Naldiba Rimra",
-        "nik": "137111011030005",
-        "keluarga": "Keluarga Varizky Naldiba Rimra",
-        "jenisKelamin": "Laki-laki",
-        "statusDomisili": "Aktif",
-        "statusHidup": "Hidup",
-      },
-      {
-        "no": "3",
-        "nama": "Tes",
-        "nik": "2222222222222222",
-        "keluarga": "Keluarga Tes",
-        "jenisKelamin": "Laki-laki",
-        "statusDomisili": "Aktif",
-        "statusHidup": "Wafat",
-      },
-    ];
+  State<WargaDaftarScreen> createState() => _WargaDaftarScreenState();
+}
 
+class _WargaDaftarScreenState extends State<WargaDaftarScreen> {
+  int _currentPage = 1;
+
+  final List<Map<String, String>> wargaData = [
+    {
+      "no": "1",
+      "nama": "yyyyy",
+      "nik": "1234567891234567",
+      "keluarga": "Keluarga Mara Nunez",
+      "jenisKelamin": "Perempuan",
+      "statusDomisili": "Aktif",
+      "statusHidup": "Hidup",
+    },
+    {
+      "no": "2",
+      "nama": "Varizky Naldiba Rimra",
+      "nik": "137111011030005",
+      "keluarga": "Keluarga Varizky Naldiba Rimra",
+      "jenisKelamin": "Laki-laki",
+      "statusDomisili": "Aktif",
+      "statusHidup": "Hidup",
+    },
+    {
+      "no": "3",
+      "nama": "Tes",
+      "nik": "2222222222222222",
+      "keluarga": "Keluarga Tes",
+      "jenisKelamin": "Laki-laki",
+      "statusDomisili": "Aktif",
+      "statusHidup": "Wafat",
+    },
+  ];
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF5F7FA),
       body: Padding(
@@ -84,8 +91,8 @@ class WargaDaftarScreen extends StatefulWidget {
                             vertical: 10,
                           ),
                         ),
-                        child: Row(
-                          children: const [
+                        child: const Row(
+                          children: [
                             Icon(
                               Icons.filter_list,
                               size: 20,
@@ -106,7 +113,9 @@ class WargaDaftarScreen extends StatefulWidget {
                     ],
                   ),
                 ),
+
                 const Divider(height: 1, color: Color(0xFFF0F0F0)),
+
                 // Table
                 SingleChildScrollView(
                   scrollDirection: Axis.horizontal,
@@ -204,6 +213,7 @@ class WargaDaftarScreen extends StatefulWidget {
                     }).toList(),
                   ),
                 ),
+
                 const SizedBox(height: 10),
                 _buildPagination(),
               ],
@@ -217,6 +227,7 @@ class WargaDaftarScreen extends StatefulWidget {
   Widget _buildStatusChip(String status) {
     Color bgColor;
     Color textColor = Colors.black87;
+
     switch (status) {
       case 'Aktif':
         bgColor = const Color(0xFFD6F5D6);
@@ -237,6 +248,7 @@ class WargaDaftarScreen extends StatefulWidget {
       default:
         bgColor = Colors.grey.shade200;
     }
+
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       decoration: BoxDecoration(
@@ -255,36 +267,53 @@ class WargaDaftarScreen extends StatefulWidget {
   }
 
   Widget _buildPagination() {
+    const int totalPages = 2; // example
+    List<Widget> buttons = [];
+
+    for (int i = 1; i <= totalPages; i++) {
+      final isActive = i == _currentPage;
+      buttons.add(
+        GestureDetector(
+          onTap: () => setState(() => _currentPage = i),
+          child: Container(
+            margin: const EdgeInsets.symmetric(horizontal: 4),
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: isActive
+                  ? const Color(0xFF3E6FAA)
+                  : const Color(0xFFF0F0F0),
+              shape: BoxShape.circle,
+            ),
+            child: Text(
+              '$i',
+              style: TextStyle(
+                color: isActive ? Colors.white : Colors.black,
+                fontFamily: 'Poppins',
+              ),
+            ),
+          ),
+        ),
+      );
+    }
+
     return Padding(
       padding: const EdgeInsets.only(bottom: 16),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          IconButton(onPressed: () {}, icon: const Icon(Icons.chevron_left)),
-          Container(
-            padding: const EdgeInsets.all(8),
-            decoration: const BoxDecoration(
-              color: Color(0xFF3E6FAA),
-              shape: BoxShape.circle,
-            ),
-            child: const Text(
-              '1',
-              style: TextStyle(color: Colors.white, fontFamily: 'Poppins'),
-            ),
+          IconButton(
+            onPressed: _currentPage > 1
+                ? () => setState(() => _currentPage--)
+                : null,
+            icon: const Icon(Icons.chevron_left),
           ),
-          const SizedBox(width: 8),
-          Container(
-            padding: const EdgeInsets.all(8),
-            decoration: const BoxDecoration(
-              color: Color(0xFFF0F0F0),
-              shape: BoxShape.circle,
-            ),
-            child: const Text(
-              '2',
-              style: TextStyle(color: Colors.black, fontFamily: 'Poppins'),
-            ),
+          ...buttons,
+          IconButton(
+            onPressed: _currentPage < totalPages
+                ? () => setState(() => _currentPage++)
+                : null,
+            icon: const Icon(Icons.chevron_right),
           ),
-          IconButton(onPressed: () {}, icon: const Icon(Icons.chevron_right)),
         ],
       ),
     );
