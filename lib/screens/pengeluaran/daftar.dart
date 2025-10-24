@@ -12,10 +12,7 @@ class Daftar extends StatelessWidget {
         elevation: 0,
         centerTitle: true,
       ),
-      body: const Padding(
-        padding: EdgeInsets.all(16.0),
-        child: TablePage(),
-      ),
+      body: const Padding(padding: EdgeInsets.all(16.0), child: TablePage()),
     );
   }
 }
@@ -76,162 +73,166 @@ class _TablePageState extends State<TablePage> {
     }
   }
 
-void _showFilterDialog(BuildContext context) {
-  final screenWidth = MediaQuery.of(context).size.width;
-  final maxDialogWidth = 600.0; // agar tidak terlalu lebar
-  final containerPadding = 16.0; // sama dengan padding kontainer utama
+  void _showFilterDialog(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final maxDialogWidth = 600.0; // agar tidak terlalu lebar
+    final containerPadding = 16.0; // sama dengan padding kontainer utama
 
-  showDialog(
-    context: context,
-    builder: (context) {
-      // Form controllers
-      TextEditingController nameController = TextEditingController();
-      TextEditingController startDateController = TextEditingController();
-      TextEditingController endDateController = TextEditingController();
-      String? selectedCategory;
+    showDialog(
+      context: context,
+      builder: (context) {
+        // Form controllers
+        TextEditingController nameController = TextEditingController();
+        TextEditingController startDateController = TextEditingController();
+        TextEditingController endDateController = TextEditingController();
+        String? selectedCategory;
 
-      return Dialog(
-        insetPadding: EdgeInsets.only(
-          left: containerPadding + 40, // geser sedikit ke kanan
-          right: containerPadding + 40,
-          top: 24,
-          bottom: 24,
-        ),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
-        child: ConstrainedBox(
-          constraints: BoxConstraints(
-            maxWidth: maxDialogWidth,
-            minWidth: 400,
+        return Dialog(
+          insetPadding: EdgeInsets.only(
+            left: containerPadding + 40, // geser sedikit ke kanan
+            right: containerPadding + 40,
+            top: 24,
+            bottom: 24,
           ),
-          child: Padding(
-            padding: const EdgeInsets.all(24.0),
-            child: SingleChildScrollView(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Judul
-                  const Text(
-                    'Filter Pengeluaran',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-
-                  // Nama
-                  const Text('Nama'),
-                  TextField(
-                    controller: nameController,
-                    decoration: const InputDecoration(
-                      hintText: 'Cari nama...',
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-
-                  // Kategori
-                  const Text('Kategori'),
-                  DropdownButtonFormField<String>(
-                    initialValue: selectedCategory,
-                    items: const [
-                      DropdownMenuItem(value: 'Pemeliharaan', child: Text('Pemeliharaan')),
-                      DropdownMenuItem(value: 'Operasional', child: Text('Operasional')),
-                    ],
-                    onChanged: (value) {
-                      selectedCategory = value;
-                    },
-                    decoration: const InputDecoration(
-                      hintText: '-- Pilih Kategori --',
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-
-                  // Dari Tanggal
-                  const Text('Dari Tanggal'),
-                  TextField(
-                    controller: startDateController,
-                    readOnly: true,
-                    decoration: InputDecoration(
-                      hintText: '--/--/----',
-                      suffixIcon: IconButton(
-                        icon: const Icon(Icons.calendar_today),
-                        onPressed: () async {
-                          DateTime? picked = await showDatePicker(
-                            context: context,
-                            initialDate: DateTime.now(),
-                            firstDate: DateTime(2000),
-                            lastDate: DateTime(2100),
-                          );
-                          if (picked != null) {
-                            startDateController.text =
-                                '${picked.day}/${picked.month}/${picked.year}';
-                          }
-                        },
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: ConstrainedBox(
+            constraints: BoxConstraints(
+              maxWidth: maxDialogWidth,
+              minWidth: 400,
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(24.0),
+              child: SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Judul
+                    const Text(
+                      'Filter Pengeluaran',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
-                  ),
-                  const SizedBox(height: 16),
+                    const SizedBox(height: 16),
 
-                  // Sampai Tanggal
-                  const Text('Sampai Tanggal'),
-                  TextField(
-                    controller: endDateController,
-                    readOnly: true,
-                    decoration: InputDecoration(
-                      hintText: '--/--/----',
-                      suffixIcon: IconButton(
-                        icon: const Icon(Icons.calendar_today),
-                        onPressed: () async {
-                          DateTime? picked = await showDatePicker(
-                            context: context,
-                            initialDate: DateTime.now(),
-                            firstDate: DateTime(2000),
-                            lastDate: DateTime(2100),
-                          );
-                          if (picked != null) {
-                            endDateController.text =
-                                '${picked.day}/${picked.month}/${picked.year}';
-                          }
-                        },
+                    // Nama
+                    const Text('Nama'),
+                    TextField(
+                      controller: nameController,
+                      decoration: const InputDecoration(
+                        hintText: 'Cari nama...',
                       ),
                     ),
-                  ),
-                  const SizedBox(height: 24),
+                    const SizedBox(height: 16),
 
-                  // Tombol
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      TextButton(
-                        onPressed: () {
-                          Navigator.pop(context);
-                        },
-                        child: const Text('Reset Filter'),
+                    // Kategori
+                    const Text('Kategori'),
+                    DropdownButtonFormField<String>(
+                      initialValue: selectedCategory,
+                      items: const [
+                        DropdownMenuItem(
+                          value: 'Pemeliharaan',
+                          child: Text('Pemeliharaan'),
+                        ),
+                        DropdownMenuItem(
+                          value: 'Operasional',
+                          child: Text('Operasional'),
+                        ),
+                      ],
+                      onChanged: (value) {
+                        selectedCategory = value;
+                      },
+                      decoration: const InputDecoration(
+                        hintText: '-- Pilih Kategori --',
                       ),
-                      const SizedBox(width: 16),
-                      ElevatedButton(
-                        onPressed: () {
-                          // Terapkan filter di sini
-                          Navigator.pop(context);
-                        },
-                        child: const Text('Terapkan'),
+                    ),
+                    const SizedBox(height: 16),
+
+                    // Dari Tanggal
+                    const Text('Dari Tanggal'),
+                    TextField(
+                      controller: startDateController,
+                      readOnly: true,
+                      decoration: InputDecoration(
+                        hintText: '--/--/----',
+                        suffixIcon: IconButton(
+                          icon: const Icon(Icons.calendar_today),
+                          onPressed: () async {
+                            DateTime? picked = await showDatePicker(
+                              context: context,
+                              initialDate: DateTime.now(),
+                              firstDate: DateTime(2000),
+                              lastDate: DateTime(2100),
+                            );
+                            if (picked != null) {
+                              startDateController.text =
+                                  '${picked.day}/${picked.month}/${picked.year}';
+                            }
+                          },
+                        ),
                       ),
-                    ],
-                  ),
-                ],
+                    ),
+                    const SizedBox(height: 16),
+
+                    // Sampai Tanggal
+                    const Text('Sampai Tanggal'),
+                    TextField(
+                      controller: endDateController,
+                      readOnly: true,
+                      decoration: InputDecoration(
+                        hintText: '--/--/----',
+                        suffixIcon: IconButton(
+                          icon: const Icon(Icons.calendar_today),
+                          onPressed: () async {
+                            DateTime? picked = await showDatePicker(
+                              context: context,
+                              initialDate: DateTime.now(),
+                              firstDate: DateTime(2000),
+                              lastDate: DateTime(2100),
+                            );
+                            if (picked != null) {
+                              endDateController.text =
+                                  '${picked.day}/${picked.month}/${picked.year}';
+                            }
+                          },
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 24),
+
+                    // Tombol
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        TextButton(
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                          child: const Text('Reset Filter'),
+                        ),
+                        const SizedBox(width: 16),
+                        ElevatedButton(
+                          onPressed: () {
+                            // Terapkan filter di sini
+                            Navigator.pop(context);
+                          },
+                          child: const Text('Terapkan'),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
-        ),
-      );
-    },
-  );
-}
-
-
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -316,9 +317,7 @@ void _showFilterDialog(BuildContext context) {
                                   ? const Color(0xFFF3F4F6)
                                   : Colors.white,
                               border: Border(
-                                bottom: BorderSide(
-                                  color: Colors.grey.shade300,
-                                ),
+                                bottom: BorderSide(color: Colors.grey.shade300),
                               ),
                             ),
                             padding: const EdgeInsets.symmetric(vertical: 14.0),
@@ -408,9 +407,7 @@ void _showFilterDialog(BuildContext context) {
     return Container(
       width: width,
       decoration: BoxDecoration(
-        border: Border(
-          right: BorderSide(color: Colors.grey.shade300),
-        ),
+        border: Border(right: BorderSide(color: Colors.grey.shade300)),
       ),
       alignment: Alignment.centerLeft,
       padding: const EdgeInsets.symmetric(horizontal: 8),
@@ -429,18 +426,13 @@ void _showFilterDialog(BuildContext context) {
     return Container(
       width: width,
       decoration: BoxDecoration(
-        border: Border(
-          right: BorderSide(color: Colors.grey.shade200),
-        ),
+        border: Border(right: BorderSide(color: Colors.grey.shade200)),
       ),
       alignment: Alignment.centerLeft,
       padding: const EdgeInsets.symmetric(horizontal: 8),
       child: Text(
         text,
-        style: const TextStyle(
-          color: Color(0xFF1F2937),
-          fontSize: 14,
-        ),
+        style: const TextStyle(color: Color(0xFF1F2937), fontSize: 14),
         overflow: TextOverflow.ellipsis,
       ),
     );
