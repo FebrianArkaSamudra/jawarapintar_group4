@@ -10,7 +10,7 @@ class RumahDaftarScreen extends StatefulWidget {
 class _RumahDaftarScreenState extends State<RumahDaftarScreen> {
   int _currentPage = 1;
 
-  final rumahList = [
+  final List<Map<String, String>> rumahList = [
     {'no': '1', 'alamat': 'sssss', 'status': 'Ditempati'},
     {'no': '2', 'alamat': 'Jalan Suhat', 'status': 'Ditempati'},
     {'no': '3', 'alamat': 'l', 'status': 'Ditempati'},
@@ -22,6 +22,169 @@ class _RumahDaftarScreenState extends State<RumahDaftarScreen> {
     {'no': '9', 'alamat': 'Jl. Baru Bangun', 'status': 'Ditempati'},
     {'no': '10', 'alamat': 'fasda', 'status': 'Tersedia'},
   ];
+
+  List<Map<String, String>> filteredList = [];
+
+  String? selectedStatus;
+  final TextEditingController alamatController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    filteredList = List.from(rumahList);
+  }
+
+  void applyFilter() {
+    String searchAlamat = alamatController.text.toLowerCase();
+    String? status = selectedStatus;
+
+    setState(() {
+      filteredList = rumahList.where((rumah) {
+        final alamatLower = rumah['alamat']!.toLowerCase();
+        final matchesAlamat = alamatLower.contains(searchAlamat);
+        final matchesStatus = status == null || status.isEmpty
+            ? true
+            : rumah['status'] == status;
+        return matchesAlamat && matchesStatus;
+      }).toList();
+    });
+  }
+
+  void resetFilter() {
+    setState(() {
+      selectedStatus = null;
+      alamatController.clear();
+      filteredList = List.from(rumahList);
+    });
+  }
+
+  void _showFilterDialog() {
+    String tempAlamat = alamatController.text;
+    String? tempStatus = selectedStatus;
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        return StatefulBuilder(
+          builder: (context, setStateDialog) {
+            return AlertDialog(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              title: const Text(
+                'Filter Data Rumah',
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+              content: SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text("Alamat"),
+                    const SizedBox(height: 6),
+                    TextField(
+                      controller: TextEditingController.fromValue(
+                        TextEditingValue(
+                          text: tempAlamat,
+                          selection: TextSelection.collapsed(
+                            offset: tempAlamat.length,
+                          ),
+                        ),
+                      ),
+                      onChanged: (v) => tempAlamat = v,
+                      decoration: InputDecoration(
+                        hintText: 'Cari alamat...',
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 10,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    const Text("Status"),
+                    const SizedBox(height: 6),
+                    DropdownButtonFormField<String>(
+                      value: tempStatus,
+                      decoration: InputDecoration(
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 10,
+                        ),
+                      ),
+                      hint: const Text("-- Pilih Status --"),
+                      items: const [
+                        DropdownMenuItem(
+                          value: "Ditempati",
+                          child: Text("Ditempati"),
+                        ),
+                        DropdownMenuItem(
+                          value: "Tersedia",
+                          child: Text("Tersedia"),
+                        ),
+                      ],
+                      onChanged: (value) =>
+                          setStateDialog(() => tempStatus = value),
+                    ),
+                  ],
+                ),
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    setState(() {
+                      alamatController.clear();
+                      selectedStatus = null;
+                      filteredList = List.from(rumahList);
+                    });
+                    Navigator.pop(context);
+                  },
+                  child: const Text(
+                    "Reset Filter",
+                    style: TextStyle(color: Colors.black87),
+                  ),
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    setState(() {
+                      alamatController.text = tempAlamat;
+                      selectedStatus = tempStatus;
+                      applyFilter();
+                    });
+                    Navigator.pop(context);
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text("Filter diterapkan!"),
+                        duration: Duration(seconds: 1),
+                      ),
+                    );
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF3E6FAA),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 20,
+                      vertical: 10,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                  ),
+                  child: const Text(
+                    "Terapkan",
+                    style: TextStyle(color: Colors.white),
+                  ),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -57,7 +220,7 @@ class _RumahDaftarScreenState extends State<RumahDaftarScreen> {
                   ),
                   elevation: 0,
                 ),
-                onPressed: () {},
+                onPressed: _showFilterDialog,
                 child: const Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
@@ -109,7 +272,7 @@ class _RumahDaftarScreenState extends State<RumahDaftarScreen> {
                     DataColumn(label: Text("Status")),
                     DataColumn(label: Text("Aksi")),
                   ],
-                  rows: rumahList.map((rumah) {
+                  rows: filteredList.map((rumah) {
                     final isTersedia = rumah['status'] == 'Tersedia';
                     return DataRow(
                       cells: [

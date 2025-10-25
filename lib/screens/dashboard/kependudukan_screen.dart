@@ -6,103 +6,65 @@ class KependudukanScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: const Color(0xFFF7F7F7),
-      padding: const EdgeInsets.all(16),
-      child: SingleChildScrollView(
+    final double screenWidth = MediaQuery.of(context).size.width;
+    final bool isMobile = screenWidth < 600;
+    final EdgeInsets contentPadding = EdgeInsets.all(isMobile ? 12 : 16);
+    final double cardPadding = isMobile ? 16 : 24;
+    final double pieSize = isMobile ? 100 : 140;
+
+    return Scaffold(
+      backgroundColor: const Color(0xFFF7F7F7),
+      body: SingleChildScrollView(
+        padding: contentPadding,
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Top: 2 stat cards
-            Row(
+            // Top: Stat cards
+            Column(
               children: [
-                Expanded(
-                  child: Card(
-                    color: const Color(0xFFDFF0FF),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.all(24.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: const [
-                          Text(
-                            '👪 Total Keluarga',
-                            style: TextStyle(
-                              color: Color(0xFF2255A4),
-                              fontWeight: FontWeight.w600,
-                              fontSize: 16,
-                            ),
-                          ),
-                          SizedBox(height: 16),
-                          Text(
-                            '7',
-                            style: TextStyle(
-                              fontSize: 32,
-                              fontWeight: FontWeight.bold,
-                              color: Color(0xFF2255A4),
-                            ),
-                          ),
-                        ],
+                Row(
+                  children: [
+                    Expanded(
+                      child: _StatCard(
+                        title: '👪 Total Keluarga',
+                        value: '7',
+                        bgColor: const Color(0xFFDFF0FF),
+                        textColor: const Color(0xFF2255A4),
                       ),
                     ),
-                  ),
-                ),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: Card(
-                    color: const Color(0xFFDFFFEF),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.all(24.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: const [
-                          Text(
-                            '👥 Total Penduduk',
-                            style: TextStyle(
-                              color: Color(0xFF2B7A4B),
-                              fontWeight: FontWeight.w600,
-                              fontSize: 16,
-                            ),
-                          ),
-                          SizedBox(height: 16),
-                          Text(
-                            '9',
-                            style: TextStyle(
-                              fontSize: 32,
-                              fontWeight: FontWeight.bold,
-                              color: Color(0xFF2B7A4B),
-                            ),
-                          ),
-                        ],
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: _StatCard(
+                        title: '👥 Total Penduduk',
+                        value: '9',
+                        bgColor: const Color(0xFFDFFFEF),
+                        textColor: const Color(0xFF2B7A4B),
                       ),
                     ),
-                  ),
+                  ],
                 ),
               ],
             ),
             const SizedBox(height: 16),
-            // Grid: 2 columns, 3 rows
+
+            // Dynamic grid for pie charts
             LayoutBuilder(
               builder: (context, constraints) {
-                final double spacing = 16;
-                final double maxWidth = constraints.maxWidth;
-                final int columns = maxWidth > 900 ? 2 : 1;
+                final double spacing = 12;
+                final int columns = isMobile ? 1 : 2;
                 final double cardWidth =
-                    (maxWidth - (columns - 1) * spacing) / columns;
+                    (constraints.maxWidth - (columns - 1) * spacing) / columns;
+
                 return Wrap(
                   spacing: spacing,
                   runSpacing: spacing,
                   children: [
-                    // Status Penduduk
                     SizedBox(
                       width: cardWidth,
                       child: _PieCard(
                         title: '⚪ Status Penduduk',
                         color: const Color(0xFFFFF4CC),
+                        pieSize: pieSize,
                         sections: [
                           PieChartSectionData(
                             color: Colors.green,
@@ -110,7 +72,7 @@ class KependudukanScreen extends StatelessWidget {
                             title: 'Aktif 78%',
                             radius: 40,
                             titleStyle: const TextStyle(
-                              fontSize: 14,
+                              fontSize: 12,
                               color: Colors.white,
                             ),
                           ),
@@ -120,7 +82,7 @@ class KependudukanScreen extends StatelessWidget {
                             title: 'Nonaktif 22%',
                             radius: 40,
                             titleStyle: const TextStyle(
-                              fontSize: 14,
+                              fontSize: 12,
                               color: Colors.white,
                             ),
                           ),
@@ -131,12 +93,12 @@ class KependudukanScreen extends StatelessWidget {
                         ],
                       ),
                     ),
-                    // Jenis Kelamin
                     SizedBox(
                       width: cardWidth,
                       child: _PieCard(
                         title: '♀️ Jenis Kelamin',
                         color: const Color(0xFFF4E8FF),
+                        pieSize: pieSize,
                         sections: [
                           PieChartSectionData(
                             color: Colors.blue,
@@ -144,7 +106,7 @@ class KependudukanScreen extends StatelessWidget {
                             title: 'Laki-laki 89%',
                             radius: 40,
                             titleStyle: const TextStyle(
-                              fontSize: 14,
+                              fontSize: 12,
                               color: Colors.white,
                             ),
                           ),
@@ -154,7 +116,7 @@ class KependudukanScreen extends StatelessWidget {
                             title: 'Perempuan 11%',
                             radius: 40,
                             titleStyle: const TextStyle(
-                              fontSize: 14,
+                              fontSize: 12,
                               color: Colors.white,
                             ),
                           ),
@@ -165,12 +127,12 @@ class KependudukanScreen extends StatelessWidget {
                         ],
                       ),
                     ),
-                    // Pekerjaan Penduduk
                     SizedBox(
                       width: cardWidth,
                       child: _PieCard(
                         title: '💼 Pekerjaan Penduduk',
                         color: const Color(0xFFFFE6F0),
+                        pieSize: pieSize,
                         sections: [
                           PieChartSectionData(
                             color: Colors.purple,
@@ -178,7 +140,7 @@ class KependudukanScreen extends StatelessWidget {
                             title: 'Lainnya 100%',
                             radius: 40,
                             titleStyle: const TextStyle(
-                              fontSize: 14,
+                              fontSize: 12,
                               color: Colors.white,
                             ),
                           ),
@@ -188,12 +150,12 @@ class KependudukanScreen extends StatelessWidget {
                         ],
                       ),
                     ),
-                    // Peran dalam Keluarga
                     SizedBox(
                       width: cardWidth,
                       child: _PieCard(
                         title: '🦸‍♂️ Peran dalam Keluarga',
                         color: const Color(0xFFE6F0FF),
+                        pieSize: pieSize,
                         sections: [
                           PieChartSectionData(
                             color: Colors.blue,
@@ -201,7 +163,7 @@ class KependudukanScreen extends StatelessWidget {
                             title: 'Kepala Keluarga 78%',
                             radius: 40,
                             titleStyle: const TextStyle(
-                              fontSize: 14,
+                              fontSize: 12,
                               color: Colors.white,
                             ),
                           ),
@@ -211,7 +173,7 @@ class KependudukanScreen extends StatelessWidget {
                             title: 'Anak 11%',
                             radius: 40,
                             titleStyle: const TextStyle(
-                              fontSize: 14,
+                              fontSize: 12,
                               color: Colors.white,
                             ),
                           ),
@@ -221,7 +183,7 @@ class KependudukanScreen extends StatelessWidget {
                             title: 'Anggota Lain 11%',
                             radius: 40,
                             titleStyle: const TextStyle(
-                              fontSize: 14,
+                              fontSize: 12,
                               color: Colors.white,
                             ),
                           ),
@@ -239,12 +201,12 @@ class KependudukanScreen extends StatelessWidget {
                         ],
                       ),
                     ),
-                    // Agama
                     SizedBox(
                       width: cardWidth,
                       child: _PieCard(
                         title: '🙏 Agama',
                         color: const Color(0xFFFFE6F0),
+                        pieSize: pieSize,
                         sections: [
                           PieChartSectionData(
                             color: Colors.blue,
@@ -252,7 +214,7 @@ class KependudukanScreen extends StatelessWidget {
                             title: 'Islam 50%',
                             radius: 40,
                             titleStyle: const TextStyle(
-                              fontSize: 14,
+                              fontSize: 12,
                               color: Colors.white,
                             ),
                           ),
@@ -262,7 +224,7 @@ class KependudukanScreen extends StatelessWidget {
                             title: 'Katolik 50%',
                             radius: 40,
                             titleStyle: const TextStyle(
-                              fontSize: 14,
+                              fontSize: 12,
                               color: Colors.white,
                             ),
                           ),
@@ -273,12 +235,12 @@ class KependudukanScreen extends StatelessWidget {
                         ],
                       ),
                     ),
-                    // Pendidikan
                     SizedBox(
                       width: cardWidth,
                       child: _PieCard(
                         title: '🎓 Pendidikan',
                         color: const Color(0xFFDFFFEF),
+                        pieSize: pieSize,
                         sections: [
                           PieChartSectionData(
                             color: Colors.grey,
@@ -286,7 +248,7 @@ class KependudukanScreen extends StatelessWidget {
                             title: 'Sarjana/Diploma 100%',
                             radius: 40,
                             titleStyle: const TextStyle(
-                              fontSize: 14,
+                              fontSize: 12,
                               color: Colors.white,
                             ),
                           ),
@@ -310,16 +272,63 @@ class KependudukanScreen extends StatelessWidget {
   }
 }
 
+class _StatCard extends StatelessWidget {
+  final String title, value;
+  final Color bgColor, textColor;
+  const _StatCard({
+    required this.title,
+    required this.value,
+    required this.bgColor,
+    required this.textColor,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      color: bgColor,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              title,
+              style: TextStyle(
+                color: textColor,
+                fontWeight: FontWeight.w600,
+                fontSize: 14,
+              ),
+            ),
+            const SizedBox(height: 10),
+            Text(
+              value,
+              style: TextStyle(
+                fontSize: 28,
+                fontWeight: FontWeight.bold,
+                color: textColor,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
 class _PieCard extends StatelessWidget {
   final String title;
   final Color color;
   final List<PieChartSectionData> sections;
   final List<_LegendDot> legend;
+  final double pieSize;
+
   const _PieCard({
     required this.title,
     required this.color,
     required this.sections,
     required this.legend,
+    this.pieSize = 120,
   });
 
   @override
@@ -328,23 +337,26 @@ class _PieCard extends StatelessWidget {
       color: color,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: Padding(
-        padding: const EdgeInsets.all(24.0),
+        padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
               title,
-              style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 15),
+              style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: 10),
             SizedBox(
-              height: 120,
+              height: pieSize,
               child: PieChart(
-                PieChartData(sections: sections, centerSpaceRadius: 32),
+                PieChartData(
+                  sections: sections,
+                  centerSpaceRadius: pieSize * 0.25,
+                ),
               ),
             ),
             const SizedBox(height: 8),
-            Wrap(spacing: 12, runSpacing: 4, children: legend),
+            Wrap(spacing: 8, runSpacing: 4, children: legend),
           ],
         ),
       ),
@@ -363,12 +375,12 @@ class _LegendDot extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: [
         Container(
-          width: 12,
-          height: 12,
+          width: 10,
+          height: 10,
           decoration: BoxDecoration(color: color, shape: BoxShape.circle),
         ),
         const SizedBox(width: 4),
-        Text(label, style: const TextStyle(fontSize: 12)),
+        Text(label, style: const TextStyle(fontSize: 11)),
       ],
     );
   }

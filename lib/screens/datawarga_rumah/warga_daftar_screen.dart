@@ -10,6 +10,12 @@ class WargaDaftarScreen extends StatefulWidget {
 class _WargaDaftarScreenState extends State<WargaDaftarScreen> {
   int _currentPage = 1;
 
+  final TextEditingController _namaController = TextEditingController();
+  String? selectedGender;
+  String? selectedStatus;
+  String? selectedKeluarga;
+  List<Map<String, String>> filteredData = [];
+
   final List<Map<String, String>> wargaData = [
     {
       "no": "1",
@@ -39,6 +45,43 @@ class _WargaDaftarScreenState extends State<WargaDaftarScreen> {
       "statusHidup": "Wafat",
     },
   ];
+
+  @override
+  void initState() {
+    super.initState();
+    filteredData = List.from(wargaData);
+  }
+
+  void applyFilter() {
+    setState(() {
+      filteredData = wargaData.where((item) {
+        final matchesNama =
+            _namaController.text.isEmpty ||
+            item['nama']!.toLowerCase().contains(
+              _namaController.text.toLowerCase(),
+            );
+        final matchesGender =
+            selectedGender == null || item['jenisKelamin'] == selectedGender;
+        final matchesStatus =
+            selectedStatus == null ||
+            item['statusDomisili'] == selectedStatus ||
+            item['statusHidup'] == selectedStatus;
+        final matchesKeluarga =
+            selectedKeluarga == null || item['keluarga'] == selectedKeluarga;
+        return matchesNama && matchesGender && matchesStatus && matchesKeluarga;
+      }).toList();
+    });
+  }
+
+  void resetFilter() {
+    setState(() {
+      _namaController.clear();
+      selectedGender = null;
+      selectedStatus = null;
+      selectedKeluarga = null;
+      filteredData = List.from(wargaData);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -80,7 +123,156 @@ class _WargaDaftarScreenState extends State<WargaDaftarScreen> {
                         ),
                       ),
                       ElevatedButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          showDialog(
+                            context: context,
+                            builder: (context) => AlertDialog(
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              title: const Text(
+                                'Filter Penerimaan Warga',
+                                style: TextStyle(
+                                  fontFamily: 'Poppins',
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              content: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  TextField(
+                                    controller: _namaController,
+                                    decoration: InputDecoration(
+                                      labelText: 'Nama',
+                                      hintText: 'Cari nama...',
+                                      border: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
+                                      contentPadding:
+                                          const EdgeInsets.symmetric(
+                                            horizontal: 12,
+                                          ),
+                                    ),
+                                  ),
+                                  const SizedBox(height: 12),
+                                  DropdownButtonFormField<String>(
+                                    decoration: InputDecoration(
+                                      labelText: 'Jenis Kelamin',
+                                      border: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
+                                    ),
+                                    value: selectedGender,
+                                    items: const [
+                                      DropdownMenuItem(
+                                        value: 'Laki-laki',
+                                        child: Text('Laki-laki'),
+                                      ),
+                                      DropdownMenuItem(
+                                        value: 'Perempuan',
+                                        child: Text('Perempuan'),
+                                      ),
+                                    ],
+                                    onChanged: (v) =>
+                                        setState(() => selectedGender = v),
+                                  ),
+                                  const SizedBox(height: 12),
+                                  DropdownButtonFormField<String>(
+                                    decoration: InputDecoration(
+                                      labelText: 'Status',
+                                      border: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
+                                    ),
+                                    value: selectedStatus,
+                                    items: const [
+                                      DropdownMenuItem(
+                                        value: 'Aktif',
+                                        child: Text('Aktif'),
+                                      ),
+                                      DropdownMenuItem(
+                                        value: 'Nonaktif',
+                                        child: Text('Nonaktif'),
+                                      ),
+                                      DropdownMenuItem(
+                                        value: 'Hidup',
+                                        child: Text('Hidup'),
+                                      ),
+                                      DropdownMenuItem(
+                                        value: 'Wafat',
+                                        child: Text('Wafat'),
+                                      ),
+                                    ],
+                                    onChanged: (v) =>
+                                        setState(() => selectedStatus = v),
+                                  ),
+                                  const SizedBox(height: 12),
+                                  DropdownButtonFormField<String>(
+                                    decoration: InputDecoration(
+                                      labelText: 'Keluarga',
+                                      border: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
+                                    ),
+                                    value: selectedKeluarga,
+                                    items: const [
+                                      DropdownMenuItem(
+                                        value: 'Keluarga Mara Nunez',
+                                        child: Text('Keluarga Mara Nunez'),
+                                      ),
+                                      DropdownMenuItem(
+                                        value: 'Keluarga Varizky Naldiba Rimra',
+                                        child: Text(
+                                          'Keluarga Varizky Naldiba Rimra',
+                                        ),
+                                      ),
+                                      DropdownMenuItem(
+                                        value: 'Keluarga Tes',
+                                        child: Text('Keluarga Tes'),
+                                      ),
+                                    ],
+                                    onChanged: (v) =>
+                                        setState(() => selectedKeluarga = v),
+                                  ),
+                                ],
+                              ),
+                              actions: [
+                                TextButton(
+                                  onPressed: () {
+                                    resetFilter();
+                                    Navigator.pop(context);
+                                  },
+                                  child: const Text(
+                                    'Reset Filter',
+                                    style: TextStyle(
+                                      color: Colors.black87,
+                                      fontFamily: 'Poppins',
+                                    ),
+                                  ),
+                                ),
+                                ElevatedButton(
+                                  onPressed: () {
+                                    applyFilter();
+                                    Navigator.pop(context);
+                                  },
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: const Color(0xFF3E6FAA),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                  ),
+                                  child: const Text(
+                                    'Terapkan',
+                                    style: TextStyle(
+                                      fontFamily: 'Poppins',
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          );
+                        },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: const Color(0xFF3E6FAA),
                           shape: RoundedRectangleBorder(
@@ -170,7 +362,7 @@ class _WargaDaftarScreenState extends State<WargaDaftarScreen> {
                         ),
                       ),
                     ],
-                    rows: wargaData.map((data) {
+                    rows: filteredData.map((data) {
                       return DataRow(
                         cells: [
                           DataCell(
