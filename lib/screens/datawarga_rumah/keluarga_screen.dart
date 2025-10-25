@@ -10,43 +10,258 @@ class KeluargaScreen extends StatefulWidget {
 class _KeluargaScreenState extends State<KeluargaScreen> {
   int _currentPage = 1;
 
+  // Filters (persisted)
+  String? selectedStatus;
+  String? selectedRumah; // corresponds to 'kepemilikan' in data
+  final TextEditingController namaController = TextEditingController();
+
+  // Full data (source of truth)
+  final List<Map<String, String>> keluargaList = [
+    {
+      'no': '1',
+      'nama': 'Keluarga Varizky Naldiba Rimra',
+      'kepala': 'Varizky Naldiba Rimra',
+      'alamat': 'i',
+      'kepemilikan': 'Pemilik',
+      'status': 'Aktif',
+    },
+    {
+      'no': '2',
+      'nama': 'Keluarga Tes',
+      'kepala': 'Tes',
+      'alamat': 'Tes',
+      'kepemilikan': 'Penyewa',
+      'status': 'Aktif',
+    },
+    {
+      'no': '3',
+      'nama': 'Keluarga Farhan',
+      'kepala': 'Farhan',
+      'alamat': 'Griyashanta L203',
+      'kepemilikan': 'Pemilik',
+      'status': 'Aktif',
+    },
+    {
+      'no': '7',
+      'nama': 'Keluarga Ijat',
+      'kepala': 'Ijat',
+      'alamat': 'Keluar Wilayah',
+      'kepemilikan': 'Penyewa',
+      'status': 'Nonaktif',
+    },
+  ];
+
+  // Filtered list shown in the table
+  late List<Map<String, String>> filteredList;
+
+  @override
+  void initState() {
+    super.initState();
+    filteredList = List.from(keluargaList);
+  }
+
+  @override
+  void dispose() {
+    namaController.dispose();
+    super.dispose();
+  }
+
+  void applyFilter() {
+    final String namaQuery = namaController.text.trim().toLowerCase();
+
+    setState(() {
+      filteredList = keluargaList.where((item) {
+        final matchesNama =
+            namaQuery.isEmpty ||
+            item['nama']!.toLowerCase().contains(namaQuery) ||
+            item['kepala']!.toLowerCase().contains(namaQuery);
+
+        final matchesStatus =
+            (selectedStatus == null || selectedStatus!.isEmpty) ||
+            item['status'] == selectedStatus;
+
+        final matchesRumah =
+            (selectedRumah == null || selectedRumah!.isEmpty) ||
+            item['kepemilikan'] == selectedRumah;
+
+        return matchesNama && matchesStatus && matchesRumah;
+      }).toList();
+      _currentPage = 1; // reset pagination if you use pages later
+    });
+  }
+
+  void resetFilter() {
+    setState(() {
+      namaController.clear();
+      selectedStatus = null;
+      selectedRumah = null;
+      filteredList = List.from(keluargaList);
+      _currentPage = 1;
+    });
+  }
+
+  void _openFilterDialog() {
+    // Use temporary local variables so the dialog UI can update independently.
+    String tempNama = namaController.text;
+    String? tempStatus = selectedStatus;
+    String? tempRumah = selectedRumah;
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        return StatefulBuilder(
+          builder: (context, setStateDialog) {
+            return AlertDialog(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              title: const Text(
+                'Filter Keluarga',
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+              content: SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text("Nama"),
+                    const SizedBox(height: 6),
+                    TextField(
+                      controller: TextEditingController.fromValue(
+                        TextEditingValue(
+                          text: tempNama,
+                          selection: TextSelection.collapsed(
+                            offset: tempNama.length,
+                          ),
+                        ),
+                      ),
+                      onChanged: (v) => tempNama = v,
+                      decoration: InputDecoration(
+                        hintText: 'Cari nama...',
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 10,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    const Text("Status"),
+                    const SizedBox(height: 6),
+                    DropdownButtonFormField<String>(
+                      value: tempStatus,
+                      decoration: InputDecoration(
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 10,
+                        ),
+                      ),
+                      hint: const Text("-- Pilih Status --"),
+                      items: const [
+                        DropdownMenuItem(value: "Aktif", child: Text("Aktif")),
+                        DropdownMenuItem(
+                          value: "Nonaktif",
+                          child: Text("Nonaktif"),
+                        ),
+                      ],
+                      onChanged: (value) =>
+                          setStateDialog(() => tempStatus = value),
+                    ),
+                    const SizedBox(height: 16),
+                    const Text("Rumah"),
+                    const SizedBox(height: 6),
+                    DropdownButtonFormField<String>(
+                      value: tempRumah,
+                      decoration: InputDecoration(
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 10,
+                        ),
+                      ),
+                      hint: const Text("-- Pilih Rumah --"),
+                      items: const [
+                        DropdownMenuItem(
+                          value: "Pemilik",
+                          child: Text("Pemilik"),
+                        ),
+                        DropdownMenuItem(
+                          value: "Penyewa",
+                          child: Text("Penyewa"),
+                        ),
+                      ],
+                      onChanged: (value) =>
+                          setStateDialog(() => tempRumah = value),
+                    ),
+                  ],
+                ),
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    // Reset both temp and persistent filters
+                    setState(() {
+                      namaController.clear();
+                      selectedStatus = null;
+                      selectedRumah = null;
+                      filteredList = List.from(keluargaList);
+                    });
+                    Navigator.pop(context);
+                  },
+                  child: const Text(
+                    "Reset Filter",
+                    style: TextStyle(color: Colors.black87),
+                  ),
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    // Commit dialog values to the screen state and apply filter
+                    setState(() {
+                      namaController.text = tempNama;
+                      selectedStatus = tempStatus;
+                      selectedRumah = tempRumah;
+                      applyFilter();
+                    });
+                    Navigator.pop(context);
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text("Filter diterapkan!"),
+                        duration: Duration(seconds: 1),
+                      ),
+                    );
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF3E6FAA),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 20,
+                      vertical: 10,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                  ),
+                  child: const Text(
+                    "Terapkan",
+                    style: TextStyle(color: Colors.white),
+                  ),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    final keluargaList = [
-      {
-        'no': '1',
-        'nama': 'Keluarga Varizky Naldiba Rimra',
-        'kepala': 'Varizky Naldiba Rimra',
-        'alamat': 'i',
-        'kepemilikan': 'Pemilik',
-        'status': 'Aktif',
-      },
-      {
-        'no': '2',
-        'nama': 'Keluarga Tes',
-        'kepala': 'Tes',
-        'alamat': 'Tes',
-        'kepemilikan': 'Penyewa',
-        'status': 'Aktif',
-      },
-      {
-        'no': '3',
-        'nama': 'Keluarga Farhan',
-        'kepala': 'Farhan',
-        'alamat': 'Griyashanta L203',
-        'kepemilikan': 'Pemilik',
-        'status': 'Aktif',
-      },
-      {
-        'no': '7',
-        'nama': 'Keluarga Ijat',
-        'kepala': 'Ijat',
-        'alamat': 'Keluar Wilayah',
-        'kepemilikan': 'Penyewa',
-        'status': 'Nonaktif',
-      },
-    ];
-
+    // Note: keluargaList is the full data, filteredList is shown in table.
     return Scaffold(
       backgroundColor: const Color(0xFFF5F7FA),
       body: Padding(
@@ -58,16 +273,17 @@ class _KeluargaScreenState extends State<KeluargaScreen> {
             Text(
               "Data Keluarga",
               style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 22,
-                  ),
+                fontWeight: FontWeight.bold,
+                fontSize: 22,
+              ),
             ),
             const SizedBox(height: 16),
 
+            // Filter button
             Align(
               alignment: Alignment.topRight,
               child: ElevatedButton(
-                onPressed: () {},
+                onPressed: _openFilterDialog,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFF3E6FAA),
                   padding: const EdgeInsets.symmetric(
@@ -110,8 +326,10 @@ class _KeluargaScreenState extends State<KeluargaScreen> {
                     ),
                   ],
                 ),
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 12,
+                ),
                 child: SingleChildScrollView(
                   scrollDirection: Axis.horizontal,
                   child: SingleChildScrollView(
@@ -130,7 +348,7 @@ class _KeluargaScreenState extends State<KeluargaScreen> {
                         DataColumn(label: Text("Status")),
                         DataColumn(label: Text("Aksi")),
                       ],
-                      rows: keluargaList.map((keluarga) {
+                      rows: filteredList.map((keluarga) {
                         final isActive = keluarga['status'] == 'Aktif';
                         return DataRow(
                           cells: [
@@ -154,8 +372,7 @@ class _KeluargaScreenState extends State<KeluargaScreen> {
                                 child: Text(
                                   keluarga['status']!,
                                   style: TextStyle(
-                                    color:
-                                        isActive ? Colors.green : Colors.red,
+                                    color: isActive ? Colors.green : Colors.red,
                                     fontWeight: FontWeight.w500,
                                   ),
                                 ),
@@ -204,9 +421,7 @@ class _KeluargaScreenState extends State<KeluargaScreen> {
             width: 32,
             height: 32,
             decoration: BoxDecoration(
-              color: isActive
-                  ? const Color(0xFF3E6FAA)
-                  : Colors.transparent,
+              color: isActive ? const Color(0xFF3E6FAA) : Colors.transparent,
               shape: BoxShape.circle,
             ),
             alignment: Alignment.center,
@@ -227,11 +442,10 @@ class _KeluargaScreenState extends State<KeluargaScreen> {
       children: [
         IconButton(
           icon: const Icon(Icons.chevron_left),
-          color: _currentPage == 1
-              ? Colors.grey
-              : const Color(0xFF3E6FAA),
-          onPressed:
-              _currentPage == 1 ? null : () => setState(() => _currentPage--),
+          color: _currentPage == 1 ? Colors.grey : const Color(0xFF3E6FAA),
+          onPressed: _currentPage == 1
+              ? null
+              : () => setState(() => _currentPage--),
         ),
         ...pageButtons,
         IconButton(
@@ -239,8 +453,9 @@ class _KeluargaScreenState extends State<KeluargaScreen> {
           color: _currentPage == totalPages
               ? Colors.grey
               : const Color(0xFF3E6FAA),
-          onPressed:
-              _currentPage == totalPages ? null : () => setState(() => _currentPage++),
+          onPressed: _currentPage == totalPages
+              ? null
+              : () => setState(() => _currentPage++),
         ),
       ],
     );
