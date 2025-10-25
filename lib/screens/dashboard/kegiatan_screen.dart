@@ -3,6 +3,7 @@ import 'package:fl_chart/fl_chart.dart';
 
 class KegiatanScreen extends StatelessWidget {
   const KegiatanScreen({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -11,7 +12,7 @@ class KegiatanScreen extends StatelessWidget {
       child: SingleChildScrollView(
         child: Column(
           children: [
-            // Top: 2 cards side by side, responsive
+            // --- TOP SECTION: Responsive stat cards ---
             LayoutBuilder(
               builder: (context, constraints) {
                 final double maxWidth = constraints.maxWidth;
@@ -19,10 +20,12 @@ class KegiatanScreen extends StatelessWidget {
                 final int columns = maxWidth >= 900 ? 2 : 1;
                 final double cardWidth =
                     (maxWidth - (columns - 1) * spacing) / columns;
+
                 return Wrap(
                   spacing: spacing,
                   runSpacing: 12,
                   children: [
+                    // Total Kegiatan
                     SizedBox(
                       width: cardWidth,
                       child: Card(
@@ -62,15 +65,17 @@ class KegiatanScreen extends StatelessWidget {
                         ),
                       ),
                     ),
+
+                    // Kegiatan per Kategori (improved & mobile-friendly)
                     SizedBox(
                       width: cardWidth,
                       child: Card(
-                        color: const Color(0xFFDFFFEF),
+                        color: const Color(0xFFEFFFF8),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),
                         ),
                         child: Padding(
-                          padding: const EdgeInsets.all(24.0),
+                          padding: const EdgeInsets.all(20.0),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
@@ -78,73 +83,72 @@ class KegiatanScreen extends StatelessWidget {
                                 '🗂️ Kegiatan per Kategori',
                                 style: TextStyle(
                                   color: Color(0xFF2255A4),
-                                  fontWeight: FontWeight.w600,
+                                  fontWeight: FontWeight.w700,
                                   fontSize: 16,
                                 ),
                               ),
                               const SizedBox(height: 16),
-                              SizedBox(
-                                height: 120,
-                                child: PieChart(
-                                  PieChartData(
-                                    sections: [
-                                      PieChartSectionData(
-                                        color: Colors.blue,
-                                        value: 100,
-                                        title: '100%',
-                                        radius: 48,
-                                        titleStyle: TextStyle(
-                                          color: Colors.white,
-                                          fontWeight: FontWeight.bold,
+                              SingleChildScrollView(
+                                scrollDirection: Axis.horizontal,
+                                child: SizedBox(
+                                  width: 260,
+                                  height: 180,
+                                  child: PieChart(
+                                    PieChartData(
+                                      sections: [
+                                        PieChartSectionData(
+                                          color: Colors.blue,
+                                          value: 100,
+                                          title: '100%',
+                                          radius: 60,
+                                          titleStyle: const TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.bold,
+                                          ),
                                         ),
-                                      ),
-                                      PieChartSectionData(
-                                        color: Colors.green,
-                                        value: 0,
-                                        title: '',
-                                        radius: 48,
-                                      ),
-                                      PieChartSectionData(
-                                        color: Colors.orange,
-                                        value: 0,
-                                        title: '',
-                                        radius: 48,
-                                      ),
-                                      PieChartSectionData(
-                                        color: Colors.yellow,
-                                        value: 0,
-                                        title: '',
-                                        radius: 48,
-                                      ),
-                                      PieChartSectionData(
-                                        color: Colors.purple,
-                                        value: 0,
-                                        title: '',
-                                        radius: 48,
-                                      ),
-                                      PieChartSectionData(
-                                        color: Colors.red,
-                                        value: 0,
-                                        title: '',
-                                        radius: 48,
-                                      ),
-                                      PieChartSectionData(
-                                        color: Colors.lightBlue,
-                                        value: 0,
-                                        title: '',
-                                        radius: 48,
-                                      ),
-                                    ],
-                                    centerSpaceRadius: 32,
+                                        PieChartSectionData(
+                                          color: Colors.green,
+                                          value: 0,
+                                          title: '',
+                                        ),
+                                        PieChartSectionData(
+                                          color: Colors.orange,
+                                          value: 0,
+                                          title: '',
+                                        ),
+                                        PieChartSectionData(
+                                          color: Colors.yellow,
+                                          value: 0,
+                                          title: '',
+                                        ),
+                                        PieChartSectionData(
+                                          color: Colors.red,
+                                          value: 0,
+                                          title: '',
+                                        ),
+                                        PieChartSectionData(
+                                          color: Colors.purple,
+                                          value: 0,
+                                          title: '',
+                                        ),
+                                        PieChartSectionData(
+                                          color: Colors.lightBlue,
+                                          value: 0,
+                                          title: '',
+                                        ),
+                                      ],
+                                      centerSpaceRadius: 45,
+                                    ),
                                   ),
                                 ),
                               ),
                               const SizedBox(height: 8),
-                              // Legend
                               Wrap(
-                                spacing: 12,
-                                runSpacing: 4,
-                                children: [
+                                alignment: WrapAlignment.start,
+                                spacing: 10,
+                                runSpacing: 6,
+                                children: const [
                                   _LegendDot(
                                     color: Colors.blue,
                                     label: 'Komunitas & Sosial',
@@ -184,77 +188,36 @@ class KegiatanScreen extends StatelessWidget {
                 );
               },
             ),
+
             const SizedBox(height: 16),
-            // Middle: 2 horizontal cards
-            Row(
-              children: [
-                Expanded(
-                  child: Card(
-                    color: const Color(0xFFFFF4CC),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.all(24.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: const [
-                          Text(
-                            '🍒 Kegiatan berdasarkan Waktu',
-                            style: TextStyle(
-                              color: Color(0xFFB97A00),
-                              fontWeight: FontWeight.w600,
-                              fontSize: 15,
-                            ),
-                          ),
-                          SizedBox(height: 12),
-                          Text(
-                            'Sudah Lewat: 1',
-                            style: TextStyle(fontSize: 14),
-                          ),
-                          Text('Hari Ini: 0', style: TextStyle(fontSize: 14)),
-                          Text(
-                            'Akan Datang: 0',
-                            style: TextStyle(fontSize: 14),
-                          ),
+
+            // --- MIDDLE SECTION: Two horizontal cards ---
+            LayoutBuilder(
+              builder: (context, constraints) {
+                final bool isMobile = constraints.maxWidth < 600;
+                return isMobile
+                    ? Column(
+                        children: [
+                          _buildTimeCard(),
+                          const SizedBox(height: 12),
+                          _buildResponsibleCard(),
                         ],
-                      ),
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: Card(
-                    color: const Color(0xFFF4E8FF),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.all(24.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: const [
-                          Text(
-                            '👤 Penanggung Jawab Terbanyak',
-                            style: TextStyle(
-                              color: Color(0xFF6A4FB6),
-                              fontWeight: FontWeight.w600,
-                              fontSize: 15,
-                            ),
-                          ),
-                          SizedBox(height: 12),
-                          Text('Pak', style: TextStyle(fontSize: 14)),
+                      )
+                    : Row(
+                        children: [
+                          Expanded(child: _buildTimeCard()),
+                          const SizedBox(width: 16),
+                          Expanded(child: _buildResponsibleCard()),
                         ],
-                      ),
-                    ),
-                  ),
-                ),
-              ],
+                      );
+              },
             ),
+
             const SizedBox(height: 16),
-            // Bottom: wide bar chart
+
+            // --- BOTTOM SECTION: Bar Chart (fixed overflow) ---
             Card(
-              color: const Color(0xFFFDE6F0),
+              color: const Color(0xFFFFE6F0),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12),
               ),
@@ -267,87 +230,101 @@ class KegiatanScreen extends StatelessWidget {
                       '📅 Kegiatan per Bulan (Tahun Ini)',
                       style: TextStyle(
                         color: Color(0xFFD94B7A),
-                        fontWeight: FontWeight.w600,
-                        fontSize: 15,
+                        fontWeight: FontWeight.w700,
+                        fontSize: 16,
                       ),
                     ),
                     const SizedBox(height: 12),
-                    SizedBox(
-                      height: 220,
-                      child: BarChart(
-                        BarChartData(
-                          maxY: 1.2,
-                          barTouchData: BarTouchData(enabled: false),
-                          titlesData: FlTitlesData(
-                            leftTitles: AxisTitles(
-                              sideTitles: SideTitles(
-                                showTitles: true,
-                                reservedSize: 40,
-                              ),
-                            ),
-                            bottomTitles: AxisTitles(
-                              sideTitles: SideTitles(
-                                showTitles: true,
-                                getTitlesWidget:
-                                    (double value, TitleMeta meta) {
-                                      return value == 0
-                                          ? Column(
-                                              mainAxisSize: MainAxisSize.min,
-                                              children: const [
-                                                Text(
-                                                  'Okt',
-                                                  style: TextStyle(
-                                                    fontSize: 13,
-                                                  ),
-                                                ),
-                                                Text(
-                                                  'total : 1',
-                                                  style: TextStyle(
-                                                    fontSize: 12,
-                                                  ),
-                                                ),
-                                              ],
-                                            )
-                                          : const SizedBox();
-                                    },
-                              ),
-                            ),
-                            topTitles: AxisTitles(
-                              sideTitles: SideTitles(showTitles: false),
-                            ),
-                            rightTitles: AxisTitles(
-                              sideTitles: SideTitles(showTitles: false),
-                            ),
-                          ),
-                          borderData: FlBorderData(show: false),
-                          barGroups: [
-                            BarChartGroupData(
-                              x: 0,
-                              barRods: [
-                                BarChartRodData(
-                                  toY: 1.0,
-                                  color: Colors.pinkAccent,
-                                  width: 120,
-                                  borderRadius: BorderRadius.circular(8),
+                    LayoutBuilder(
+                      builder: (context, constraints) {
+                        final bool isMobile = constraints.maxWidth < 600;
+                        return SingleChildScrollView(
+                          scrollDirection: Axis.horizontal,
+                          child: SizedBox(
+                            width: isMobile ? 400 : constraints.maxWidth,
+                            height: isMobile ? 200 : 250,
+                            child: BarChart(
+                              BarChartData(
+                                maxY: 1.2,
+                                barTouchData: BarTouchData(enabled: false),
+                                titlesData: FlTitlesData(
+                                  leftTitles: AxisTitles(
+                                    sideTitles: SideTitles(
+                                      showTitles: true,
+                                      reservedSize: 32,
+                                    ),
+                                  ),
+                                  bottomTitles: AxisTitles(
+                                    axisNameSize: 45,
+                                    sideTitles: SideTitles(
+                                      showTitles: true,
+                                      reservedSize: 40,
+                                      getTitlesWidget:
+                                          (double value, TitleMeta meta) {
+                                            return value == 0
+                                                ? Column(
+                                                    mainAxisSize:
+                                                        MainAxisSize.min,
+                                                    children: const [
+                                                      Text(
+                                                        'Okt',
+                                                        style: TextStyle(
+                                                          fontSize: 12,
+                                                          fontWeight:
+                                                              FontWeight.w500,
+                                                        ),
+                                                      ),
+                                                      SizedBox(height: 2),
+                                                      Text(
+                                                        'total : 1',
+                                                        style: TextStyle(
+                                                          fontSize: 11,
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  )
+                                                : const SizedBox();
+                                          },
+                                    ),
+                                  ),
+                                  topTitles: AxisTitles(
+                                    sideTitles: SideTitles(showTitles: false),
+                                  ),
+                                  rightTitles: AxisTitles(
+                                    sideTitles: SideTitles(showTitles: false),
+                                  ),
                                 ),
-                              ],
-                              showingTooltipIndicators: [0],
-                            ),
-                          ],
-                          gridData: FlGridData(
-                            show: true,
-                            drawVerticalLine: true,
-                            getDrawingHorizontalLine: (v) => FlLine(
-                              color: Colors.grey.shade300,
-                              strokeWidth: 1,
-                            ),
-                            getDrawingVerticalLine: (v) => FlLine(
-                              color: Colors.grey.shade300,
-                              strokeWidth: 1,
+                                borderData: FlBorderData(show: false),
+                                barGroups: [
+                                  BarChartGroupData(
+                                    x: 0,
+                                    barRods: [
+                                      BarChartRodData(
+                                        toY: 1.0,
+                                        color: Colors.pinkAccent,
+                                        width: isMobile ? 60 : 100,
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                                gridData: FlGridData(
+                                  show: true,
+                                  drawVerticalLine: true,
+                                  getDrawingHorizontalLine: (v) => FlLine(
+                                    color: Colors.grey.shade300,
+                                    strokeWidth: 1,
+                                  ),
+                                  getDrawingVerticalLine: (v) => FlLine(
+                                    color: Colors.grey.shade300,
+                                    strokeWidth: 1,
+                                  ),
+                                ),
+                              ),
                             ),
                           ),
-                        ),
-                      ),
+                        );
+                      },
                     ),
                   ],
                 ),
@@ -358,8 +335,62 @@ class KegiatanScreen extends StatelessWidget {
       ),
     );
   }
+
+  // --- Helper cards ---
+  Widget _buildTimeCard() {
+    return Card(
+      color: const Color(0xFFFFF4CC),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      child: Padding(
+        padding: const EdgeInsets.all(24.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: const [
+            Text(
+              '🍒 Kegiatan berdasarkan Waktu',
+              style: TextStyle(
+                color: Color(0xFFB97A00),
+                fontWeight: FontWeight.w600,
+                fontSize: 15,
+              ),
+            ),
+            SizedBox(height: 12),
+            Text('Sudah Lewat: 1', style: TextStyle(fontSize: 14)),
+            Text('Hari Ini: 0', style: TextStyle(fontSize: 14)),
+            Text('Akan Datang: 0', style: TextStyle(fontSize: 14)),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildResponsibleCard() {
+    return Card(
+      color: const Color(0xFFF4E8FF),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      child: Padding(
+        padding: const EdgeInsets.all(24.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: const [
+            Text(
+              '👤 Penanggung Jawab Terbanyak',
+              style: TextStyle(
+                color: Color(0xFF6A4FB6),
+                fontWeight: FontWeight.w600,
+                fontSize: 15,
+              ),
+            ),
+            SizedBox(height: 12),
+            Text('Pak', style: TextStyle(fontSize: 14)),
+          ],
+        ),
+      ),
+    );
+  }
 }
 
+// --- Legend Dot widget ---
 class _LegendDot extends StatelessWidget {
   final Color color;
   final String label;
