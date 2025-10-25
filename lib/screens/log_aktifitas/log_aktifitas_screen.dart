@@ -292,10 +292,10 @@ class _LogAktifitasScreenState extends State<LogAktifitasScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isMobile = MediaQuery.of(context).size.width < 700;
     // Light theme colors tuned to match the provided screenshot
     const bgCard = Colors.white;
     const innerTableBg = Colors.white;
-    const headerBg = Colors.white;
 
     return Padding(
       padding: const EdgeInsets.all(16.0),
@@ -380,175 +380,76 @@ class _LogAktifitasScreenState extends State<LogAktifitasScreen> {
                       ),
                       child: Column(
                         children: [
-                          // header
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                              vertical: 10,
-                              horizontal: 12,
-                            ),
-                            decoration: const BoxDecoration(
-                              color: headerBg,
-                              borderRadius: BorderRadius.only(
-                                topLeft: Radius.circular(8),
-                                topRight: Radius.circular(8),
-                              ),
-                            ),
-                            child: Row(
-                              children: const [
-                                Expanded(
-                                  flex: 1,
-                                  child: Text(
-                                    'NO',
-                                    style: TextStyle(
-                                      color: Colors.black54,
-                                      fontSize: 13,
-                                      fontWeight: FontWeight.w700,
-                                    ),
-                                  ),
-                                ),
-                                Expanded(
-                                  flex: 3,
-                                  child: Text(
-                                    'TANGGAL',
-                                    style: TextStyle(
-                                      color: Colors.black54,
-                                      fontSize: 13,
-                                      fontWeight: FontWeight.w700,
-                                    ),
-                                  ),
-                                ),
-                                Expanded(
-                                  flex: 6,
-                                  child: Text(
-                                    'DESKRIPSI',
-                                    style: TextStyle(
-                                      color: Colors.black54,
-                                      fontSize: 13,
-                                      fontWeight: FontWeight.w700,
-                                    ),
-                                  ),
-                                ),
-                                Expanded(
-                                  flex: 3,
-                                  child: Text(
-                                    'AKTOR',
-                                    textAlign: TextAlign.left,
-                                    style: TextStyle(
-                                      color: Colors.black54,
-                                      fontSize: 13,
-                                      fontWeight: FontWeight.w700,
-                                    ),
-                                  ),
-                                ),
-                                Expanded(
-                                  flex: 1,
-                                  child: Text(
-                                    'AKSI',
-                                    textAlign: TextAlign.center,
-                                    style: TextStyle(
-                                      color: Colors.black54,
-                                      fontSize: 13,
-                                      fontWeight: FontWeight.w700,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-
-                          const Divider(height: 1, color: Color(0xFF2B2F32)),
-
-                          // rows (or empty state)
-                          Expanded(
-                            child: _filteredItems.isEmpty
-                                ? Center(
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(24.0),
-                                      child: Column(
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          Icon(
-                                            Icons.inbox,
-                                            size: 48,
-                                            color: Colors.grey.shade400,
-                                          ),
-                                          const SizedBox(height: 12),
-                                          Text(
-                                            'Tidak ada log yang sesuai filter',
-                                            style: TextStyle(
-                                              color: Colors.grey.shade600,
+                          // For small screens we show a card/list layout; for larger screens keep the table
+                          isMobile
+                              ? Expanded(
+                                  child: _filteredItems.isEmpty
+                                      ? Center(
+                                          child: Padding(
+                                            padding: const EdgeInsets.all(24.0),
+                                            child: Column(
+                                              mainAxisSize: MainAxisSize.min,
+                                              children: [
+                                                Icon(
+                                                  Icons.inbox,
+                                                  size: 48,
+                                                  color: Colors.grey.shade400,
+                                                ),
+                                                const SizedBox(height: 12),
+                                                Text(
+                                                  'Tidak ada log yang sesuai filter',
+                                                  style: TextStyle(
+                                                    color: Colors.grey.shade600,
+                                                  ),
+                                                ),
+                                              ],
                                             ),
                                           ),
-                                        ],
-                                      ),
-                                    ),
-                                  )
-                                : ListView.separated(
-                                    padding: const EdgeInsets.symmetric(
-                                      vertical: 8,
-                                    ),
-                                    itemCount: _pagedItems.length,
-                                    separatorBuilder: (_, __) => Divider(
-                                      height: 1,
-                                      color: Colors.grey.shade200,
-                                    ),
-                                    itemBuilder: (context, index) {
-                                      final item = _pagedItems[index];
-                                      final rowIndex =
-                                          index +
-                                          1 +
-                                          (_currentPage - 1) * _rowsPerPage;
-                                      return Container(
-                                        padding: const EdgeInsets.symmetric(
-                                          vertical: 12,
-                                          horizontal: 12,
-                                        ),
-                                        child: Row(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.center,
-                                          children: [
-                                            Expanded(
-                                              flex: 1,
-                                              child: Text(
-                                                rowIndex.toString(),
-                                                style: const TextStyle(
-                                                  color: Colors.black87,
+                                        )
+                                      : ListView.separated(
+                                          padding: const EdgeInsets.symmetric(
+                                            vertical: 8,
+                                            horizontal: 6,
+                                          ),
+                                          itemCount: _filteredItems.length,
+                                          separatorBuilder: (_, __) => Divider(
+                                            height: 8,
+                                            color: Colors.grey.shade200,
+                                          ),
+                                          itemBuilder: (context, index) {
+                                            final item = _filteredItems[index];
+                                            return Card(
+                                              margin:
+                                                  const EdgeInsets.symmetric(
+                                                    vertical: 4,
+                                                  ),
+                                              child: ListTile(
+                                                contentPadding:
+                                                    const EdgeInsets.symmetric(
+                                                      vertical: 12,
+                                                      horizontal: 12,
+                                                    ),
+                                                leading: CircleAvatar(
+                                                  backgroundColor:
+                                                      Colors.grey.shade200,
+                                                  child: Text(item['no'] ?? ''),
                                                 ),
-                                              ),
-                                            ),
-                                            Expanded(
-                                              flex: 3,
-                                              child: Text(
-                                                item['tanggal'] ?? '',
-                                                style: const TextStyle(
-                                                  color: Colors.black87,
+                                                title: Text(
+                                                  item['deskripsi'] ?? '',
+                                                  maxLines: 2,
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
                                                 ),
-                                              ),
-                                            ),
-                                            Expanded(
-                                              flex: 6,
-                                              child: Text(
-                                                item['deskripsi'] ?? '',
-                                                style: const TextStyle(
-                                                  color: Colors.black87,
+                                                subtitle: Padding(
+                                                  padding:
+                                                      const EdgeInsets.only(
+                                                        top: 6.0,
+                                                      ),
+                                                  child: Text(
+                                                    '${item['tanggal'] ?? ''} • ${item['aktor'] ?? ''}',
+                                                  ),
                                                 ),
-                                                overflow: TextOverflow.ellipsis,
-                                              ),
-                                            ),
-                                            Expanded(
-                                              flex: 3,
-                                              child: Text(
-                                                item['aktor'] ?? '',
-                                                style: const TextStyle(
-                                                  color: Colors.black87,
-                                                ),
-                                              ),
-                                            ),
-                                            Expanded(
-                                              flex: 1,
-                                              child: Align(
-                                                alignment: Alignment.center,
-                                                child: PopupMenuButton<String>(
+                                                trailing: PopupMenuButton<String>(
                                                   onSelected: (v) {
                                                     if (v == 'detail') {
                                                       showDialog<void>(
@@ -583,7 +484,7 @@ class _LogAktifitasScreenState extends State<LogAktifitasScreen> {
                                                               const SizedBox(
                                                                 height: 6,
                                                               ),
-                                                              Text(
+                                                              const Text(
                                                                 'Deskripsi:',
                                                               ),
                                                               const SizedBox(
@@ -622,13 +523,188 @@ class _LogAktifitasScreenState extends State<LogAktifitasScreen> {
                                                   ),
                                                 ),
                                               ),
-                                            ),
-                                          ],
+                                            );
+                                          },
                                         ),
-                                      );
-                                    },
-                                  ),
-                          ),
+                                )
+                              : Expanded(
+                                  child: _filteredItems.isEmpty
+                                      ? Center(
+                                          child: Padding(
+                                            padding: const EdgeInsets.all(24.0),
+                                            child: Column(
+                                              mainAxisSize: MainAxisSize.min,
+                                              children: [
+                                                Icon(
+                                                  Icons.inbox,
+                                                  size: 48,
+                                                  color: Colors.grey.shade400,
+                                                ),
+                                                const SizedBox(height: 12),
+                                                Text(
+                                                  'Tidak ada log yang sesuai filter',
+                                                  style: TextStyle(
+                                                    color: Colors.grey.shade600,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        )
+                                      : ListView.separated(
+                                          padding: const EdgeInsets.symmetric(
+                                            vertical: 8,
+                                          ),
+                                          itemCount: _pagedItems.length,
+                                          separatorBuilder: (_, __) => Divider(
+                                            height: 1,
+                                            color: Colors.grey.shade200,
+                                          ),
+                                          itemBuilder: (context, index) {
+                                            final item = _pagedItems[index];
+                                            final rowIndex =
+                                                index +
+                                                1 +
+                                                (_currentPage - 1) *
+                                                    _rowsPerPage;
+                                            return Container(
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                    vertical: 12,
+                                                    horizontal: 12,
+                                                  ),
+                                              child: Row(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.center,
+                                                children: [
+                                                  Expanded(
+                                                    flex: 1,
+                                                    child: Text(
+                                                      rowIndex.toString(),
+                                                      style: const TextStyle(
+                                                        color: Colors.black87,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  Expanded(
+                                                    flex: 3,
+                                                    child: Text(
+                                                      item['tanggal'] ?? '',
+                                                      style: const TextStyle(
+                                                        color: Colors.black87,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  Expanded(
+                                                    flex: 6,
+                                                    child: Text(
+                                                      item['deskripsi'] ?? '',
+                                                      style: const TextStyle(
+                                                        color: Colors.black87,
+                                                      ),
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
+                                                    ),
+                                                  ),
+                                                  Expanded(
+                                                    flex: 3,
+                                                    child: Text(
+                                                      item['aktor'] ?? '',
+                                                      style: const TextStyle(
+                                                        color: Colors.black87,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  Expanded(
+                                                    flex: 1,
+                                                    child: Align(
+                                                      alignment:
+                                                          Alignment.center,
+                                                      child: PopupMenuButton<String>(
+                                                        onSelected: (v) {
+                                                          if (v == 'detail') {
+                                                            showDialog<void>(
+                                                              context: context,
+                                                              builder: (ctx) => AlertDialog(
+                                                                title: const Text(
+                                                                  'Detail Log',
+                                                                ),
+                                                                content: Column(
+                                                                  mainAxisSize:
+                                                                      MainAxisSize
+                                                                          .min,
+                                                                  crossAxisAlignment:
+                                                                      CrossAxisAlignment
+                                                                          .start,
+                                                                  children: [
+                                                                    Text(
+                                                                      'No: ${item['no']}',
+                                                                    ),
+                                                                    const SizedBox(
+                                                                      height: 6,
+                                                                    ),
+                                                                    Text(
+                                                                      'Tanggal: ${item['tanggal']}',
+                                                                    ),
+                                                                    const SizedBox(
+                                                                      height: 6,
+                                                                    ),
+                                                                    Text(
+                                                                      'Aktor: ${item['aktor']}',
+                                                                    ),
+                                                                    const SizedBox(
+                                                                      height: 6,
+                                                                    ),
+                                                                    Text(
+                                                                      'Deskripsi:',
+                                                                    ),
+                                                                    const SizedBox(
+                                                                      height: 4,
+                                                                    ),
+                                                                    Text(
+                                                                      item['deskripsi'] ??
+                                                                          '',
+                                                                    ),
+                                                                  ],
+                                                                ),
+                                                                actions: [
+                                                                  TextButton(
+                                                                    onPressed: () =>
+                                                                        Navigator.of(
+                                                                          ctx,
+                                                                        ).pop(),
+                                                                    child:
+                                                                        const Text(
+                                                                          'Tutup',
+                                                                        ),
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                            );
+                                                          }
+                                                        },
+                                                        itemBuilder: (_) =>
+                                                            const [
+                                                              PopupMenuItem(
+                                                                value: 'detail',
+                                                                child: Text(
+                                                                  'Detail',
+                                                                ),
+                                                              ),
+                                                            ],
+                                                        icon: Icon(
+                                                          Icons.more_vert,
+                                                          color: Colors.black54,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            );
+                                          },
+                                        ),
+                                ),
                         ],
                       ),
                     ),

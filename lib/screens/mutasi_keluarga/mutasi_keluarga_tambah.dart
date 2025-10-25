@@ -169,184 +169,282 @@ class _MutasiKeluargaTambahState extends State<MutasiKeluargaTambah> {
               padding: const EdgeInsets.all(24.0),
               child: Form(
                 key: _formKey,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text(
-                      'Buat Mutasi Keluarga',
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                    const SizedBox(height: 22),
-
-                    label('Jenis Mutasi'),
-                    DropdownButtonFormField<String>(
-                      initialValue: _jenisMutasi,
-                      items: [
-                        const DropdownMenuItem(
-                          value: null,
-                          child: Text('-- Pilih Jenis Mutasi --'),
-                        ),
-                        ...jenisOptions.map(
-                          (e) => DropdownMenuItem(
-                            value: e,
-                            child: Text(
-                              e,
-                              style: const TextStyle(fontSize: 14),
-                            ),
-                          ),
-                        ),
-                      ],
-                      onChanged: (v) => setState(() => _jenisMutasi = v),
-                      decoration: inputDecoration,
-                      validator: (v) {
-                        if (v == null || v.isEmpty) {
-                          return 'Jenis mutasi wajib dipilih';
-                        }
-                        return null;
-                      },
-                    ),
-
-                    const SizedBox(height: 18),
-                    label('Keluarga'),
-                    DropdownButtonFormField<String>(
-                      initialValue: _keluarga,
-                      items: [
-                        const DropdownMenuItem(
-                          value: null,
-                          child: Text('-- Pilih Keluarga --'),
-                        ),
-                        ...keluargaOptions.map(
-                          (e) => DropdownMenuItem(
-                            value: e,
-                            child: Text(
-                              e,
-                              style: const TextStyle(fontSize: 14),
-                            ),
-                          ),
-                        ),
-                      ],
-                      onChanged: (v) => setState(() => _keluarga = v),
-                      decoration: inputDecoration.copyWith(
-                        enabledBorder: inputDecoration.border,
-                      ),
-                      validator: (v) {
-                        if (v == null || v.isEmpty) {
-                          return 'Keluarga wajib dipilih';
-                        }
-                        return null;
-                      },
-                    ),
-
-                    const SizedBox(height: 18),
-                    label('Alasan Mutasi'),
-                    TextFormField(
-                      controller: _alasanController,
-                      maxLines: 4,
-                      decoration: inputDecoration.copyWith(
-                        hintText: 'Masukkan alasan disini...',
-                      ),
-                      style: const TextStyle(fontSize: 14),
-                    ),
-
-                    const SizedBox(height: 18),
-                    label('Tanggal Mutasi'),
-                    Column(
+                child: LayoutBuilder(
+                  builder: (context, constraints) {
+                    final isNarrow = constraints.maxWidth < 700;
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Row(
-                          children: [
-                            Expanded(
-                              child: InkWell(
-                                onTap: _pickDate,
-                                child: InputDecorator(
-                                  decoration: inputDecoration,
+                        const Text(
+                          'Buat Mutasi Keluarga',
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                        const SizedBox(height: 22),
+
+                        // Jenis & Keluarga: side-by-side on wide, stacked on narrow
+                        if (!isNarrow)
+                          Row(
+                            children: [
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    label('Jenis Mutasi'),
+                                    DropdownButtonFormField<String>(
+                                      initialValue: _jenisMutasi,
+                                      items: [
+                                        const DropdownMenuItem(
+                                          value: null,
+                                          child: Text(
+                                            '-- Pilih Jenis Mutasi --',
+                                          ),
+                                        ),
+                                        ...jenisOptions.map(
+                                          (e) => DropdownMenuItem(
+                                            value: e,
+                                            child: Text(
+                                              e,
+                                              style: const TextStyle(
+                                                fontSize: 14,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                      onChanged: (v) =>
+                                          setState(() => _jenisMutasi = v),
+                                      decoration: inputDecoration,
+                                      validator: (v) {
+                                        if (v == null || v.isEmpty) {
+                                          return 'Jenis mutasi wajib dipilih';
+                                        }
+                                        return null;
+                                      },
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              const SizedBox(width: 18),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    label('Keluarga'),
+                                    DropdownButtonFormField<String>(
+                                      initialValue: _keluarga,
+                                      items: [
+                                        const DropdownMenuItem(
+                                          value: null,
+                                          child: Text('-- Pilih Keluarga --'),
+                                        ),
+                                        ...keluargaOptions.map(
+                                          (e) => DropdownMenuItem(
+                                            value: e,
+                                            child: Text(
+                                              e,
+                                              style: const TextStyle(
+                                                fontSize: 14,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                      onChanged: (v) =>
+                                          setState(() => _keluarga = v),
+                                      decoration: inputDecoration.copyWith(
+                                        enabledBorder: inputDecoration.border,
+                                      ),
+                                      validator: (v) {
+                                        if (v == null || v.isEmpty) {
+                                          return 'Keluarga wajib dipilih';
+                                        }
+                                        return null;
+                                      },
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          )
+                        else ...[
+                          label('Jenis Mutasi'),
+                          DropdownButtonFormField<String>(
+                            initialValue: _jenisMutasi,
+                            items: [
+                              const DropdownMenuItem(
+                                value: null,
+                                child: Text('-- Pilih Jenis Mutasi --'),
+                              ),
+                              ...jenisOptions.map(
+                                (e) => DropdownMenuItem(
+                                  value: e,
                                   child: Text(
-                                    _tanggalMutasi == null
-                                        ? '--/--/----'
-                                        : formatLongDate(_tanggalMutasi!),
+                                    e,
                                     style: const TextStyle(fontSize: 14),
                                   ),
                                 ),
                               ),
+                            ],
+                            onChanged: (v) => setState(() => _jenisMutasi = v),
+                            decoration: inputDecoration,
+                            validator: (v) {
+                              if (v == null || v.isEmpty) {
+                                return 'Jenis mutasi wajib dipilih';
+                              }
+                              return null;
+                            },
+                          ),
+
+                          const SizedBox(height: 18),
+                          label('Keluarga'),
+                          DropdownButtonFormField<String>(
+                            initialValue: _keluarga,
+                            items: [
+                              const DropdownMenuItem(
+                                value: null,
+                                child: Text('-- Pilih Keluarga --'),
+                              ),
+                              ...keluargaOptions.map(
+                                (e) => DropdownMenuItem(
+                                  value: e,
+                                  child: Text(
+                                    e,
+                                    style: const TextStyle(fontSize: 14),
+                                  ),
+                                ),
+                              ),
+                            ],
+                            onChanged: (v) => setState(() => _keluarga = v),
+                            decoration: inputDecoration.copyWith(
+                              enabledBorder: inputDecoration.border,
                             ),
-                            const SizedBox(width: 8),
-                            IconButton(
-                              onPressed: () =>
-                                  setState(() => _tanggalMutasi = null),
-                              icon: const Icon(Icons.close, size: 20),
-                              padding: const EdgeInsets.all(8),
+                            validator: (v) {
+                              if (v == null || v.isEmpty) {
+                                return 'Keluarga wajib dipilih';
+                              }
+                              return null;
+                            },
+                          ),
+                        ],
+
+                        const SizedBox(height: 18),
+                        label('Alasan Mutasi'),
+                        TextFormField(
+                          controller: _alasanController,
+                          maxLines: 4,
+                          decoration: inputDecoration.copyWith(
+                            hintText: 'Masukkan alasan disini...',
+                          ),
+                          style: const TextStyle(fontSize: 14),
+                        ),
+
+                        const SizedBox(height: 18),
+                        label('Tanggal Mutasi'),
+                        Column(
+                          children: [
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: InkWell(
+                                    onTap: _pickDate,
+                                    child: InputDecorator(
+                                      decoration: inputDecoration,
+                                      child: Text(
+                                        _tanggalMutasi == null
+                                            ? '--/--/----'
+                                            : formatLongDate(_tanggalMutasi!),
+                                        style: const TextStyle(fontSize: 14),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(width: 8),
+                                IconButton(
+                                  onPressed: () =>
+                                      setState(() => _tanggalMutasi = null),
+                                  icon: const Icon(Icons.close, size: 20),
+                                  padding: const EdgeInsets.all(8),
+                                ),
+                                IconButton(
+                                  onPressed: _pickDate,
+                                  icon: const Icon(
+                                    Icons.calendar_today,
+                                    size: 20,
+                                  ),
+                                  padding: const EdgeInsets.all(8),
+                                ),
+                              ],
                             ),
-                            IconButton(
-                              onPressed: _pickDate,
-                              icon: const Icon(Icons.calendar_today, size: 20),
-                              padding: const EdgeInsets.all(8),
+                            // tanggal error text (only show after save attempt)
+                            if (_showDateError)
+                              Padding(
+                                padding: const EdgeInsets.only(top: 6.0),
+                                child: Text(
+                                  'Tanggal mutasi wajib diisi',
+                                  style: TextStyle(
+                                    color: Colors.red.shade700,
+                                    fontSize: 13,
+                                  ),
+                                ),
+                              ),
+                          ],
+                        ),
+
+                        const SizedBox(height: 22),
+                        Row(
+                          children: [
+                            ElevatedButton(
+                              onPressed: _save,
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Theme.of(context).primaryColor,
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 18,
+                                  vertical: 12,
+                                ),
+                                minimumSize: const Size(0, 42),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                              ),
+                              child: const Text(
+                                'Simpan',
+                                style: TextStyle(
+                                  fontSize: 15,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 12),
+                            OutlinedButton(
+                              onPressed: _resetForm,
+                              style: OutlinedButton.styleFrom(
+                                backgroundColor: Colors.white,
+                                side: BorderSide(color: Colors.grey.shade300),
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 16,
+                                  vertical: 12,
+                                ),
+                                minimumSize: const Size(0, 42),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                              ),
+                              child: Text(
+                                'Reset',
+                                style: TextStyle(
+                                  fontSize: 15,
+                                  color: Colors.grey.shade800,
+                                ),
+                              ),
                             ),
                           ],
                         ),
-                        // tanggal error text (only show after save attempt)
-                        if (_showDateError)
-                          Padding(
-                            padding: const EdgeInsets.only(top: 6.0),
-                            child: Text(
-                              'Tanggal mutasi wajib diisi',
-                              style: TextStyle(
-                                color: Colors.red.shade700,
-                                fontSize: 13,
-                              ),
-                            ),
-                          ),
                       ],
-                    ),
-
-                    const SizedBox(height: 22),
-                    Row(
-                      children: [
-                        ElevatedButton(
-                          onPressed: _save,
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Theme.of(context).primaryColor,
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 18,
-                              vertical: 12,
-                            ),
-                            minimumSize: const Size(0, 42),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                          ),
-                          child: const Text(
-                            'Simpan',
-                            style: TextStyle(fontSize: 15, color: Colors.white),
-                          ),
-                        ),
-                        const SizedBox(width: 12),
-                        OutlinedButton(
-                          onPressed: _resetForm,
-                          style: OutlinedButton.styleFrom(
-                            backgroundColor: Colors.white,
-                            side: BorderSide(color: Colors.grey.shade300),
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 16,
-                              vertical: 12,
-                            ),
-                            minimumSize: const Size(0, 42),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                          ),
-                          child: Text(
-                            'Reset',
-                            style: TextStyle(
-                              fontSize: 15,
-                              color: Colors.grey.shade800,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
+                    );
+                  },
                 ),
               ),
             ),

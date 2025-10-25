@@ -197,6 +197,7 @@ class _MutasiKeluargaDaftarState extends State<MutasiKeluargaDaftar> {
 
   @override
   Widget build(BuildContext context) {
+    final isMobile = MediaQuery.of(context).size.width < 700;
     return Scaffold(
       backgroundColor: const Color(0xFFF7F7F7),
       body: Padding(
@@ -241,55 +242,57 @@ class _MutasiKeluargaDaftarState extends State<MutasiKeluargaDaftar> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    // Header tabel
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        vertical: 14,
-                        horizontal: 16,
+                    // Header tabel for larger screens only
+                    if (!isMobile) ...[
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          vertical: 14,
+                          horizontal: 16,
+                        ),
+                        color: const Color(0xFFF9FAFB),
+                        child: Row(
+                          children: const [
+                            Expanded(
+                              flex: 1,
+                              child: Text(
+                                'NO',
+                                style: TextStyle(fontWeight: FontWeight.bold),
+                              ),
+                            ),
+                            Expanded(
+                              flex: 2,
+                              child: Text(
+                                'TANGGAL',
+                                style: TextStyle(fontWeight: FontWeight.bold),
+                              ),
+                            ),
+                            Expanded(
+                              flex: 3,
+                              child: Text(
+                                'KELUARGA',
+                                style: TextStyle(fontWeight: FontWeight.bold),
+                              ),
+                            ),
+                            Expanded(
+                              flex: 3,
+                              child: Text(
+                                'JENIS MUTASI',
+                                style: TextStyle(fontWeight: FontWeight.bold),
+                              ),
+                            ),
+                            Expanded(
+                              flex: 1,
+                              child: Text(
+                                'AKSI',
+                                style: TextStyle(fontWeight: FontWeight.bold),
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
-                      color: const Color(0xFFF9FAFB),
-                      child: Row(
-                        children: const [
-                          Expanded(
-                            flex: 1,
-                            child: Text(
-                              'NO',
-                              style: TextStyle(fontWeight: FontWeight.bold),
-                            ),
-                          ),
-                          Expanded(
-                            flex: 2,
-                            child: Text(
-                              'TANGGAL',
-                              style: TextStyle(fontWeight: FontWeight.bold),
-                            ),
-                          ),
-                          Expanded(
-                            flex: 3,
-                            child: Text(
-                              'KELUARGA',
-                              style: TextStyle(fontWeight: FontWeight.bold),
-                            ),
-                          ),
-                          Expanded(
-                            flex: 3,
-                            child: Text(
-                              'JENIS MUTASI',
-                              style: TextStyle(fontWeight: FontWeight.bold),
-                            ),
-                          ),
-                          Expanded(
-                            flex: 1,
-                            child: Text(
-                              'AKSI',
-                              style: TextStyle(fontWeight: FontWeight.bold),
-                              textAlign: TextAlign.center,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    const Divider(height: 1, color: Color(0xFFE0E0E0)),
+                      const Divider(height: 1, color: Color(0xFFE0E0E0)),
+                    ],
 
                     // Isi data tabel (listens to store changes)
                     Expanded(
@@ -297,6 +300,31 @@ class _MutasiKeluargaDaftarState extends State<MutasiKeluargaDaftar> {
                         valueListenable: mutasiKeluargaItems,
                         builder: (context, list, _) {
                           final source = _applyLocalFilters(list);
+                          if (source.isEmpty) {
+                            return Center(
+                              child: Padding(
+                                padding: const EdgeInsets.all(24.0),
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Icon(
+                                      Icons.inbox,
+                                      size: 48,
+                                      color: Colors.grey.shade400,
+                                    ),
+                                    const SizedBox(height: 12),
+                                    Text(
+                                      'Tidak ada data mutasi',
+                                      style: TextStyle(
+                                        color: Colors.grey.shade600,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            );
+                          }
+
                           return ListView.separated(
                             itemCount: source.length,
                             separatorBuilder: (context, index) => const Divider(
@@ -305,6 +333,143 @@ class _MutasiKeluargaDaftarState extends State<MutasiKeluargaDaftar> {
                             ),
                             itemBuilder: (context, index) {
                               final item = source[index];
+                              if (isMobile) {
+                                // card layout for mobile
+                                return Card(
+                                  margin: const EdgeInsets.symmetric(
+                                    vertical: 8,
+                                    horizontal: 12,
+                                  ),
+                                  child: InkWell(
+                                    onTap: () {
+                                      final keluargaName =
+                                          item['keluarga'] ?? '';
+                                      if (widget.onSelectKeluarga != null) {
+                                        widget.onSelectKeluarga!(keluargaName);
+                                      }
+                                    },
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(12.0),
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            item['keluarga'] ?? '',
+                                            style: const TextStyle(
+                                              fontWeight: FontWeight.w700,
+                                            ),
+                                          ),
+                                          const SizedBox(height: 6),
+                                          Row(
+                                            children: [
+                                              Expanded(
+                                                child: Text(
+                                                  item['tanggal'] ?? '',
+                                                  style: const TextStyle(
+                                                    color: Colors.black54,
+                                                  ),
+                                                ),
+                                              ),
+                                              Container(
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                      horizontal: 10,
+                                                      vertical: 6,
+                                                    ),
+                                                decoration: BoxDecoration(
+                                                  color:
+                                                      item['jenisColor'] ??
+                                                      Colors.green.shade100,
+                                                  borderRadius:
+                                                      BorderRadius.circular(12),
+                                                ),
+                                                child: Text(
+                                                  item['jenis'] ?? '',
+                                                  style: TextStyle(
+                                                    color:
+                                                        item['textColor'] ??
+                                                        Colors.green.shade700,
+                                                    fontWeight: FontWeight.w600,
+                                                  ),
+                                                ),
+                                              ),
+                                              const SizedBox(width: 8),
+                                              PopupMenuButton<String>(
+                                                icon: const Icon(
+                                                  Icons.more_horiz,
+                                                  color: Colors.black54,
+                                                ),
+                                                onSelected: (value) {
+                                                  if (value == 'detail') {
+                                                    showDialog(
+                                                      context: context,
+                                                      builder: (ctx) => AlertDialog(
+                                                        title: const Text(
+                                                          'Detail Mutasi',
+                                                        ),
+                                                        content: Column(
+                                                          mainAxisSize:
+                                                              MainAxisSize.min,
+                                                          crossAxisAlignment:
+                                                              CrossAxisAlignment
+                                                                  .start,
+                                                          children: [
+                                                            Text(
+                                                              'Tanggal: ${item['tanggal'] ?? '-'}',
+                                                            ),
+                                                            const SizedBox(
+                                                              height: 8,
+                                                            ),
+                                                            Text(
+                                                              'Keluarga: ${item['keluarga'] ?? '-'}',
+                                                            ),
+                                                            const SizedBox(
+                                                              height: 8,
+                                                            ),
+                                                            Text(
+                                                              'Jenis: ${item['jenis'] ?? '-'}',
+                                                            ),
+                                                            const SizedBox(
+                                                              height: 8,
+                                                            ),
+                                                            Text(
+                                                              'Alasan: ${item['alasan'] != null && (item['alasan'] as String).isNotEmpty ? item['alasan'] : '-'}',
+                                                            ),
+                                                          ],
+                                                        ),
+                                                        actions: [
+                                                          TextButton(
+                                                            onPressed: () =>
+                                                                Navigator.of(
+                                                                  ctx,
+                                                                ).pop(),
+                                                            child: const Text(
+                                                              'Tutup',
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    );
+                                                  }
+                                                },
+                                                itemBuilder: (context) => [
+                                                  const PopupMenuItem(
+                                                    value: 'detail',
+                                                    child: Text('Detail'),
+                                                  ),
+                                                ],
+                                              ),
+                                            ],
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                );
+                              }
+
+                              // desktop / wide layout (original row)
                               return InkWell(
                                 onTap: () {
                                   final keluargaName = item['keluarga'] ?? '';
