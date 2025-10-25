@@ -17,6 +17,7 @@ A modern **Flutter Web Application** built for smart community management.
 
 ## 💡 Project Overview
 
+<<<<<<< HEAD
 **JawaraPintar** is a community management system designed to simplify administrative, communication, and financial management for neighborhood or housing associations.
 
 Built using **Flutter Web**, it includes features like user management, financial reports, message broadcasting, and more — all with a sleek sidebar-based UI.
@@ -97,3 +98,13 @@ class KegiatanScreen extends StatelessWidget {
                             children: const [
                               Text(
 ```
+=======
+For help getting started with Flutter development, view the
+[online documentation](https://docs.flutter.dev/), which offers tutorials,
+samples, guidance on mobile development, and a full API reference.
+=======
+# jawarapintar_group4
+>>>>>>> 2f8857adc5d11aa6ff7d7f0581f5114229d7da5b
+
+## Hammam Taek
+>>>>>>> 8631290c6f3983e5b9d182dbf1d96a36fad8a3ed
