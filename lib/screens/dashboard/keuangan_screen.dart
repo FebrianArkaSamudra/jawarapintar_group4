@@ -8,149 +8,106 @@ class KeuanganScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       color: const Color(0xFFF7F7F7),
-      padding: const EdgeInsets.all(16),
       child: SingleChildScrollView(
+        padding: const EdgeInsets.all(16),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            // Statistik atas (responsive: 1/2/3 kolom tergantung lebar)
-            LayoutBuilder(
-              builder: (context, constraints) {
-                final double maxWidth = constraints.maxWidth;
-                final double spacing = 16;
-                final int columns = maxWidth >= 1100
-                    ? 3
-                    : maxWidth >= 700
-                    ? 2
-                    : 1;
-                final double cardWidth =
-                    (maxWidth - (columns - 1) * spacing) / columns;
+            // Statistik cards (stacked vertically on mobile)
+            _StatCard(
+              title: 'Total Pemasukan',
+              value: '50 jt',
+              color: const Color(0xFFCCE2FF),
+              icon: Icons.account_balance_wallet_outlined,
+            ),
+            const SizedBox(height: 12),
+            _StatCard(
+              title: 'Total Pengeluaran',
+              value: '2.1 rb',
+              color: const Color(0xFFCFFFE2),
+              icon: Icons.money_off_csred_outlined,
+            ),
+            const SizedBox(height: 12),
+            _StatCard(
+              title: 'Jumlah Transaksi',
+              value: '4',
+              color: const Color(0xFFFFF9CC),
+              icon: Icons.bar_chart_outlined,
+            ),
+            const SizedBox(height: 16),
 
-                return Wrap(
-                  spacing: spacing,
-                  runSpacing: 12,
-                  children: [
-                    SizedBox(
-                      width: cardWidth,
-                      child: _StatCard(
-                        title: 'Total Pemasukan',
-                        value: '50 jt',
-                        color: const Color(0xFFCCE2FF),
-                        icon: Icons.account_balance_wallet_outlined,
-                      ),
-                    ),
-                    SizedBox(
-                      width: cardWidth,
-                      child: _StatCard(
-                        title: 'Total Pengeluaran',
-                        value: '2.1 rb',
-                        color: const Color(0xFFCFFFE2),
-                        icon: Icons.money_off_csred_outlined,
-                      ),
-                    ),
-                    SizedBox(
-                      width: cardWidth,
-                      child: _StatCard(
-                        title: 'Jumlah Transaksi',
-                        value: '4',
-                        color: const Color(0xFFFFF9CC),
-                        icon: Icons.bar_chart_outlined,
-                      ),
-                    ),
-                  ],
-                );
-              },
+            // Grafik bar pemasukan
+            _ChartCard(
+              title: 'Pemasukan per Bulan',
+              color: const Color(0xFFF3E6FF),
+              child: _BarChartSample(
+                barColor: Colors.blueAccent,
+                maxY: 60,
+                data: [0, 45, 0, 0, 0, 0, 0, 0, 0, 0, 0, 50],
+                labels: ['Agu', '', '', '', '', '', '', '', '', '', '', 'Okt'],
+              ),
             ),
             const SizedBox(height: 16),
-            // Grafik bar dan pie
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Expanded(
-                  child: _ChartCard(
-                    title: 'Pemasukan per Bulan',
-                    color: const Color(0xFFF3E6FF),
-                    child: _BarChartSample(
-                      barColor: Colors.blueAccent,
-                      maxY: 60,
-                      data: [0, 45, 0, 0, 0, 0, 0, 0, 0, 0, 0, 50],
-                      labels: [
-                        'Agu',
-                        '',
-                        '',
-                        '',
-                        '',
-                        '',
-                        '',
-                        '',
-                        '',
-                        '',
-                        '',
-                        'Okt',
-                      ],
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: _ChartCard(
-                    title: 'Pengeluaran per Bulan',
-                    color: const Color(0xFFFFE6EA),
-                    child: _BarChartSample(
-                      barColor: Colors.redAccent,
-                      maxY: 2.2,
-                      data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2.1],
-                      labels: ['Okt'],
-                    ),
-                  ),
-                ),
-              ],
+
+            // Grafik bar pengeluaran
+            _ChartCard(
+              title: 'Pengeluaran per Bulan',
+              color: const Color(0xFFFFE6EA),
+              child: _BarChartSample(
+                barColor: Colors.redAccent,
+                maxY: 2.2,
+                data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2.1],
+                labels: ['Okt'],
+              ),
             ),
             const SizedBox(height: 16),
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Expanded(
-                  child: _ChartCard(
-                    title: 'Pemasukan Berdasarkan Kategori',
-                    color: const Color(0xFFCCE2FF),
-                    child: _PieChartSample(
-                      sections: [
-                        PieChartSectionData(
-                          color: Colors.orangeAccent,
-                          value: 100,
-                          title: '',
-                        ),
-                        PieChartSectionData(
-                          color: Colors.redAccent,
-                          value: 0,
-                          title: '',
-                        ),
-                      ],
-                      legend: const [
-                        'Dana Bantuan Pemerintah',
-                        'Pendapatan Lainnya',
-                      ],
+
+            // Pie chart pemasukan
+            _ChartCard(
+              title: 'Pemasukan Berdasarkan Kategori',
+              color: const Color(0xFFCCE2FF),
+              child: _PieChartSample(
+                sections: [
+                  PieChartSectionData(
+                    color: Colors.orangeAccent,
+                    value: 100,
+                    title: '100%',
+                    titleStyle: const TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 12,
                     ),
                   ),
-                ),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: _ChartCard(
-                    title: 'Pengeluaran Berdasarkan Kategori',
-                    color: const Color(0xFFCFFFE2),
-                    child: _PieChartSample(
-                      sections: [
-                        PieChartSectionData(
-                          color: Colors.redAccent,
-                          value: 100,
-                          title: '',
-                        ),
-                      ],
-                      legend: const ['Pemeliharaan Fasilitas'],
+                  PieChartSectionData(
+                    color: Colors.redAccent,
+                    value: 0,
+                    title: '',
+                  ),
+                ],
+                legend: const ['Dana Bantuan Pemerintah', 'Pendapatan Lainnya'],
+              ),
+            ),
+            const SizedBox(height: 16),
+
+            // Pie chart pengeluaran
+            _ChartCard(
+              title: 'Pengeluaran Berdasarkan Kategori',
+              color: const Color(0xFFCFFFE2),
+              child: _PieChartSample(
+                sections: [
+                  PieChartSectionData(
+                    color: Colors.redAccent,
+                    value: 100,
+                    title: '100%',
+                    titleStyle: const TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 12,
                     ),
                   ),
-                ),
-              ],
+                ],
+                legend: const ['Pemeliharaan Fasilitas'],
+              ),
             ),
           ],
         ),
@@ -170,6 +127,7 @@ class _StatCard extends StatelessWidget {
     required this.color,
     required this.icon,
   });
+
   @override
   Widget build(BuildContext context) {
     return Card(
@@ -177,28 +135,31 @@ class _StatCard extends StatelessWidget {
       elevation: 2,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: Padding(
-        padding: const EdgeInsets.all(18.0),
+        padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
               children: [
-                Icon(icon, color: Colors.blue.shade700, size: 22),
+                Icon(icon, color: Colors.blue.shade700, size: 20),
                 const SizedBox(width: 8),
-                Text(
-                  title,
-                  style: const TextStyle(
-                    fontWeight: FontWeight.w600,
-                    color: Color(0xFF3F6FAA),
+                Expanded(
+                  child: Text(
+                    title,
+                    style: const TextStyle(
+                      fontWeight: FontWeight.w600,
+                      color: Color(0xFF3F6FAA),
+                      fontSize: 14,
+                    ),
                   ),
                 ),
               ],
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 12),
             Text(
               value,
               style: const TextStyle(
-                fontSize: 28,
+                fontSize: 24,
                 fontWeight: FontWeight.bold,
                 color: Color(0xFF3F6FAA),
               ),
@@ -219,6 +180,7 @@ class _ChartCard extends StatelessWidget {
     required this.color,
     required this.child,
   });
+
   @override
   Widget build(BuildContext context) {
     return Card(
@@ -226,19 +188,22 @@ class _ChartCard extends StatelessWidget {
       elevation: 2,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: Padding(
-        padding: const EdgeInsets.all(18.0),
+        padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
               children: [
-                Icon(Icons.edit, color: Colors.blue.shade700, size: 18),
+                Icon(Icons.edit, color: Colors.blue.shade700, size: 16),
                 const SizedBox(width: 8),
-                Text(
-                  title,
-                  style: const TextStyle(
-                    fontWeight: FontWeight.w600,
-                    color: Color(0xFF3F6FAA),
+                Expanded(
+                  child: Text(
+                    title,
+                    style: const TextStyle(
+                      fontWeight: FontWeight.w600,
+                      color: Color(0xFF3F6FAA),
+                      fontSize: 14,
+                    ),
                   ),
                 ),
               ],
@@ -263,6 +228,7 @@ class _BarChartSample extends StatelessWidget {
     required this.barColor,
     required this.maxY,
   });
+
   @override
   Widget build(BuildContext context) {
     return BarChart(
@@ -272,16 +238,29 @@ class _BarChartSample extends StatelessWidget {
         barTouchData: BarTouchData(enabled: false),
         titlesData: FlTitlesData(
           leftTitles: AxisTitles(
-            sideTitles: SideTitles(showTitles: true, reservedSize: 40),
+            sideTitles: SideTitles(
+              showTitles: true,
+              reservedSize: 30,
+              getTitlesWidget: (value, meta) {
+                return Text(
+                  value.toInt().toString(),
+                  style: const TextStyle(fontSize: 10),
+                );
+              },
+            ),
           ),
           bottomTitles: AxisTitles(
             sideTitles: SideTitles(
               showTitles: true,
               getTitlesWidget: (value, meta) {
                 int idx = value.toInt();
-                return idx < labels.length
-                    ? Text(labels[idx])
-                    : const SizedBox();
+                if (idx < labels.length && labels[idx].isNotEmpty) {
+                  return Text(
+                    labels[idx],
+                    style: const TextStyle(fontSize: 10),
+                  );
+                }
+                return const SizedBox();
               },
             ),
           ),
@@ -294,7 +273,12 @@ class _BarChartSample extends StatelessWidget {
             BarChartGroupData(
               x: i,
               barRods: [
-                BarChartRodData(toY: data[i], color: barColor, width: 24),
+                BarChartRodData(
+                  toY: data[i],
+                  color: barColor,
+                  width: 16,
+                  borderRadius: BorderRadius.circular(4),
+                ),
               ],
             ),
         ],
@@ -307,6 +291,7 @@ class _PieChartSample extends StatelessWidget {
   final List<PieChartSectionData> sections;
   final List<String> legend;
   const _PieChartSample({required this.sections, required this.legend});
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -321,17 +306,31 @@ class _PieChartSample extends StatelessWidget {
             ),
           ),
         ),
-        const SizedBox(height: 8),
+        const SizedBox(height: 12),
         Wrap(
-          spacing: 12,
+          spacing: 8,
+          runSpacing: 4,
           children: [
             for (int i = 0; i < legend.length; i++)
               Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Container(width: 12, height: 12, color: sections[i].color),
+                  Container(
+                    width: 12,
+                    height: 12,
+                    decoration: BoxDecoration(
+                      color: sections[i].color,
+                      shape: BoxShape.circle,
+                    ),
+                  ),
                   const SizedBox(width: 4),
-                  Text(legend[i], style: const TextStyle(fontSize: 12)),
+                  Flexible(
+                    child: Text(
+                      legend[i],
+                      style: const TextStyle(fontSize: 11),
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
                 ],
               ),
           ],
