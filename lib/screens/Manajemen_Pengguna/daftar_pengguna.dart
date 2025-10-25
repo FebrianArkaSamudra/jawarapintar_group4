@@ -15,6 +15,7 @@ class _RegistrasiPageState extends State<RegistrasiPage> {
   List<Map<String, String>> _users = [];
   bool _loading = true;
   final TextEditingController _namaController = TextEditingController();
+  String? _selectedStatus; // 🔹 added this to track filter status
 
   @override
   void initState() {
@@ -27,13 +28,11 @@ class _RegistrasiPageState extends State<RegistrasiPage> {
     final List<Map<String, String>> converted = [];
 
     try {
-      // try init if repo has it (ignore if not)
       try {
         await PenggunaRepo.init();
       } catch (_) {}
 
       dynamic items;
-      // call getAll safely whether it returns Future or plain
       try {
         final maybe = PenggunaRepo.getAll();
         if (maybe is Future) {
@@ -80,12 +79,40 @@ class _RegistrasiPageState extends State<RegistrasiPage> {
         }
       }
 
+      // ✅ If repo returned something, use it; otherwise, use hardcoded fallback
       setState(() {
-        _users = converted;
+        _users = converted.isNotEmpty
+            ? converted
+            : [
+                {
+                  'no': '1',
+                  'nama': 'Hammam Abdullah',
+                  'email': 'Hammam@gmail.com',
+                  'noHp': '081234251261',
+                  'role': 'Admin',
+                  'status': 'Diterima',
+                },
+                {
+                  'no': '2',
+                  'nama': 'Arka love',
+                  'email': 'arka@gmail.com',
+                  'noHp': '081298763332',
+                  'role': 'Warga',
+                  'status': 'Pending',
+                },
+                {
+                  'no': '3',
+                  'nama': 'baihaqi',
+                  'email': 'yuma@gmail.com',
+                  'noHp': '081298769999',
+                  'role': 'Warga',
+                  'status': 'Ditolak',
+                },
+              ];
         _loading = false;
       });
     } catch (_) {
-      // fallback sample data
+      // ✅ Always load fallback data on error
       setState(() {
         _users = [
           {
@@ -102,7 +129,7 @@ class _RegistrasiPageState extends State<RegistrasiPage> {
             'email': 'arka@gmail.com',
             'noHp': '081298763332',
             'role': 'Warga',
-            'status': 'Diterima',
+            'status': 'Pending',
           },
           {
             'no': '3',
@@ -110,7 +137,7 @@ class _RegistrasiPageState extends State<RegistrasiPage> {
             'email': 'yuma@gmail.com',
             'noHp': '081298769999',
             'role': 'Warga',
-            'status': 'Diterima',
+            'status': 'Ditolak',
           },
         ];
         _loading = false;
@@ -124,24 +151,74 @@ class _RegistrasiPageState extends State<RegistrasiPage> {
       MaterialPageRoute(
         builder: (_) => TambahPenggunaScreen(
           onUserAdded: (u) async {
-            // Handle callback if needed
             return;
           },
         ),
       ),
     );
     if (res != null) {
-      // try persist via repo if available
       try {
         await PenggunaRepo.add(res);
       } catch (_) {}
       setState(() => _users.insert(0, res));
     }
-    return; // Add explicit return statement
+    return;
   }
 
-  void _openFilterDialog() {
-    // Implement filter dialog
+  // 🔹 Filter dialog implementation
+  void _openFilterDialog() async {
+    final result = await showDialog<String>(
+      context: context,
+      builder: (context) {
+        String? tempSelected = _selectedStatus;
+        return AlertDialog(
+          title: const Text('Filter by Status'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              RadioListTile<String>(
+                title: const Text('Diterima'),
+                value: 'Diterima',
+                groupValue: tempSelected,
+                onChanged: (value) {
+                  setState(() => tempSelected = value);
+                  Navigator.pop(context, value);
+                },
+              ),
+              RadioListTile<String>(
+                title: const Text('Pending'),
+                value: 'Pending',
+                groupValue: tempSelected,
+                onChanged: (value) {
+                  setState(() => tempSelected = value);
+                  Navigator.pop(context, value);
+                },
+              ),
+              RadioListTile<String>(
+                title: const Text('Ditolak'),
+                value: 'Ditolak',
+                groupValue: tempSelected,
+                onChanged: (value) {
+                  setState(() => tempSelected = value);
+                  Navigator.pop(context, value);
+                },
+              ),
+              TextButton(
+                onPressed: () => Navigator.pop(context, null),
+                child: const Text('Clear Filter'),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+
+    // Apply filter
+    if (result != null || _selectedStatus != null) {
+      setState(() {
+        _selectedStatus = result;
+      });
+    }
   }
 
   List<Map<String, String>> _filteredUsers() {
@@ -150,7 +227,13 @@ class _RegistrasiPageState extends State<RegistrasiPage> {
       final namaMatches = user['nama']?.toLowerCase().contains(query) ?? false;
       final emailMatches =
           user['email']?.toLowerCase().contains(query) ?? false;
-      return namaMatches || emailMatches;
+
+      // 🔹 Apply status filter
+      final statusMatches =
+          _selectedStatus == null ||
+          user['status']?.toLowerCase() == _selectedStatus!.toLowerCase();
+
+      return (namaMatches || emailMatches) && statusMatches;
     }).toList();
   }
 
@@ -188,7 +271,7 @@ class _RegistrasiPageState extends State<RegistrasiPage> {
                   prefixIcon: const Icon(Icons.search, color: Colors.grey),
                   suffixIcon: IconButton(
                     icon: const Icon(Icons.filter_list),
-                    onPressed: _openFilterDialog,
+                    onPressed: _openFilterDialog, // 🔹 now functional
                     color: theme.primaryColor,
                   ),
                   border: InputBorder.none,
@@ -270,10 +353,8 @@ class _RegistrasiPageState extends State<RegistrasiPage> {
                                     PenggunaDetailScreen(pengguna: user),
                               ),
                             );
-                            // reload in case detail changed via edit inside detail screen
                             await _load();
                           } else if (value == 'edit') {
-                            // expect Map<String,String> back from EditPenggunaScreen
                             final res = await Navigator.of(context)
                                 .push<Map<String, String>>(
                                   MaterialPageRoute(
@@ -282,7 +363,6 @@ class _RegistrasiPageState extends State<RegistrasiPage> {
                                   ),
                                 );
                             if (res != null) {
-                              // try persist via repo if available (safe wrapped)
                               try {
                                 await PenggunaRepo.add(res);
                               } catch (_) {}

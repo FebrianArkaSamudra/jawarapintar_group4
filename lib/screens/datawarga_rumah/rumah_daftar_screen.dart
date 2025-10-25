@@ -76,6 +76,7 @@ class _RumahDaftarScreenState extends State<RumahDaftarScreen> {
             ),
             const SizedBox(height: 12),
 
+            // --- MODIFIED SECTION ---
             // Table container
             Container(
               width: double.infinity,
@@ -90,71 +91,67 @@ class _RumahDaftarScreenState extends State<RumahDaftarScreen> {
                   ),
                 ],
               ),
-              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
+              // We only apply vertical padding to the container
+              padding: const EdgeInsets.symmetric(vertical: 20),
               child: SingleChildScrollView(
-                scrollDirection: Axis.vertical,
-                child: LayoutBuilder(
-                  builder: (context, constraints) {
-                    return ConstrainedBox(
-                      constraints: BoxConstraints(
-                        minWidth: constraints.maxWidth,
-                      ),
-                      child: DataTable(
-                        headingTextStyle: const TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black87,
+                // This makes the table scrollable from left-to-right
+                scrollDirection: Axis.horizontal,
+                // We apply horizontal padding here, inside the scroll
+                padding: const EdgeInsets.symmetric(horizontal: 24),
+                child: DataTable(
+                  headingTextStyle: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black87,
+                  ),
+                  columns: const [
+                    DataColumn(label: Text("No")),
+                    DataColumn(label: Text("Alamat")),
+                    DataColumn(label: Text("Status")),
+                    DataColumn(label: Text("Aksi")),
+                  ],
+                  rows: rumahList.map((rumah) {
+                    final isTersedia = rumah['status'] == 'Tersedia';
+                    return DataRow(
+                      cells: [
+                        DataCell(Text(rumah['no']!)),
+                        DataCell(Text(rumah['alamat']!)),
+                        DataCell(
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 12,
+                              vertical: 6,
+                            ),
+                            decoration: BoxDecoration(
+                              color: isTersedia
+                                  ? Colors.green.shade50
+                                  : Colors.blue.shade50,
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            child: Text(
+                              rumah['status']!,
+                              style: TextStyle(
+                                color: isTersedia
+                                    ? Colors.green
+                                    : Colors.blueAccent,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ),
                         ),
-                        columns: const [
-                          DataColumn(label: Text("No")),
-                          DataColumn(label: Text("Alamat")),
-                          DataColumn(label: Text("Status")),
-                          DataColumn(label: Text("Aksi")),
-                        ],
-                        rows: rumahList.map((rumah) {
-                          final isTersedia = rumah['status'] == 'Tersedia';
-                          return DataRow(
-                            cells: [
-                              DataCell(Text(rumah['no']!)),
-                              DataCell(Text(rumah['alamat']!)),
-                              DataCell(
-                                Container(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 12,
-                                    vertical: 6,
-                                  ),
-                                  decoration: BoxDecoration(
-                                    color: isTersedia
-                                        ? Colors.green.shade50
-                                        : Colors.blue.shade50,
-                                    borderRadius: BorderRadius.circular(20),
-                                  ),
-                                  child: Text(
-                                    rumah['status']!,
-                                    style: TextStyle(
-                                      color: isTersedia
-                                          ? Colors.green
-                                          : Colors.blueAccent,
-                                      fontWeight: FontWeight.w500,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              DataCell(
-                                IconButton(
-                                  onPressed: () {},
-                                  icon: const Icon(Icons.more_horiz),
-                                ),
-                              ),
-                            ],
-                          );
-                        }).toList(),
-                      ),
+                        DataCell(
+                          IconButton(
+                            onPressed: () {},
+                            icon: const Icon(Icons.more_horiz),
+                          ),
+                        ),
+                      ],
                     );
-                  },
+                  }).toList(),
                 ),
               ),
             ),
 
+            // --- END OF MODIFIED SECTION ---
             const SizedBox(height: 20),
 
             // Pagination

@@ -90,11 +90,11 @@ class _InformasiAspirasiScreenState extends State<InformasiAspirasiScreen> {
       no: 8,
       pengirim: 'Lina Marlina',
       judul: 'Peningkatan Fasilitas Umum',
-      status: 'Pending',  
+      status: 'Pending',
       tanggal: '3 Oktober 2025',
       deskripsi: 'Usulan penambahan fasilitas umum di area rekreasi.',
     ),
-    _AspirasiItem( 
+    _AspirasiItem(
       no: 9,
       pengirim: 'Agus Salim',
       judul: 'Perbaikan Jalan Rusak',
@@ -176,7 +176,9 @@ class _InformasiAspirasiScreenState extends State<InformasiAspirasiScreen> {
       context: context,
       builder: (dialogCtx) {
         return AlertDialog(
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
           titlePadding: EdgeInsets.zero,
           contentPadding: const EdgeInsets.all(20),
           title: Padding(
@@ -184,8 +186,10 @@ class _InformasiAspirasiScreenState extends State<InformasiAspirasiScreen> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Text('Filter Pesan Warga',
-                    style: TextStyle(fontWeight: FontWeight.bold)),
+                const Text(
+                  'Filter Pesan Warga',
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
                 InkWell(
                   onTap: () => Navigator.of(dialogCtx).pop(),
                   child: const Icon(Icons.close),
@@ -202,26 +206,33 @@ class _InformasiAspirasiScreenState extends State<InformasiAspirasiScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const SizedBox(height: 12),
-                    const Text('Judul',
-                        style: TextStyle(fontWeight: FontWeight.w600)),
+                    const Text(
+                      'Judul',
+                      style: TextStyle(fontWeight: FontWeight.w600),
+                    ),
                     const SizedBox(height: 8),
                     TextField(
                       controller: judulController,
                       decoration: InputDecoration(
                         hintText: 'Cari judul...',
                         border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(15)),
+                          borderRadius: BorderRadius.circular(15),
+                        ),
                       ),
                     ),
                     const SizedBox(height: 16),
-                    const Text('Status',
-                        style: TextStyle(fontWeight: FontWeight.w600)),
+                    const Text(
+                      'Status',
+                      style: TextStyle(fontWeight: FontWeight.w600),
+                    ),
                     const SizedBox(height: 8),
                     DropdownButtonFormField<String>(
                       value: selectedStatus,
                       hint: const Text('-- Pilih Status --'),
                       items: const ['Pending', 'Diterima', 'Ditolak']
-                          .map((s) => DropdownMenuItem(value: s, child: Text(s)))
+                          .map(
+                            (s) => DropdownMenuItem(value: s, child: Text(s)),
+                          )
                           .toList(),
                       onChanged: (v) => setStateSB(() => selectedStatus = v),
                     ),
@@ -233,7 +244,9 @@ class _InformasiAspirasiScreenState extends State<InformasiAspirasiScreen> {
                           onPressed: () {
                             judulController.clear();
                             setStateSB(() => selectedStatus = null);
-                            setState(() => _filteredItems = List.from(_allItems));
+                            setState(
+                              () => _filteredItems = List.from(_allItems),
+                            );
                           },
                           child: const Text('Reset Filter'),
                         ),
@@ -242,11 +255,13 @@ class _InformasiAspirasiScreenState extends State<InformasiAspirasiScreen> {
                             Navigator.of(dialogCtx).pop();
                             setState(() {
                               _filteredItems = _allItems.where((item) {
-                                final matchJudul = judulController.text.isEmpty ||
-                                    item.judul
-                                        .toLowerCase()
-                                        .contains(judulController.text.toLowerCase());
-                                final matchStatus = selectedStatus == null ||
+                                final matchJudul =
+                                    judulController.text.isEmpty ||
+                                    item.judul.toLowerCase().contains(
+                                      judulController.text.toLowerCase(),
+                                    );
+                                final matchStatus =
+                                    selectedStatus == null ||
                                     item.status == selectedStatus;
                                 return matchJudul && matchStatus;
                               }).toList();
@@ -322,11 +337,13 @@ class _InformasiAspirasiScreenState extends State<InformasiAspirasiScreen> {
                 content: const Text('Yakin ingin menghapus item ini?'),
                 actions: [
                   TextButton(
-                      onPressed: () => Navigator.pop(dctx, false),
-                      child: const Text('Batal')),
+                    onPressed: () => Navigator.pop(dctx, false),
+                    child: const Text('Batal'),
+                  ),
                   TextButton(
-                      onPressed: () => Navigator.pop(dctx, true),
-                      child: const Text('Hapus')),
+                    onPressed: () => Navigator.pop(dctx, true),
+                    child: const Text('Hapus'),
+                  ),
                 ],
               ),
             );
@@ -335,8 +352,9 @@ class _InformasiAspirasiScreenState extends State<InformasiAspirasiScreen> {
                 _filteredItems.removeAt(index);
                 _selectedItem = null;
               });
-              ScaffoldMessenger.of(context)
-                  .showSnackBar(const SnackBar(content: Text('Item dihapus')));
+              ScaffoldMessenger.of(
+                context,
+              ).showSnackBar(const SnackBar(content: Text('Item dihapus')));
             }
           },
         ),
@@ -372,8 +390,10 @@ class _InformasiAspirasiScreenState extends State<InformasiAspirasiScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text('Detail Informasi Aspirasi',
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
+        const Text(
+          'Detail Informasi Aspirasi',
+          style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+        ),
         const SizedBox(height: 12),
         _buildDetailRow('Pengirim', item.pengirim),
         _buildDetailRow('Judul', item.judul),
@@ -395,17 +415,21 @@ class _InformasiAspirasiScreenState extends State<InformasiAspirasiScreen> {
 
   // ===== FORM EDIT =====
   Widget _buildEditForm(_AspirasiItem item) {
-    final TextEditingController judulController =
-        TextEditingController(text: item.judul);
-    final TextEditingController deskripsiController =
-        TextEditingController(text: item.deskripsi);
+    final TextEditingController judulController = TextEditingController(
+      text: item.judul,
+    );
+    final TextEditingController deskripsiController = TextEditingController(
+      text: item.deskripsi,
+    );
     String? selectedStatus = item.status;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text('Edit Informasi Aspirasi',
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
+        const Text(
+          'Edit Informasi Aspirasi',
+          style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+        ),
         const SizedBox(height: 12),
         TextField(
           controller: judulController,
@@ -474,102 +498,132 @@ class _InformasiAspirasiScreenState extends State<InformasiAspirasiScreen> {
   }
 
   Widget _buildDetailRow(String label, String value) => Padding(
-        padding: const EdgeInsets.only(bottom: 8.0),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            SizedBox(
-                width: 130,
-                child: Text('$label:',
-                    style: const TextStyle(fontWeight: FontWeight.w600))),
-            Expanded(child: Text(value)),
-          ],
+    padding: const EdgeInsets.only(bottom: 8.0),
+    child: Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        SizedBox(
+          width: 130,
+          child: Text(
+            '$label:',
+            style: const TextStyle(fontWeight: FontWeight.w600),
+          ),
         ),
-      );
+        Expanded(child: Text(value)),
+      ],
+    ),
+  );
 
   // ===== MAIN BUILD =====
   @override
   Widget build(BuildContext context) {
     const headerStyle = TextStyle(
-        fontWeight: FontWeight.w600, color: Color(0xFF666666), fontSize: 14);
+      fontWeight: FontWeight.w600,
+      color: Color(0xFF666666),
+      fontSize: 14,
+    );
     const bodyStyle = TextStyle(color: Color(0xFF333333), fontSize: 14);
 
     return Padding(
       padding: const EdgeInsets.all(24.0),
-      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Expanded(
-          child: Container(
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(12),
-              boxShadow: [
-                BoxShadow(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Expanded(
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(12),
+                boxShadow: [
+                  BoxShadow(
                     color: Colors.black.withOpacity(0.05),
                     blurRadius: 10,
-                    offset: const Offset(0, 5)),
-              ],
-            ),
-            padding: const EdgeInsets.all(20),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Align(
-                  alignment: Alignment.topRight,
-                  child: OutlinedButton.icon(
-                    onPressed: () => _showFilterModal(context),
-                    icon: const Icon(Icons.filter_list),
-                    label: const Text('Filters'),
+                    offset: const Offset(0, 5),
                   ),
-                ),
-                const SizedBox(height: 6),
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 8.0),
-                  child: Row(children: const [
-                    SizedBox(width: 50, child: Text('No', style: headerStyle)),
-                    Expanded(
-                        flex: 2,
-                        child:
-                            Center(child: Text('Pengirim', style: headerStyle))),
-                    Expanded(
-                        flex: 3,
-                        child:
-                            Center(child: Text('Judul', style: headerStyle))),
-                    Expanded(
-                        flex: 2,
-                        child:
-                            Center(child: Text('Status', style: headerStyle))),
-                    Expanded(
-                        flex: 3,
-                        child:
-                            Center(child: Text('Tanggal Dibuat', style: headerStyle))),
-                    SizedBox(
-                        width: 50,
-                        child: Center(child: Text('Aksi', style: headerStyle))),
-                  ]),
-                ),
-                const Divider(height: 1, thickness: 1, color: Color(0xFFE0E0E0)),
-                const SizedBox(height: 6),
-                Expanded(
-                  child: ListView.builder(
-                    itemCount: _filteredItems.length,
-                    itemBuilder: (context, index) {
-                      final it = _filteredItems[index];
-                      return _HoverableRow(
-                        data: it,
-                        bodyStyle: bodyStyle,
-                        buildStatusBadge: _buildStatusBadge,
-                        buildActionButton: _buildActionMenu,
-                        index: index,
-                      );
-                    },
+                ],
+              ),
+              padding: const EdgeInsets.all(20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Align(
+                    alignment: Alignment.topRight,
+                    child: OutlinedButton.icon(
+                      onPressed: () => _showFilterModal(context),
+                      icon: const Icon(Icons.filter_list),
+                      label: const Text('Filters'),
+                    ),
                   ),
-                ),
-                _buildDetailSection(),
-              ],
+                  const SizedBox(height: 6),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 8.0),
+                    child: Row(
+                      children: const [
+                        SizedBox(
+                          width: 50,
+                          child: Text('No', style: headerStyle),
+                        ),
+                        Expanded(
+                          flex: 2,
+                          child: Center(
+                            child: Text('Pengirim', style: headerStyle),
+                          ),
+                        ),
+                        Expanded(
+                          flex: 3,
+                          child: Center(
+                            child: Text('Judul', style: headerStyle),
+                          ),
+                        ),
+                        Expanded(
+                          flex: 2,
+                          child: Center(
+                            child: Text('Status', style: headerStyle),
+                          ),
+                        ),
+                        Expanded(
+                          flex: 3,
+                          child: Center(
+                            child: Text('Tanggal Dibuat', style: headerStyle),
+                          ),
+                        ),
+                        SizedBox(
+                          width: 50,
+                          child: Center(
+                            child: Text('Aksi', style: headerStyle),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const Divider(
+                    height: 1,
+                    thickness: 1,
+                    color: Color(0xFFE0E0E0),
+                  ),
+                  const SizedBox(height: 6),
+                  Expanded(
+                    child: ListView.builder(
+                      itemCount: _filteredItems.length,
+                      itemBuilder: (context, index) {
+                        final it = _filteredItems[index];
+                        return _HoverableRow(
+                          data: it,
+                          bodyStyle: bodyStyle,
+                          buildStatusBadge: _buildStatusBadge,
+                          buildActionButton: _buildActionMenu,
+                          index: index,
+                        );
+                      },
+                    ),
+                  ),
+                  _buildDetailSection(),
+                ],
+              ),
             ),
           ),
-        ),
-      ]),
+        ],
+      ),
     );
   }
 }
@@ -612,42 +666,69 @@ class _HoverableRowState extends State<_HoverableRow> {
           : null,
     );
 
-    return Column(children: [
-      MouseRegion(
-        onEnter: (_) => setState(() => _hover = true),
-        onExit: (_) => setState(() => _hover = false),
-        cursor: SystemMouseCursors.click,
-        child: Container(
-          decoration: decoration,
-          child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 12.0),
-            child: Row(children: [
-              SizedBox(width: 50, child: Text('${widget.data.no}.', style: widget.bodyStyle)),
-              Expanded(
-                flex: 2,
-                child: Center(child: Text(widget.data.pengirim, style: widget.bodyStyle)),
+    return Column(
+      children: [
+        MouseRegion(
+          onEnter: (_) => setState(() => _hover = true),
+          onExit: (_) => setState(() => _hover = false),
+          cursor: SystemMouseCursors.click,
+          child: Container(
+            decoration: decoration,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 12.0),
+              child: Row(
+                children: [
+                  SizedBox(
+                    width: 50,
+                    child: Text('${widget.data.no}.', style: widget.bodyStyle),
+                  ),
+                  Expanded(
+                    flex: 2,
+                    child: Center(
+                      child: Text(
+                        widget.data.pengirim,
+                        style: widget.bodyStyle,
+                      ),
+                    ),
+                  ),
+                  Expanded(
+                    flex: 3,
+                    child: Center(
+                      child: Text(widget.data.judul, style: widget.bodyStyle),
+                    ),
+                  ),
+                  Expanded(
+                    flex: 2,
+                    child: Center(
+                      child: widget.buildStatusBadge(
+                        context,
+                        widget.data.status,
+                      ),
+                    ),
+                  ),
+                  Expanded(
+                    flex: 3,
+                    child: Center(
+                      child: Text(widget.data.tanggal, style: widget.bodyStyle),
+                    ),
+                  ),
+                  SizedBox(
+                    width: 50,
+                    child: Center(
+                      child: widget.buildActionButton(
+                        context,
+                        widget.data,
+                        widget.index,
+                      ),
+                    ),
+                  ),
+                ],
               ),
-              Expanded(
-                flex: 3,
-                child: Center(child: Text(widget.data.judul, style: widget.bodyStyle)),
-              ),
-              Expanded(
-                flex: 2,
-                child: Center(
-                    child: widget.buildStatusBadge(context, widget.data.status)),
-              ),
-              Expanded(
-                flex: 3,
-                child: Center(child: Text(widget.data.tanggal, style: widget.bodyStyle)),
-              ),
-              SizedBox(
-                  width: 50,
-                  child: Center(child: widget.buildActionButton(context, widget.data, widget.index))),
-            ]),
+            ),
           ),
         ),
-      ),
-      const Divider(height: 1, color: Color(0xFFE0E0E0)),
-    ]);
+        const Divider(height: 1, color: Color(0xFFE0E0E0)),
+      ],
+    );
   }
 }
