@@ -249,65 +249,46 @@ class _CustomSidebarState extends State<CustomSidebar> {
                       ),
 
                       // Title item menu utama (tanpa teks saat minimize)
-                      title: isSelected && !widget.isMinimized
-                          ?
-                            // Item Aktif (dibuat mirip SidebarItem yang aktif)
-                            Row(
-                              children: [
-                                Container(
-                                  width: 4,
-                                  height: 40,
-                                  decoration: BoxDecoration(
-                                    color: mainColor,
-                                    borderRadius: BorderRadius.circular(2),
-                                  ),
-                                ),
-                                const SizedBox(width: 12),
-                                Icon(item.icon, color: mainColor, size: 24),
-                                const SizedBox(width: 12),
-                                Expanded(
-                                  child: Text(
-                                    item.title,
-                                    style: TextStyle(
-                                      color: mainColor,
-                                      fontWeight: FontWeight.w600,
-                                      fontSize: 14,
-                                    ),
-                                  ),
-                                ),
-                              ],
+                      title: Row(
+                        children: [
+                          if (isSelected && !widget.isMinimized)
+                            Container(
+                              width: 4,
+                              height: 40,
+                              decoration: BoxDecoration(
+                                color: mainColor,
+                                borderRadius: BorderRadius.circular(2),
+                              ),
                             )
-                          : isSelected && widget.isMinimized
-                          ? Icon(item.icon, color: mainColor, size: 24)
-                          : widget.isMinimized
-                          ? Icon(
-                              item.icon,
-                              color: const Color(0xFF5C7E9D),
-                              size: 24,
-                            )
-                          : Row(
-                              // Item Non-aktif
-                              children: [
-                                const SizedBox(width: 4),
-                                const SizedBox(width: 12),
-                                Icon(
-                                  item.icon,
-                                  color: const Color(0xFF5C7E9D),
-                                  size: 24,
+                          else
+                            const SizedBox(width: 4),
+                          const SizedBox(width: 12),
+                          Icon(
+                            item.icon,
+                            color: isSelected
+                                ? mainColor
+                                : const Color(0xFF5C7E9D),
+                            size: 24,
+                          ),
+                          if (!widget.isMinimized) ...[
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: Text(
+                                item.title,
+                                style: TextStyle(
+                                  color: isSelected
+                                      ? mainColor
+                                      : const Color(0xFF5C7E9D),
+                                  fontWeight: isSelected
+                                      ? FontWeight.w600
+                                      : FontWeight.w500,
+                                  fontSize: 14,
                                 ),
-                                const SizedBox(width: 12),
-                                Expanded(
-                                  child: Text(
-                                    item.title,
-                                    style: const TextStyle(
-                                      color: Color(0xFF5C7E9D),
-                                      fontWeight: FontWeight.w500,
-                                      fontSize: 14,
-                                    ),
-                                  ),
-                                ),
-                              ],
+                              ),
                             ),
+                          ],
+                        ],
+                      ),
 
                       trailing: widget.isMinimized
                           ? null
@@ -352,41 +333,188 @@ class _CustomSidebarState extends State<CustomSidebar> {
 
           // Area Profil Pengguna
           const Divider(color: Color(0xFFF0F0F0), thickness: 2, height: 1),
-          Padding(
-            padding: EdgeInsets.all(widget.isMinimized ? 12.0 : 16.0),
-            child: Row(
-              mainAxisAlignment: widget.isMinimized
-                  ? MainAxisAlignment.center
-                  : MainAxisAlignment.start,
-              children: <Widget>[
-                const CircleAvatar(
-                  backgroundColor: Color(0xFFD3E0EA),
-                  radius: 18,
-                  child: Icon(Icons.person, color: Color(0xFF3F6FAA), size: 20),
-                ),
-                if (!widget.isMinimized) const SizedBox(width: 8),
-                if (!widget.isMinimized)
-                  const Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Text(
-                        'Yuma Akhunza K.P',
-                        style: TextStyle(
-                          color: Color(0xFF333333),
-                          fontSize: 13,
-                          fontWeight: FontWeight.w600,
+          Material(
+            color: Colors.white,
+            child: InkWell(
+              onTap: widget.isMinimized
+                  ? () {
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            title: Row(
+                              children: [
+                                Icon(
+                                  Icons.logout,
+                                  color: Theme.of(context).primaryColor,
+                                ),
+                                const SizedBox(width: 8),
+                                const Text('Konfirmasi Logout'),
+                              ],
+                            ),
+                            content: const Text(
+                              'Apakah Anda yakin ingin keluar?',
+                            ),
+                            actions: [
+                              TextButton(
+                                onPressed: () => Navigator.of(context).pop(),
+                                child: const Text('Batal'),
+                              ),
+                              ElevatedButton(
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                  Navigator.of(context).pushNamedAndRemoveUntil(
+                                    '/login',
+                                    (Route<dynamic> route) => false,
+                                  );
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                ),
+                                child: const Text('Ya, Keluar'),
+                              ),
+                            ],
+                          );
+                        },
+                      );
+                    }
+                  : null,
+              child: Container(
+                padding: EdgeInsets.all(widget.isMinimized ? 12.0 : 16.0),
+                child: Column(
+                  children: [
+                    Row(
+                      mainAxisAlignment: widget.isMinimized
+                          ? MainAxisAlignment.center
+                          : MainAxisAlignment.start,
+                      children: <Widget>[
+                        const CircleAvatar(
+                          backgroundColor: Color(0xFFD3E0EA),
+                          radius: 18,
+                          child: Icon(
+                            Icons.person,
+                            color: Color(0xFF3F6FAA),
+                            size: 20,
+                          ),
                         ),
-                      ),
-                      Text(
-                        'yuma.akhunza@gmail.com',
-                        style: TextStyle(
-                          color: Color(0xFF999999),
-                          fontSize: 11,
+                        if (!widget.isMinimized) ...[
+                          const SizedBox(width: 8),
+                          const Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: <Widget>[
+                                Text(
+                                  'Admin Jawara',
+                                  style: TextStyle(
+                                    color: Color(0xFF333333),
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                                Text(
+                                  'admin1@gmail.com',
+                                  style: TextStyle(
+                                    color: Color(0xFF999999),
+                                    fontSize: 11,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ],
+                    ),
+                    if (!widget.isMinimized) ...[
+                      const SizedBox(height: 12),
+                      InkWell(
+                        onTap: () {
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                title: Row(
+                                  children: [
+                                    Icon(
+                                      Icons.logout,
+                                      color: Theme.of(context).primaryColor,
+                                    ),
+                                    const SizedBox(width: 8),
+                                    const Text('Konfirmasi Logout'),
+                                  ],
+                                ),
+                                content: const Text(
+                                  'Apakah Anda yakin ingin keluar?',
+                                ),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () =>
+                                        Navigator.of(context).pop(),
+                                    child: const Text('Batal'),
+                                  ),
+                                  ElevatedButton(
+                                    onPressed: () {
+                                      Navigator.of(context).pop();
+                                      Navigator.of(
+                                        context,
+                                      ).pushNamedAndRemoveUntil(
+                                        '/login',
+                                        (Route<dynamic> route) => false,
+                                      );
+                                    },
+                                    style: ElevatedButton.styleFrom(
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
+                                    ),
+                                    child: const Text('Ya, Keluar'),
+                                  ),
+                                ],
+                              );
+                            },
+                          );
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                            vertical: 8,
+                            horizontal: 12,
+                          ),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(8),
+                            border: Border.all(color: const Color(0xFFE0E0E0)),
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: const [
+                              Icon(
+                                Icons.logout,
+                                size: 16,
+                                color: Color(0xFF5C7E9D),
+                              ),
+                              SizedBox(width: 8),
+                              Text(
+                                'Log out',
+                                style: TextStyle(
+                                  color: Color(0xFF5C7E9D),
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                     ],
-                  ),
-              ],
+                  ],
+                ),
+              ),
             ),
           ),
         ],
