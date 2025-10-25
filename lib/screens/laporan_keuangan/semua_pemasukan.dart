@@ -8,9 +8,7 @@ class SemuaPemasukan extends StatelessWidget {
   Widget build(BuildContext context) {
     return const Scaffold(
       backgroundColor: Colors.white,
-      body: SafeArea(
-        child: TablePage(),
-      ),
+      body: SafeArea(child: TablePage()),
     );
   }
 }
@@ -75,7 +73,9 @@ class _TablePageState extends State<TablePage> {
         String? selectedCategory;
 
         return Dialog(
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
           child: ConstrainedBox(
             constraints: const BoxConstraints(maxWidth: 600),
             child: Padding(
@@ -138,6 +138,7 @@ class _TablePageState extends State<TablePage> {
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
+    final bool isMobile = screenWidth < 600;
 
     return Padding(
       padding: const EdgeInsets.all(24.0),
@@ -161,87 +162,210 @@ class _TablePageState extends State<TablePage> {
           ),
           const SizedBox(height: 20),
 
-          // ✅ Table Full Width
-          Expanded(
-            child: Container(
-              width: screenWidth, // full lebar layar
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(12),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.05),
-                    blurRadius: 8,
-                    offset: const Offset(0, 2),
-                  ),
-                ],
-              ),
-              child: SingleChildScrollView(
-                child: Column(
-                  children: [
-                    // Header
-                    Container(
-                      color: Colors.grey[50],
-                      padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
-                      child: Row(
-                        children: const [
-                          Expanded(flex: 1, child: Text('NO', style: _headerStyle)),
-                          Expanded(flex: 2, child: Text('NAMA', style: _headerStyle)),
-                          Expanded(flex: 3, child: Text('JENIS PEMASUKAN', style: _headerStyle)),
-                          Expanded(flex: 3, child: Text('TANGGAL', style: _headerStyle)),
-                          Expanded(flex: 3, child: Text('NOMINAL', style: _headerStyle)),
-                          Expanded(flex: 1, child: Text('AKSI', style: _headerStyle)),
-                        ],
-                      ),
+          // For mobile, show a ListView of Cards; for larger screens keep the table
+          if (isMobile)
+            Flexible(
+              child: ListView.separated(
+                itemCount: data.length,
+                separatorBuilder: (_, __) => const SizedBox(height: 8),
+                padding: EdgeInsets.only(
+                  top: 8,
+                  bottom: MediaQuery.of(context).viewPadding.bottom + 16,
+                ),
+                physics: const AlwaysScrollableScrollPhysics(),
+                itemBuilder: (context, index) {
+                  final item = data[index];
+                  return Card(
+                    margin: const EdgeInsets.symmetric(
+                      horizontal: 0,
+                      vertical: 6,
                     ),
-
-                    // Rows
-                    ...paginatedData.asMap().entries.map((entry) {
-                      int index = entry.key;
-                      var item = entry.value;
-                      return MouseRegion(
-                        onEnter: (_) => setState(() => hoveredIndex = index),
-                        onExit: (_) => setState(() => hoveredIndex = null),
-                        child: AnimatedContainer(
-                          duration: const Duration(milliseconds: 150),
-                          color: hoveredIndex == index ? Colors.grey[100] : Colors.white,
-                          padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
-                          child: Row(
-                            children: [
-                              Expanded(flex: 1, child: Text(item['no']!)),
-                              Expanded(flex: 2, child: Text(item['nama']!)),
-                              Expanded(flex: 3, child: Text(item['jenis']!)),
-                              Expanded(flex: 3, child: Text(item['tanggal']!)),
-                              Expanded(flex: 3, child: Text(item['nominal']!)),
-                              Expanded(
-                                flex: 1,
-                                child: PopupMenuButton<String>(
-                                  onSelected: (value) {
-                                    if (value == 'detail') {
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) => detailPage(item: item),
-                                        ),
-                                      );
-                                    }
-                                  },
-                                  itemBuilder: (BuildContext context) => const [
-                                    PopupMenuItem(value: 'detail', child: Text('Detail')),
-                                  ],
-                                  icon: Icon(Icons.more_horiz, color: Colors.grey[700]),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                        vertical: 8.0,
+                        horizontal: 12.0,
+                      ),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  item['nama']!,
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.w600,
+                                  ),
                                 ),
+                                const SizedBox(height: 6),
+                                Text(
+                                  '${item['jenis']} • ${item['tanggal']}',
+                                  style: const TextStyle(color: Colors.grey),
+                                ),
+                              ],
+                            ),
+                          ),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.end,
+                            children: [
+                              Text(
+                                item['nominal']!,
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              PopupMenuButton<String>(
+                                onSelected: (value) {
+                                  if (value == 'detail') {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) =>
+                                            detailPage(item: item),
+                                      ),
+                                    );
+                                  }
+                                },
+                                itemBuilder: (BuildContext context) => const [
+                                  PopupMenuItem(
+                                    value: 'detail',
+                                    child: Text('Detail'),
+                                  ),
+                                ],
                               ),
                             ],
                           ),
-                        ),
-                      );
-                    }),
+                        ],
+                      ),
+                    ),
+                  );
+                },
+              ),
+            )
+          else
+            Flexible(
+              child: Container(
+                width: screenWidth, // full lebar layar
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(12),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.05),
+                      blurRadius: 8,
+                      offset: const Offset(0, 2),
+                    ),
                   ],
+                ),
+                child: SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      // Header
+                      Container(
+                        color: Colors.grey[50],
+                        padding: const EdgeInsets.symmetric(
+                          vertical: 16,
+                          horizontal: 16,
+                        ),
+                        child: Row(
+                          children: const [
+                            Expanded(
+                              flex: 1,
+                              child: Text('NO', style: _headerStyle),
+                            ),
+                            Expanded(
+                              flex: 2,
+                              child: Text('NAMA', style: _headerStyle),
+                            ),
+                            Expanded(
+                              flex: 3,
+                              child: Text(
+                                'JENIS PEMASUKAN',
+                                style: _headerStyle,
+                              ),
+                            ),
+                            Expanded(
+                              flex: 3,
+                              child: Text('TANGGAL', style: _headerStyle),
+                            ),
+                            Expanded(
+                              flex: 3,
+                              child: Text('NOMINAL', style: _headerStyle),
+                            ),
+                            Expanded(
+                              flex: 1,
+                              child: Text('AKSI', style: _headerStyle),
+                            ),
+                          ],
+                        ),
+                      ),
+
+                      // Rows
+                      ...paginatedData.asMap().entries.map((entry) {
+                        int index = entry.key;
+                        var item = entry.value;
+                        return MouseRegion(
+                          onEnter: (_) => setState(() => hoveredIndex = index),
+                          onExit: (_) => setState(() => hoveredIndex = null),
+                          child: AnimatedContainer(
+                            duration: const Duration(milliseconds: 150),
+                            color: hoveredIndex == index
+                                ? Colors.grey[100]
+                                : Colors.white,
+                            padding: const EdgeInsets.symmetric(
+                              vertical: 16,
+                              horizontal: 16,
+                            ),
+                            child: Row(
+                              children: [
+                                Expanded(flex: 1, child: Text(item['no']!)),
+                                Expanded(flex: 2, child: Text(item['nama']!)),
+                                Expanded(flex: 3, child: Text(item['jenis']!)),
+                                Expanded(
+                                  flex: 3,
+                                  child: Text(item['tanggal']!),
+                                ),
+                                Expanded(
+                                  flex: 3,
+                                  child: Text(item['nominal']!),
+                                ),
+                                Expanded(
+                                  flex: 1,
+                                  child: PopupMenuButton<String>(
+                                    onSelected: (value) {
+                                      if (value == 'detail') {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) =>
+                                                detailPage(item: item),
+                                          ),
+                                        );
+                                      }
+                                    },
+                                    itemBuilder: (BuildContext context) =>
+                                        const [
+                                          PopupMenuItem(
+                                            value: 'detail',
+                                            child: Text('Detail'),
+                                          ),
+                                        ],
+                                    icon: Icon(
+                                      Icons.more_horiz,
+                                      color: Colors.grey[700],
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                      }),
+                    ],
+                  ),
                 ),
               ),
             ),
-          ),
 
           const SizedBox(height: 20),
 
@@ -265,15 +389,18 @@ class _TablePageState extends State<TablePage> {
                   child: Text(
                     currentPage.toString(),
                     style: const TextStyle(
-                        color: Colors.white, fontWeight: FontWeight.bold),
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
               ),
               IconButton(
                 onPressed: currentPage < totalPages ? nextPage : null,
                 icon: const Icon(Icons.chevron_right),
-                color:
-                    currentPage < totalPages ? Colors.grey[700] : Colors.grey[300],
+                color: currentPage < totalPages
+                    ? Colors.grey[700]
+                    : Colors.grey[300],
               ),
             ],
           ),

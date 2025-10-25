@@ -8,13 +8,11 @@ class detailPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final double maxContentWidth = 1000;
-    final screenWidth = MediaQuery.of(context).size.width;
+    final double screenWidth = MediaQuery.of(context).size.width;
 
     return Scaffold(
       backgroundColor: const Color(0xFFF5F5F7),
-      appBar: AppBar(
-       
-      ),
+      appBar: AppBar(),
       body: Center(
         child: Container(
           width: screenWidth < maxContentWidth ? screenWidth : maxContentWidth,
@@ -37,22 +35,28 @@ class detailPage extends StatelessWidget {
               children: [
                 const Text(
                   'Detail Pengeluaran',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 16),
-                _buildRow('No', item['no'] ?? ''),
-                _buildRow('Nama Pengeluaran', item['nama'] ?? ''),
-                _buildRow('Jenis Pengeluaran', item['jenis'] ?? ''),
-                _buildRow('Tanggal', item['tanggal'] ?? ''),
-                _buildRow('Nominal', item['nominal'] ?? '', isHighlight: true),
+                _buildRow(context, 'No', item['no'] ?? ''),
+                _buildRow(context, 'Nama Pengeluaran', item['nama'] ?? ''),
+                _buildRow(context, 'Jenis Pengeluaran', item['jenis'] ?? ''),
+                _buildRow(context, 'Tanggal', item['tanggal'] ?? ''),
+                _buildRow(
+                  context,
+                  'Nominal',
+                  item['nominal'] ?? '',
+                  isHighlight: true,
+                ),
                 // Tambahan opsional
                 if (item.containsKey('tanggalVerifikasi'))
-                  _buildRow('Tanggal Terverifikasi', item['tanggalVerifikasi']!),
+                  _buildRow(
+                    context,
+                    'Tanggal Terverifikasi',
+                    item['tanggalVerifikasi']!,
+                  ),
                 if (item.containsKey('verifikator'))
-                  _buildRow('Verifikator', item['verifikator']!),
+                  _buildRow(context, 'Verifikator', item['verifikator']!),
               ],
             ),
           ),
@@ -61,7 +65,41 @@ class detailPage extends StatelessWidget {
     );
   }
 
-  Widget _buildRow(String label, String value, {bool isHighlight = false}) {
+  Widget _buildRow(
+    BuildContext context,
+    String label,
+    String value, {
+    bool isHighlight = false,
+  }) {
+    final double screenWidth = MediaQuery.of(context).size.width;
+    final bool isMobile = screenWidth < 600;
+
+    if (isMobile) {
+      // stack label above value for mobile
+      return Padding(
+        padding: const EdgeInsets.symmetric(vertical: 8.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              label,
+              style: const TextStyle(fontSize: 13, color: Colors.grey),
+            ),
+            const SizedBox(height: 6),
+            Text(
+              value,
+              style: TextStyle(
+                fontSize: 15,
+                fontWeight: isHighlight ? FontWeight.bold : FontWeight.normal,
+                color: isHighlight ? Colors.red : Colors.black,
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+
+    // desktop/tablet layout: label + value in a row
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: Row(
@@ -70,10 +108,7 @@ class detailPage extends StatelessWidget {
             width: 180,
             child: Text(
               label,
-              style: const TextStyle(
-                fontSize: 14,
-                color: Colors.grey,
-              ),
+              style: const TextStyle(fontSize: 14, color: Colors.grey),
             ),
           ),
           Expanded(

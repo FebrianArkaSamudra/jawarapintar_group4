@@ -47,9 +47,9 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  bool _isSidebarMinimized = false;
   String _selectedPrimaryItem = primaryMenuItems.first.title;
   String? _selectedSubItem = primaryMenuItems.first.subItems?.first;
+  String _pageTitle = '';
 
   @override
   void initState() {
@@ -64,263 +64,207 @@ class _MyHomePageState extends State<MyHomePage> {
     if (widget.initialSubItem != null) {
       _selectedSubItem = widget.initialSubItem;
     }
+
+    _updatePageTitle();
   }
 
-  void _toggleSidebar() {
-    setState(() {
-      _isSidebarMinimized = !_isSidebarMinimized;
-    });
+  void _updatePageTitle() {
+    if (_selectedSubItem != null) {
+      _pageTitle = '$_selectedPrimaryItem - $_selectedSubItem';
+    } else {
+      _pageTitle = _selectedPrimaryItem;
+    }
   }
 
   void _selectMenuItem(String primaryTitle, String? subTitle) {
     setState(() {
       _selectedPrimaryItem = primaryTitle;
       _selectedSubItem = subTitle;
+      _updatePageTitle();
     });
     debugPrint(
       'Menu Dipilih: $primaryTitle${subTitle != null ? ' > $subTitle' : ''}',
     );
   }
 
+  Widget _buildContent() {
+    // Dashboard screens
+    if (_selectedPrimaryItem == 'Dashboard') {
+      if (_selectedSubItem == 'Keuangan') {
+        return const KeuanganScreen();
+      }
+      if (_selectedSubItem == 'Kegiatan') {
+        return const KegiatanScreen();
+      }
+      if (_selectedSubItem == 'Kependudukan') {
+        return const KependudukanScreen();
+      }
+    }
+
+    // Data Warga & Rumah screens
+    if (_selectedPrimaryItem == 'Data Warga & Rumah') {
+      if (_selectedSubItem == 'Warga - Daftar') {
+        return const WargaDaftarScreen();
+      }
+      if (_selectedSubItem == 'Warga - Tambah') {
+        return const WargaTambahScreen();
+      }
+      if (_selectedSubItem == 'Keluarga') {
+        return const KeluargaScreen();
+      }
+      if (_selectedSubItem == 'Rumah - Daftar') {
+        return const RumahDaftarScreen();
+      }
+      if (_selectedSubItem == 'Rumah - Tambah') {
+        return const RumahTambahScreen();
+      }
+    }
+
+    // Pemasukan screens
+    if (_selectedPrimaryItem == 'Pemasukan') {
+      if (_selectedSubItem == 'Kategori Iuran') {
+        return const KategoriIuranScreen();
+      }
+      if (_selectedSubItem == 'Tagih Iuran') {
+        return const TagihIuranScreen();
+      }
+      if (_selectedSubItem == 'Tagihan') {
+        return const TagihanScreen();
+      }
+      if (_selectedSubItem == 'Pemasukan Lain - Daftar') {
+        return const PemasukanDaftarScreen();
+      }
+      if (_selectedSubItem == 'Pemasukan Lain - Tambah') {
+        return const PemasukanTambahScreen();
+      }
+    }
+
+    // Pengeluaran screens
+    if (_selectedPrimaryItem == 'Pengeluaran') {
+      if (_selectedSubItem == 'Daftar') {
+        return const Daftar();
+      }
+      if (_selectedSubItem == 'Tambah') {
+        return const Tambah();
+      }
+    }
+
+    // Laporan Keuangan screens
+    if (_selectedPrimaryItem == 'Laporan Keuangan') {
+      if (_selectedSubItem == 'Cetak laporan') {
+        return const CetakLaporan();
+      }
+      if (_selectedSubItem == 'Semua Pemasukan') {
+        return const SemuaPemasukan();
+      }
+      if (_selectedSubItem == 'Semua Pengeluaran') {
+        return const SemuaPengeluaran();
+      }
+    }
+
+    // Kegiatan & Broadcast screens
+    if (_selectedPrimaryItem == 'Kegiatan & Broadcast') {
+      if (_selectedSubItem == 'Kegiatan - Daftar') {
+        return const KegiatanDaftar();
+      }
+      if (_selectedSubItem == 'Kegiatan - Tambah') {
+        return const KegiatanTambah();
+      }
+      if (_selectedSubItem == 'Broadcast - Daftar') {
+        return const BroadcastDaftar();
+      }
+      if (_selectedSubItem == 'Broadcast - Tambah') {
+        return const BroadcastTambah();
+      }
+    }
+
+    // Pesan Warga screens
+    if (_selectedPrimaryItem == 'Pesan Warga') {
+      if (_selectedSubItem == 'Kegiatan - Daftar') {
+        return const InformasiAspirasiScreen();
+      }
+      if (_selectedSubItem == 'Informasi Aspirasi') {
+        return const InformasiAspirasiScreen();
+      }
+    }
+
+    // Penerimaan Warga screens
+    if (_selectedPrimaryItem == 'Penerimaan Warga') {
+      if (_selectedSubItem == 'Kegiatan - Daftar' ||
+          _selectedSubItem == 'Informasi Penerimaan Warga') {
+        return const InformasiPenerimaanWargaScreen();
+      }
+    }
+
+    // Mutasi Keluarga screens
+    if (_selectedPrimaryItem == 'Mutasi Keluarga') {
+      if (_selectedSubItem == 'Daftar') {
+        return const MutasiKeluargaDaftar();
+      }
+      if (_selectedSubItem == 'Tambah') {
+        return const MutasiKeluargaTambah();
+      }
+    }
+
+    // Channel screens
+    if (_selectedPrimaryItem == 'Channel Transfer') {
+      if (_selectedSubItem == 'Daftar Channel') {
+        return const DaftarChannelPage();
+      }
+      if (_selectedSubItem == 'Tambah Channel') {
+        return const TambahChannelPage();
+      }
+    }
+
+    // Manajemen Pengguna screens
+    if (_selectedPrimaryItem == 'Manajemen Pengguna') {
+      if (_selectedSubItem == 'Daftar Pengguna' ||
+          _selectedSubItem == 'Edit Pengguna') {
+        return const RegistrasiPage();
+      }
+      if (_selectedSubItem == 'Tambah Pengguna') {
+        return TambahPenggunaScreen(
+          onUserAdded: (newUser) async {
+            try {
+              await PenggunaRepo.add(newUser);
+            } catch (_) {}
+            setState(() {
+              _selectedSubItem = 'Daftar Pengguna';
+            });
+          },
+        );
+      }
+    }
+
+    // Log Aktifitas screen
+    if (_selectedPrimaryItem == 'Log Aktifitas') {
+      return const LogAktifitasScreen();
+    }
+
+    // Default fallback
+    return MainContent(
+      selectedPrimaryItem: _selectedPrimaryItem,
+      selectedSubItem: _selectedSubItem,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    const Color appBgColor = Color(0xFFF7F7F7);
-
-    return Scaffold(
-      backgroundColor: appBgColor,
-      body: Row(
-        children: <Widget>[
-          CustomSidebar(
-            onToggleMinimize: _toggleSidebar,
-            isMinimized: _isSidebarMinimized,
-            selectedPrimaryItem: _selectedPrimaryItem,
-            selectedSubItem: _selectedSubItem ?? '',
-            onSelect: _selectMenuItem,
-          ),
-
-          const VerticalDivider(
-            width: 1,
-            thickness: 1,
-            color: Color(0xFFCCCCCC),
-          ),
-
-          Expanded(
-            child: Builder(
-              builder: (context) {
-                // Dashboard screens
-                if (_selectedPrimaryItem == 'Dashboard') {
-                  if (_selectedSubItem == 'Keuangan') {
-                    return const KeuanganScreen();
-                  }
-                  if (_selectedSubItem == 'Kegiatan') {
-                    return const KegiatanScreen();
-                  }
-                  if (_selectedSubItem == 'Kependudukan') {
-                    return const KependudukanScreen();
-                  }
-                }
-
-                // Data Warga & Rumah screens
-                if (_selectedPrimaryItem == 'Data Warga & Rumah') {
-                  if (_selectedSubItem == 'Warga - Daftar') {
-                    return const WargaDaftarScreen();
-                  }
-                  if (_selectedSubItem == 'Warga - Tambah') {
-                    return const WargaTambahScreen();
-                  }
-                  if (_selectedSubItem == 'Keluarga') {
-                    return const KeluargaScreen();
-                  }
-                  if (_selectedSubItem == 'Rumah - Daftar') {
-                    return const RumahDaftarScreen();
-                  }
-                  if (_selectedSubItem == 'Rumah - Tambah') {
-                    return const RumahTambahScreen();
-                  }
-                }
-
-                // Pemasukan / Pengeluaran / Laporan etc.
-                 if (_selectedPrimaryItem == 'Pemasukan') {
-                  if (_selectedSubItem == 'Kategori Iuran') {
-                    return const KategoriIuranScreen();
-                  }
-                  if (_selectedSubItem == 'Tagih Iuran') {
-                    return const TagihIuranScreen();
-                  }
-                  if (_selectedSubItem == 'Tagihan') {
-                    return const TagihanScreen();
-                  }
-                  if (_selectedSubItem == 'Pemasukan Lain - Daftar') {
-                    return const PemasukanDaftarScreen();
-                  }
-                  if (_selectedSubItem == 'Pemasukan Lain - Tambah') {
-                    return const PemasukanTambahScreen();
-                  }
-                }
-                if (_selectedPrimaryItem == 'Pengeluaran'){
-                  if (_selectedSubItem == 'Daftar')
-                     return const Daftar();
-                  if (_selectedSubItem == 'Tambah')
-                    return const Tambah();
-                }
-                if (_selectedPrimaryItem == 'Laporan Keuangan') {
-                  if (_selectedSubItem == 'Cetak laporan') {
-                    return const CetakLaporan();
-                  }
-                  if (_selectedSubItem == 'Semua Pemasukan') {
-                    return const SemuaPemasukan();
-                  }
-                  if (_selectedSubItem == 'Semua Pengeluaran') {
-                    return const SemuaPengeluaran();
-                  }
-                }
-                if (_selectedPrimaryItem == 'Kegiatan & Broadcast') {
-                  if (_selectedSubItem == 'Kegiatan - Daftar') {
-                    return const KegiatanDaftar();
-                  }
-                  if (_selectedSubItem == 'Kegiatan - Tambah') {
-                    return const KegiatanTambah();
-                  }
-                  if (_selectedSubItem == 'Broadcast - Daftar') {
-                    return const BroadcastDaftar();
-                  }
-                  if (_selectedSubItem == 'Broadcast - Tambah') {
-                    return const BroadcastTambah();
-                  }
-                }
-                if (_selectedPrimaryItem == 'Pesan Warga') {
-                  if (_selectedSubItem == 'Kegiatan - Daftar') {
-                    return const InformasiAspirasiScreen();
-                  }
-                }
-                if (_selectedPrimaryItem == 'Penerimaan Warga') {
-                  if (_selectedSubItem == 'Kegiatan - Daftar') {
-                    return const InformasiPenerimaanWargaScreen();
-                  }
-                }
-                if (_selectedPrimaryItem == 'Mutasi Keluarga') {
-                  if (_selectedSubItem == 'Daftar') {
-                    return const MutasiKeluargaDaftar();
-                  }
-                  if (_selectedSubItem == 'Tambah') {
-                    return const MutasiKeluargaTambah();
-                  }
-                }
-                if (_selectedPrimaryItem == 'Log Aktifitas') {
-                  return const LogAktifitasScreen();
-                }
-
-                // Manajemen Pengguna: subpages rendered in main area
-                if (_selectedPrimaryItem == 'Manajemen Pengguna') {
-                  if (_selectedSubItem == 'Daftar Pengguna') {
-                    return const RegistrasiPage();
-                  }
-                  if (_selectedSubItem == 'Tambah Pengguna') {
-                    return TambahPenggunaScreen(
-                      onUserAdded: (newUser) async {
-                        try {
-                          await PenggunaRepo.add(newUser);
-                        } catch (_) {}
-                        setState(() {
-                          _selectedSubItem = 'Daftar Pengguna';
-                        });
-                      },
-                    );
-                  }
-                  if (_selectedSubItem == 'Edit Pengguna') {
-                    return const RegistrasiPage();
-                  }
-                }
-
-                // Default content
-                // Pemasukan screens
-                if (_selectedPrimaryItem == 'Pemasukan') {
-                  if (_selectedSubItem == 'Kategori Iuran') {
-                    return const KategoriIuranScreen();
-                  }
-                  if (_selectedSubItem == 'Tagih Iuran') {
-                    return const TagihIuranScreen();
-                  }
-                  if (_selectedSubItem == 'Tagihan') {
-                    return const TagihanScreen();
-                  }
-                  if (_selectedSubItem == 'Pemasukan Lain - Daftar') {
-                    return const PemasukanDaftarScreen();
-                  }
-                  if (_selectedSubItem == 'Pemasukan Lain - Tambah') {
-                    return const PemasukanTambahScreen();
-                  }
-                }
-                // Pengeluaran screens
-                if (_selectedPrimaryItem == 'Pengeluaran') {
-                  if (_selectedSubItem == 'Daftar') {
-                    return const Daftar();
-                  }
-                  if (_selectedSubItem == 'Tambah') {
-                    return const Tambah();
-                  }
-                }
-                // Laporan Keuangan screens
-
-                // Kegiatan & Broadcast screens
-                if (_selectedPrimaryItem == 'Kegiatan & Broadcast') {
-                  if (_selectedSubItem == 'Kegiatan - Daftar') {
-                    return const KegiatanDaftar();
-                  }
-                  if (_selectedSubItem == 'Kegiatan - Tambah') {
-                    return const KegiatanTambah();
-                  }
-                  if (_selectedSubItem == 'Broadcast - Daftar') {
-                    return const BroadcastDaftar();
-                  }
-                  if (_selectedSubItem == 'Broadcast - Tambah') {
-                    return const BroadcastTambah();
-                  }
-                }
-                // Pesan Warga screens
-                if (_selectedPrimaryItem == 'Pesan Warga') {
-                  if (_selectedSubItem == 'Informasi Aspirasi') {
-                    return const InformasiAspirasiScreen();
-                  }
-                }
-                // Penerimaan Warga screens
-                if (_selectedPrimaryItem == 'Penerimaan Warga') {
-                  if (_selectedSubItem == 'Informasi Penerimaan Warga') {
-                    return const InformasiPenerimaanWargaScreen();
-                  }
-                }
-                // Mutasi Keluarga screens
-                if (_selectedPrimaryItem == 'Mutasi Keluarga') {
-                  if (_selectedSubItem == 'Daftar') {
-                    return const MutasiKeluargaDaftar();
-                  }
-                  if (_selectedSubItem == 'Tambah') {
-                    return const MutasiKeluargaTambah();
-                  }
-                }
-                // channel screens
-                if (_selectedPrimaryItem == 'Channel Transfer') {
-                  if (_selectedSubItem == 'Daftar Channel') {
-                    return const DaftarChannelPage();
-                  }
-                  if (_selectedSubItem == 'Tambah Channel') {
-                    return const TambahChannelPage();
-                  }
-                }
-                // Log Aktifitas screens
-                if (_selectedPrimaryItem == 'Log Aktifitas') {
-                  return const LogAktifitasScreen();
-                }
-                // Default fallback
-                return MainContent(
-                  selectedPrimaryItem: _selectedPrimaryItem,
-                  selectedSubItem: _selectedSubItem,
-                );
-              },
-            ),
-          ),
-        ],
-      ),
+    return CustomSidebar(
+      title: _pageTitle,
+      selectedPrimaryItem: _selectedPrimaryItem,
+      selectedSubItem: _selectedSubItem,
+      onMenuSelect: _selectMenuItem,
+      child: _buildContent(),
+      actions: [
+        IconButton(
+          icon: const Icon(Icons.notifications_none),
+          onPressed: () {
+            // Handle notifications
+          },
+          color: Theme.of(context).colorScheme.primary,
+        ),
+      ],
     );
   }
 }

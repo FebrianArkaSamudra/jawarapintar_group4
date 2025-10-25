@@ -13,11 +13,7 @@ class _CetakLaporanState extends State<CetakLaporan> {
   DateTime? endDate;
   String? selectedJenis = 'Semua';
 
-  final List<String> jenisLaporan = [
-    'Semua',
-    'Pemasukan',
-    'Pengeluaran',
-  ];
+  final List<String> jenisLaporan = ['Semua', 'Pemasukan', 'Pengeluaran'];
 
   final dateFormat = DateFormat('dd/MM/yyyy');
 
@@ -56,6 +52,7 @@ class _CetakLaporanState extends State<CetakLaporan> {
 
   @override
   Widget build(BuildContext context) {
+    final bool isMobile = MediaQuery.of(context).size.width < 600;
     return Scaffold(
       backgroundColor: const Color(0xFFF5F7FB),
       body: SafeArea(
@@ -82,89 +79,172 @@ class _CetakLaporanState extends State<CetakLaporan> {
                 children: [
                   const Text(
                     "Cetak Laporan Keuangan",
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w600,
-                    ),
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
                   ),
                   const SizedBox(height: 24),
 
-                  // Row: tanggal mulai & akhir
-                  Row(
-                    children: [
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Text("Tanggal Mulai"),
-                            const SizedBox(height: 8),
-                            TextFormField(
-                              readOnly: true,
-                              decoration: InputDecoration(
-                                hintText: "--/--/----",
-                                suffixIcon: Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    if (startDate != null)
+                  // Tanggal mulai & akhir: tampilkan sebagai Row di desktop, Column di mobile
+                  if (!isMobile)
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text("Tanggal Mulai"),
+                              const SizedBox(height: 8),
+                              TextFormField(
+                                readOnly: true,
+                                decoration: InputDecoration(
+                                  hintText: "--/--/----",
+                                  suffixIcon: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      if (startDate != null)
+                                        IconButton(
+                                          icon: const Icon(Icons.clear),
+                                          onPressed: () =>
+                                              setState(() => startDate = null),
+                                        ),
                                       IconButton(
-                                        icon: const Icon(Icons.clear),
-                                        onPressed: () => setState(() => startDate = null),
+                                        icon: const Icon(
+                                          Icons.calendar_today_outlined,
+                                        ),
+                                        onPressed: () =>
+                                            _selectDate(context, true),
                                       ),
-                                    IconButton(
-                                      icon: const Icon(Icons.calendar_today_outlined),
-                                      onPressed: () => _selectDate(context, true),
-                                    ),
-                                  ],
+                                    ],
+                                  ),
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
                                 ),
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(8),
+                                controller: TextEditingController(
+                                  text: startDate != null
+                                      ? dateFormat.format(startDate!)
+                                      : '',
                                 ),
                               ),
-                              controller: TextEditingController(
-                                text: startDate != null ? dateFormat.format(startDate!) : '',
-                              ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
-                      ),
-                      const SizedBox(width: 24),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Text("Tanggal Akhir"),
-                            const SizedBox(height: 8),
-                            TextFormField(
-                              readOnly: true,
-                              decoration: InputDecoration(
-                                hintText: "--/--/----",
-                                suffixIcon: Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    if (endDate != null)
+                        const SizedBox(width: 24),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text("Tanggal Akhir"),
+                              const SizedBox(height: 8),
+                              TextFormField(
+                                readOnly: true,
+                                decoration: InputDecoration(
+                                  hintText: "--/--/----",
+                                  suffixIcon: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      if (endDate != null)
+                                        IconButton(
+                                          icon: const Icon(Icons.clear),
+                                          onPressed: () =>
+                                              setState(() => endDate = null),
+                                        ),
                                       IconButton(
-                                        icon: const Icon(Icons.clear),
-                                        onPressed: () => setState(() => endDate = null),
+                                        icon: const Icon(
+                                          Icons.calendar_today_outlined,
+                                        ),
+                                        onPressed: () =>
+                                            _selectDate(context, false),
                                       ),
-                                    IconButton(
-                                      icon: const Icon(Icons.calendar_today_outlined),
-                                      onPressed: () => _selectDate(context, false),
-                                    ),
-                                  ],
+                                    ],
+                                  ),
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
                                 ),
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(8),
+                                controller: TextEditingController(
+                                  text: endDate != null
+                                      ? dateFormat.format(endDate!)
+                                      : '',
                                 ),
                               ),
-                              controller: TextEditingController(
-                                text: endDate != null ? dateFormat.format(endDate!) : '',
-                              ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
-                      ),
-                    ],
-                  ),
+                      ],
+                    )
+                  else
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text("Tanggal Mulai"),
+                        const SizedBox(height: 8),
+                        TextFormField(
+                          readOnly: true,
+                          decoration: InputDecoration(
+                            hintText: "--/--/----",
+                            suffixIcon: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                if (startDate != null)
+                                  IconButton(
+                                    icon: const Icon(Icons.clear),
+                                    onPressed: () =>
+                                        setState(() => startDate = null),
+                                  ),
+                                IconButton(
+                                  icon: const Icon(
+                                    Icons.calendar_today_outlined,
+                                  ),
+                                  onPressed: () => _selectDate(context, true),
+                                ),
+                              ],
+                            ),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                          ),
+                          controller: TextEditingController(
+                            text: startDate != null
+                                ? dateFormat.format(startDate!)
+                                : '',
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                        const Text("Tanggal Akhir"),
+                        const SizedBox(height: 8),
+                        TextFormField(
+                          readOnly: true,
+                          decoration: InputDecoration(
+                            hintText: "--/--/----",
+                            suffixIcon: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                if (endDate != null)
+                                  IconButton(
+                                    icon: const Icon(Icons.clear),
+                                    onPressed: () =>
+                                        setState(() => endDate = null),
+                                  ),
+                                IconButton(
+                                  icon: const Icon(
+                                    Icons.calendar_today_outlined,
+                                  ),
+                                  onPressed: () => _selectDate(context, false),
+                                ),
+                              ],
+                            ),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                          ),
+                          controller: TextEditingController(
+                            text: endDate != null
+                                ? dateFormat.format(endDate!)
+                                : '',
+                          ),
+                        ),
+                      ],
+                    ),
 
                   const SizedBox(height: 24),
 
@@ -179,7 +259,8 @@ class _CetakLaporanState extends State<CetakLaporan> {
                         child: Text(value),
                       );
                     }).toList(),
-                    onChanged: (newValue) => setState(() => selectedJenis = newValue),
+                    onChanged: (newValue) =>
+                        setState(() => selectedJenis = newValue),
                     decoration: InputDecoration(
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(8),
@@ -196,21 +277,30 @@ class _CetakLaporanState extends State<CetakLaporan> {
                         onPressed: _downloadPDF,
                         style: ElevatedButton.styleFrom(
                           backgroundColor: const Color(0xFF6366F1),
-                          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 24,
+                            vertical: 14,
+                          ),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(8),
                           ),
                         ),
                         child: const Text(
                           "Download PDF",
-                          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                       ),
                       const SizedBox(width: 12),
                       OutlinedButton(
                         onPressed: _resetForm,
                         style: OutlinedButton.styleFrom(
-                          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 24,
+                            vertical: 14,
+                          ),
                         ),
                         child: const Text("Reset"),
                       ),

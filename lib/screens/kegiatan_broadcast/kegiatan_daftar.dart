@@ -8,9 +8,7 @@ class KegiatanDaftar extends StatelessWidget {
   Widget build(BuildContext context) {
     return const Scaffold(
       backgroundColor: Colors.white,
-      body: SafeArea(
-        child: KegiatanTable(),
-      ),
+      body: SafeArea(child: KegiatanTable()),
     );
   }
 }
@@ -72,7 +70,9 @@ class _KegiatanTableState extends State<KegiatanTable> {
       context: context,
       builder: (context) {
         return Dialog(
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
           child: Padding(
             padding: const EdgeInsets.all(24),
             child: Column(
@@ -92,9 +92,18 @@ class _KegiatanTableState extends State<KegiatanTable> {
                 const SizedBox(height: 16),
                 DropdownButtonFormField<String>(
                   items: const [
-                    DropdownMenuItem(value: 'Akademik', child: Text('Akademik')),
-                    DropdownMenuItem(value: 'Teknologi', child: Text('Teknologi')),
-                    DropdownMenuItem(value: 'Kompetisi', child: Text('Kompetisi')),
+                    DropdownMenuItem(
+                      value: 'Akademik',
+                      child: Text('Akademik'),
+                    ),
+                    DropdownMenuItem(
+                      value: 'Teknologi',
+                      child: Text('Teknologi'),
+                    ),
+                    DropdownMenuItem(
+                      value: 'Kompetisi',
+                      child: Text('Kompetisi'),
+                    ),
                   ],
                   onChanged: (_) {},
                   decoration: const InputDecoration(labelText: 'Kategori'),
@@ -148,87 +157,242 @@ class _KegiatanTableState extends State<KegiatanTable> {
           ),
           const SizedBox(height: 20),
 
-          // Tabel kegiatan
-          Expanded(
-            child: Container(
-              width: screenWidth,
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(12),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.05),
-                    blurRadius: 8,
-                    offset: const Offset(0, 2),
-                  ),
-                ],
-              ),
-              child: SingleChildScrollView(
-                child: Column(
-                  children: [
-                    // Header tabel
-                    Container(
-                      color: Colors.grey[50],
-                      padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
-                      child: Row(
-                        children: const [
-                          Expanded(flex: 1, child: Text('NO', style: _headerStyle)),
-                          Expanded(flex: 3, child: Text('NAMA KEGIATAN', style: _headerStyle)),
-                          Expanded(flex: 3, child: Text('KATEGORI', style: _headerStyle)),
-                          Expanded(flex: 3, child: Text('TANGGAL', style: _headerStyle)),
-                          Expanded(flex: 2, child: Text('STATUS', style: _headerStyle)),
-                          Expanded(flex: 1, child: Text('AKSI', style: _headerStyle)),
-                        ],
-                      ),
+          // Mobile view with cards or desktop view with table
+          Flexible(
+            child: screenWidth < 600
+                ? ListView.separated(
+                    itemCount: paginatedData.length,
+                    separatorBuilder: (_, __) => const SizedBox(height: 8),
+                    padding: EdgeInsets.only(
+                      top: 8,
+                      bottom: MediaQuery.of(context).viewPadding.bottom + 16,
                     ),
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    itemBuilder: (context, index) {
+                      final item = paginatedData[index];
+                      Color statusColor;
+                      switch (item['status']?.toLowerCase()) {
+                        case 'selesai':
+                          statusColor = Colors.green;
+                          break;
+                        case 'berlangsung':
+                          statusColor = Colors.blue;
+                          break;
+                        case 'pendaftaran':
+                          statusColor = Colors.orange;
+                          break;
+                        default:
+                          statusColor = Colors.grey;
+                      }
 
-                    // Data baris
-                    ...paginatedData.asMap().entries.map((entry) {
-                      int index = entry.key;
-                      var item = entry.value;
-
-                      return MouseRegion(
-                        onEnter: (_) => setState(() => hoveredIndex = index),
-                        onExit: (_) => setState(() => hoveredIndex = null),
-                        child: AnimatedContainer(
-                          duration: const Duration(milliseconds: 150),
-                          color: hoveredIndex == index ? Colors.grey[100] : Colors.white,
-                          padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
-                          child: Row(
+                      return Card(
+                        margin: const EdgeInsets.symmetric(
+                          horizontal: 0,
+                          vertical: 6,
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Expanded(flex: 1, child: Text(item['no']!)),
-                              Expanded(flex: 3, child: Text(item['nama']!)),
-                              Expanded(flex: 3, child: Text(item['kategori']!)),
-                              Expanded(flex: 3, child: Text(item['tanggal']!)),
-                              Expanded(flex: 2, child: Text(item['status']!)),
-                              Expanded(
-                                flex: 1,
-                                child: PopupMenuButton<String>(
-                                  onSelected: (value) {
-                                    if (value == 'detail') {
+                              Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          item['nama']!,
+                                          style: const TextStyle(
+                                            fontWeight: FontWeight.w600,
+                                            fontSize: 16,
+                                          ),
+                                        ),
+                                        const SizedBox(height: 4),
+                                        Text(
+                                          '${item['kategori']} • ${item['tanggal']}',
+                                          style: TextStyle(
+                                            color: Colors.grey[600],
+                                            fontSize: 14,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  Container(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 8,
+                                      vertical: 4,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: statusColor.withOpacity(0.1),
+                                      borderRadius: BorderRadius.circular(4),
+                                    ),
+                                    child: Text(
+                                      item['status']!,
+                                      style: TextStyle(
+                                        color: statusColor,
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                children: [
+                                  TextButton(
+                                    onPressed: () {
                                       Navigator.push(
                                         context,
                                         MaterialPageRoute(
-                                          builder: (context) => DetailPage(item: item),
+                                          builder: (context) =>
+                                              DetailPage(item: item),
                                         ),
                                       );
-                                    }
-                                  },
-                                  itemBuilder: (context) => const [
-                                    PopupMenuItem(value: 'detail', child: Text('Detail')),
-                                  ],
-                                  icon: Icon(Icons.more_horiz, color: Colors.grey[700]),
-                                ),
+                                    },
+                                    child: const Text('Detail'),
+                                  ),
+                                ],
                               ),
                             ],
                           ),
                         ),
                       );
-                    }),
-                  ],
-                ),
-              ),
-            ),
+                    },
+                  )
+                : Container(
+                    width: screenWidth,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(12),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.05),
+                          blurRadius: 8,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
+                    ),
+                    child: SingleChildScrollView(
+                      child: Column(
+                        children: [
+                          // Header tabel
+                          Container(
+                            color: Colors.grey[50],
+                            padding: const EdgeInsets.symmetric(
+                              vertical: 16,
+                              horizontal: 16,
+                            ),
+                            child: Row(
+                              children: const [
+                                Expanded(
+                                  flex: 1,
+                                  child: Text('NO', style: _headerStyle),
+                                ),
+                                Expanded(
+                                  flex: 3,
+                                  child: Text(
+                                    'NAMA KEGIATAN',
+                                    style: _headerStyle,
+                                  ),
+                                ),
+                                Expanded(
+                                  flex: 3,
+                                  child: Text('KATEGORI', style: _headerStyle),
+                                ),
+                                Expanded(
+                                  flex: 3,
+                                  child: Text('TANGGAL', style: _headerStyle),
+                                ),
+                                Expanded(
+                                  flex: 2,
+                                  child: Text('STATUS', style: _headerStyle),
+                                ),
+                                Expanded(
+                                  flex: 1,
+                                  child: Text('AKSI', style: _headerStyle),
+                                ),
+                              ],
+                            ),
+                          ),
+
+                          // Data baris
+                          ...paginatedData.asMap().entries.map((entry) {
+                            int index = entry.key;
+                            var item = entry.value;
+
+                            return MouseRegion(
+                              onEnter: (_) =>
+                                  setState(() => hoveredIndex = index),
+                              onExit: (_) =>
+                                  setState(() => hoveredIndex = null),
+                              child: AnimatedContainer(
+                                duration: const Duration(milliseconds: 150),
+                                color: hoveredIndex == index
+                                    ? Colors.grey[100]
+                                    : Colors.white,
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 16,
+                                  horizontal: 16,
+                                ),
+                                child: Row(
+                                  children: [
+                                    Expanded(flex: 1, child: Text(item['no']!)),
+                                    Expanded(
+                                      flex: 3,
+                                      child: Text(item['nama']!),
+                                    ),
+                                    Expanded(
+                                      flex: 3,
+                                      child: Text(item['kategori']!),
+                                    ),
+                                    Expanded(
+                                      flex: 3,
+                                      child: Text(item['tanggal']!),
+                                    ),
+                                    Expanded(
+                                      flex: 2,
+                                      child: Text(item['status']!),
+                                    ),
+                                    Expanded(
+                                      flex: 1,
+                                      child: PopupMenuButton<String>(
+                                        onSelected: (value) {
+                                          if (value == 'detail') {
+                                            Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                builder: (context) =>
+                                                    DetailPage(item: item),
+                                              ),
+                                            );
+                                          }
+                                        },
+                                        itemBuilder: (context) => const [
+                                          PopupMenuItem(
+                                            value: 'detail',
+                                            child: Text('Detail'),
+                                          ),
+                                        ],
+                                        icon: Icon(
+                                          Icons.more_horiz,
+                                          color: Colors.grey[700],
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            );
+                          }),
+                        ],
+                      ),
+                    ),
+                  ),
           ),
 
           const SizedBox(height: 20),
@@ -253,15 +417,18 @@ class _KegiatanTableState extends State<KegiatanTable> {
                   child: Text(
                     currentPage.toString(),
                     style: const TextStyle(
-                        color: Colors.white, fontWeight: FontWeight.bold),
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
               ),
               IconButton(
                 onPressed: currentPage < totalPages ? nextPage : null,
                 icon: const Icon(Icons.chevron_right),
-                color:
-                    currentPage < totalPages ? Colors.grey[700] : Colors.grey[300],
+                color: currentPage < totalPages
+                    ? Colors.grey[700]
+                    : Colors.grey[300],
               ),
             ],
           ),
