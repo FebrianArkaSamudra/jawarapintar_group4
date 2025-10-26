@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'keluarga_detail_screen.dart';
 
 class KeluargaScreen extends StatefulWidget {
   const KeluargaScreen({super.key});
@@ -379,9 +380,25 @@ class _KeluargaScreenState extends State<KeluargaScreen> {
                               ),
                             ),
                             DataCell(
-                              IconButton(
-                                onPressed: () {},
+                              PopupMenuButton<String>(
                                 icon: const Icon(Icons.more_horiz),
+                                itemBuilder: (context) => const [
+                                  PopupMenuItem(
+                                    value: 'detail',
+                                    child: Text('Detail'),
+                                  ),
+                                ],
+                                onSelected: (value) {
+                                  if (value == 'detail') {
+                                    Navigator.of(context).push(
+                                      MaterialPageRoute(
+                                        builder: (_) => KeluargaDetailScreen(
+                                          keluarga: keluarga,
+                                        ),
+                                      ),
+                                    );
+                                  }
+                                },
                               ),
                             ),
                           ],

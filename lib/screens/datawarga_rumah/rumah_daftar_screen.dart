@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'rumah_detail_screen.dart';
+import 'rumah_edit_screen.dart';
 
 class RumahDaftarScreen extends StatefulWidget {
   const RumahDaftarScreen({super.key});
@@ -302,9 +304,58 @@ class _RumahDaftarScreenState extends State<RumahDaftarScreen> {
                           ),
                         ),
                         DataCell(
-                          IconButton(
-                            onPressed: () {},
+                          PopupMenuButton<String>(
                             icon: const Icon(Icons.more_horiz),
+                            itemBuilder: (context) {
+                              final isTersedia = rumah['status'] == 'Tersedia';
+                              return [
+                                const PopupMenuItem(
+                                  value: 'detail',
+                                  child: Text('Detail'),
+                                ),
+                                if (isTersedia)
+                                  const PopupMenuItem(
+                                    value: 'edit',
+                                    child: Text('Edit'),
+                                  ),
+                                if (isTersedia)
+                                  const PopupMenuItem(
+                                    value: 'hapus',
+                                    child: Text('Hapus'),
+                                  ),
+                              ];
+                            },
+                            onSelected: (value) {
+                              if (value == 'detail') {
+                                Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                    builder: (_) =>
+                                        RumahDetailScreen(rumah: rumah),
+                                  ),
+                                );
+                              } else if (value == 'edit') {
+                                final idx = rumahList.indexWhere(
+                                  (e) => e['no'] == rumah['no'],
+                                );
+                                if (idx != -1) {
+                                  Navigator.of(context).push(
+                                    MaterialPageRoute(
+                                      builder: (_) => RumahEditScreen(
+                                        rumah: rumahList[idx],
+                                        onSave: (updated) {
+                                          setState(() {
+                                            rumahList[idx] = updated;
+                                            applyFilter();
+                                          });
+                                        },
+                                      ),
+                                    ),
+                                  );
+                                }
+                              } else if (value == 'hapus') {
+                                _showDeleteDialog(rumah);
+                              }
+                            },
                           ),
                         ),
                       ],
@@ -321,6 +372,40 @@ class _RumahDaftarScreenState extends State<RumahDaftarScreen> {
             _buildPagination(),
           ],
         ),
+      ),
+    );
+  }
+
+  void _showDeleteDialog(Map<String, String> rumah) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        title: const Text('Konfirmasi Hapus'),
+        content: Text('Yakin ingin menghapus rumah "${rumah['alamat']}"?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Batal'),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              setState(() {
+                rumahList.removeWhere((r) => r['no'] == rumah['no']);
+                applyFilter();
+              });
+              Navigator.pop(context);
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text('Rumah berhasil dihapus'),
+                  duration: Duration(seconds: 2),
+                ),
+              );
+            },
+            style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+            child: const Text('Hapus', style: TextStyle(color: Colors.white)),
+          ),
+        ],
       ),
     );
   }

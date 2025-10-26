@@ -83,6 +83,286 @@ class _WargaDaftarScreenState extends State<WargaDaftarScreen> {
     });
   }
 
+  // DETAIL DIALOG
+  void _showWargaDetail(Map<String, String> warga) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return Dialog(
+          insetPadding: const EdgeInsets.all(16),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: ConstrainedBox(
+            constraints: BoxConstraints(
+              maxWidth: 1000,
+              maxHeight: MediaQuery.of(context).size.height * 0.9,
+            ),
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.all(24),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    'Detail Warga',
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 16),
+                  _detailRow('Nama Lengkap', warga['nama'] ?? '-'),
+                  _detailRow('NIK', warga['nik'] ?? '-'),
+                  _detailRow('Keluarga', warga['keluarga'] ?? '-'),
+                  _detailRow('Jenis Kelamin', warga['jenisKelamin'] ?? '-'),
+                  _detailRow('Status Domisili', warga['statusDomisili'] ?? '-'),
+                  _detailRow('Status Hidup', warga['statusHidup'] ?? '-'),
+                  const SizedBox(height: 12),
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: TextButton(
+                      onPressed: () => Navigator.pop(context),
+                      child: const Text('Tutup'),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _detailRow(String label, String value) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 6),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(
+            width: 220,
+            child: Text(
+              label,
+              style: const TextStyle(fontWeight: FontWeight.w600),
+            ),
+          ),
+          const SizedBox(width: 8),
+          Expanded(child: Text(value)),
+        ],
+      ),
+    );
+  }
+
+  // EDIT DIALOG
+  void _showWargaEdit(int index) {
+    final original = Map<String, String>.from(wargaData[index]);
+
+    final namaCtrl = TextEditingController(text: original['nama'] ?? '');
+    final nikCtrl = TextEditingController(text: original['nik'] ?? '');
+    final keluargaCtrl = TextEditingController(
+      text: original['keluarga'] ?? '',
+    );
+    String? jenisKelamin = original['jenisKelamin'];
+    String? statusDomisili = original['statusDomisili'];
+    String? statusHidup = original['statusHidup'];
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        return StatefulBuilder(
+          builder: (context, setDialogState) {
+            final bottomInset = MediaQuery.of(context).viewInsets.bottom;
+            return Dialog(
+              insetPadding: const EdgeInsets.all(16),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: ConstrainedBox(
+                constraints: BoxConstraints(
+                  maxWidth: 800,
+                  maxHeight: MediaQuery.of(context).size.height * 0.9,
+                ),
+                child: SingleChildScrollView(
+                  padding: EdgeInsets.fromLTRB(24, 24, 24, 24 + bottomInset),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        'Edit Warga',
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      const Text('Nama Lengkap'),
+                      const SizedBox(height: 6),
+                      TextField(
+                        controller: namaCtrl,
+                        decoration: const InputDecoration(
+                          border: OutlineInputBorder(),
+                          contentPadding: EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 10,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      const Text('NIK'),
+                      const SizedBox(height: 6),
+                      TextField(
+                        controller: nikCtrl,
+                        keyboardType: TextInputType.number,
+                        decoration: const InputDecoration(
+                          border: OutlineInputBorder(),
+                          contentPadding: EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 10,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      const Text('Keluarga'),
+                      const SizedBox(height: 6),
+                      TextField(
+                        controller: keluargaCtrl,
+                        decoration: const InputDecoration(
+                          border: OutlineInputBorder(),
+                          contentPadding: EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 10,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      const Text('Jenis Kelamin'),
+                      const SizedBox(height: 6),
+                      DropdownButtonFormField<String>(
+                        value: jenisKelamin,
+                        items: const [
+                          DropdownMenuItem(
+                            value: 'Laki-laki',
+                            child: Text('Laki-laki'),
+                          ),
+                          DropdownMenuItem(
+                            value: 'Perempuan',
+                            child: Text('Perempuan'),
+                          ),
+                        ],
+                        onChanged: (v) =>
+                            setDialogState(() => jenisKelamin = v),
+                        decoration: const InputDecoration(
+                          border: OutlineInputBorder(),
+                          contentPadding: EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 10,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      const Text('Status Domisili'),
+                      const SizedBox(height: 6),
+                      DropdownButtonFormField<String>(
+                        value: statusDomisili,
+                        items: const [
+                          DropdownMenuItem(
+                            value: 'Aktif',
+                            child: Text('Aktif'),
+                          ),
+                          DropdownMenuItem(
+                            value: 'Nonaktif',
+                            child: Text('Nonaktif'),
+                          ),
+                        ],
+                        onChanged: (v) =>
+                            setDialogState(() => statusDomisili = v),
+                        decoration: const InputDecoration(
+                          border: OutlineInputBorder(),
+                          contentPadding: EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 10,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      const Text('Status Hidup'),
+                      const SizedBox(height: 6),
+                      DropdownButtonFormField<String>(
+                        value: statusHidup,
+                        items: const [
+                          DropdownMenuItem(
+                            value: 'Hidup',
+                            child: Text('Hidup'),
+                          ),
+                          DropdownMenuItem(
+                            value: 'Wafat',
+                            child: Text('Wafat'),
+                          ),
+                        ],
+                        onChanged: (v) => setDialogState(() => statusHidup = v),
+                        decoration: const InputDecoration(
+                          border: OutlineInputBorder(),
+                          contentPadding: EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 10,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          TextButton(
+                            onPressed: () => Navigator.pop(context),
+                            child: const Text('Batal'),
+                          ),
+                          const SizedBox(width: 8),
+                          ElevatedButton(
+                            onPressed: () {
+                              setState(() {
+                                wargaData[index] = {
+                                  'no': original['no'] ?? '${index + 1}',
+                                  'nama': namaCtrl.text.trim(),
+                                  'nik': nikCtrl.text.trim(),
+                                  'keluarga': keluargaCtrl.text.trim(),
+                                  'jenisKelamin':
+                                      jenisKelamin ??
+                                      original['jenisKelamin'] ??
+                                      '-',
+                                  'statusDomisili':
+                                      statusDomisili ??
+                                      original['statusDomisili'] ??
+                                      '-',
+                                  'statusHidup':
+                                      statusHidup ??
+                                      original['statusHidup'] ??
+                                      '-',
+                                };
+                                applyFilter();
+                              });
+                              Navigator.pop(context);
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: const Color(0xFF3E6FAA),
+                            ),
+                            child: const Text(
+                              'Simpan',
+                              style: TextStyle(color: Colors.white),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -397,8 +677,35 @@ class _WargaDaftarScreenState extends State<WargaDaftarScreen> {
                           ),
                           DataCell(_buildStatusChip(data['statusDomisili']!)),
                           DataCell(_buildStatusChip(data['statusHidup']!)),
-                          const DataCell(
-                            Icon(Icons.more_horiz, color: Colors.grey),
+                          DataCell(
+                            PopupMenuButton<String>(
+                              icon: const Icon(
+                                Icons.more_horiz,
+                                color: Colors.grey,
+                              ),
+                              itemBuilder: (context) => const [
+                                PopupMenuItem(
+                                  value: 'detail',
+                                  child: Text('Detail'),
+                                ),
+                                PopupMenuItem(
+                                  value: 'edit',
+                                  child: Text('Edit'),
+                                ),
+                              ],
+                              onSelected: (value) {
+                                if (value == 'detail') {
+                                  _showWargaDetail(data);
+                                } else if (value == 'edit') {
+                                  final idx = wargaData.indexWhere(
+                                    (e) => e['no'] == data['no'],
+                                  );
+                                  if (idx != -1) {
+                                    _showWargaEdit(idx);
+                                  }
+                                }
+                              },
+                            ),
                           ),
                         ],
                       );
