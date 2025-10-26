@@ -25,15 +25,7 @@ class _WargaTambahScreenState extends State<WargaTambahScreen> {
   final _teleponController = TextEditingController();
   final _tempatLahirController = TextEditingController();
 
-  void _pickDate() async {
-    DateTime? date = await showDatePicker(
-      context: context,
-      initialDate: DateTime.now(),
-      firstDate: DateTime(1900),
-      lastDate: DateTime(2100),
-    );
-    if (date != null) setState(() => selectedDate = date);
-  }
+  // Removed old _pickDate(), handled inline inside FormField for validation
 
   void _resetForm() {
     _formKey.currentState?.reset();
@@ -99,11 +91,13 @@ class _WargaTambahScreenState extends State<WargaTambahScreen> {
                   'NIK',
                   'Masukkan NIK sesuai KTP',
                   _nikController,
+                  keyboardType: TextInputType.number,
                 ),
                 _buildTextField(
                   'Nomor Telepon',
                   '08xxxxxx',
                   _teleponController,
+                  keyboardType: TextInputType.number,
                 ),
                 _buildTextField(
                   'Tempat Lahir',
@@ -163,7 +157,13 @@ class _WargaTambahScreenState extends State<WargaTambahScreen> {
                     ElevatedButton(
                       onPressed: () {
                         if (_formKey.currentState?.validate() ?? false) {
-                          // handle submit
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('Data berhasil disubmit!'),
+                              duration: Duration(seconds: 2),
+                            ),
+                          );
+                          _resetForm();
                         }
                       },
                       style: ElevatedButton.styleFrom(
@@ -209,8 +209,9 @@ class _WargaTambahScreenState extends State<WargaTambahScreen> {
   Widget _buildTextField(
     String label,
     String hint,
-    TextEditingController controller,
-  ) {
+    TextEditingController controller, {
+    TextInputType? keyboardType,
+  }) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 16),
       child: Column(
@@ -220,6 +221,7 @@ class _WargaTambahScreenState extends State<WargaTambahScreen> {
           const SizedBox(height: 6),
           TextFormField(
             controller: controller,
+            keyboardType: keyboardType,
             decoration: InputDecoration(
               hintText: hint,
               hintStyle: const TextStyle(fontFamily: 'Poppins'),
@@ -231,6 +233,12 @@ class _WargaTambahScreenState extends State<WargaTambahScreen> {
                 vertical: 10,
               ),
             ),
+            validator: (value) {
+              if (value == null || value.trim().isEmpty) {
+                return '$label wajib diisi';
+              }
+              return null;
+            },
           ),
         ],
       ),
@@ -277,43 +285,71 @@ class _WargaTambahScreenState extends State<WargaTambahScreen> {
                 vertical: 10,
               ),
             ),
+            validator: (v) {
+              if (v == null || v.isEmpty) {
+                return '$label wajib dipilih';
+              }
+              return null;
+            },
           ),
         ],
       ),
     );
   }
 
-  // 🔹 Date Picker
+  // 🔹 Date Picker (required)
   Widget _buildDatePickerField(String label) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(label, style: const TextStyle(fontFamily: 'Poppins')),
-          const SizedBox(height: 6),
-          InkWell(
-            onTap: _pickDate,
-            child: InputDecorator(
-              decoration: InputDecoration(
-                hintText: 'Pilih tanggal lahir',
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(6),
-                ),
-                contentPadding: const EdgeInsets.symmetric(
-                  horizontal: 12,
-                  vertical: 10,
+      child: FormField<DateTime>(
+        validator: (value) {
+          if (selectedDate == null) {
+            return '$label wajib diisi';
+          }
+          return null;
+        },
+        builder: (state) {
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(label, style: const TextStyle(fontFamily: 'Poppins')),
+              const SizedBox(height: 6),
+              InkWell(
+                onTap: () async {
+                  final date = await showDatePicker(
+                    context: context,
+                    initialDate: DateTime.now(),
+                    firstDate: DateTime(1900),
+                    lastDate: DateTime(2100),
+                  );
+                  if (date != null) {
+                    setState(() => selectedDate = date);
+                    state.didChange(date);
+                  }
+                },
+                child: InputDecorator(
+                  decoration: InputDecoration(
+                    hintText: 'Pilih tanggal lahir',
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(6),
+                    ),
+                    contentPadding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 10,
+                    ),
+                    errorText: state.errorText,
+                  ),
+                  child: Text(
+                    selectedDate == null
+                        ? '--/--/--'
+                        : '${selectedDate!.day}/${selectedDate!.month}/${selectedDate!.year}',
+                    style: const TextStyle(fontFamily: 'Poppins'),
+                  ),
                 ),
               ),
-              child: Text(
-                selectedDate == null
-                    ? '--/--/--'
-                    : '${selectedDate!.day}/${selectedDate!.month}/${selectedDate!.year}',
-                style: const TextStyle(fontFamily: 'Poppins'),
-              ),
-            ),
-          ),
-        ],
+            ],
+          );
+        },
       ),
     );
   }

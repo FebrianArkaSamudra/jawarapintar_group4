@@ -9,6 +9,8 @@ class TagihIuranScreen extends StatefulWidget {
 
 class _TagihIuranScreenState extends State<TagihIuranScreen> {
   String? selectedIuran;
+  DateTime? selectedDate;
+  bool showDateError = false;
 
   final List<String> iuranList = [
     '-- Pilih Iuran --',
@@ -23,7 +25,7 @@ class _TagihIuranScreenState extends State<TagihIuranScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF5F8FC),
-      body: Padding(
+      body: SingleChildScrollView(
         padding: const EdgeInsets.all(24.0),
         child: Center(
           child: Container(
@@ -81,9 +83,54 @@ class _TagihIuranScreenState extends State<TagihIuranScreen> {
                   onChanged: (value) {
                     setState(() {
                       selectedIuran = value;
+                      selectedDate = null;
+                      showDateError = false;
                     });
                   },
                 ),
+
+                // Calendar Field (only visible after choosing iuran)
+                if (selectedIuran != null &&
+                    selectedIuran != '-- Pilih Iuran --') ...[
+                  const SizedBox(height: 16),
+                  const Text(
+                    "Tanggal",
+                    style: TextStyle(fontWeight: FontWeight.w500),
+                  ),
+                  const SizedBox(height: 8),
+                  TextFormField(
+                    readOnly: true,
+                    decoration: InputDecoration(
+                      hintText: selectedDate == null
+                          ? 'Pilih tanggal'
+                          : '${selectedDate!.day}/${selectedDate!.month}/${selectedDate!.year}',
+                      contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 10,
+                      ),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(6),
+                        borderSide: BorderSide(color: Colors.grey.shade300),
+                      ),
+                      suffixIcon: const Icon(Icons.calendar_today),
+                      errorText: showDateError ? 'Tanggal wajib diisi.' : null,
+                    ),
+                    onTap: () async {
+                      DateTime? pickedDate = await showDatePicker(
+                        context: context,
+                        initialDate: selectedDate ?? DateTime.now(),
+                        firstDate: DateTime(2000),
+                        lastDate: DateTime(2100),
+                      );
+                      if (pickedDate != null) {
+                        setState(() {
+                          selectedDate = pickedDate;
+                          showDateError = false;
+                        });
+                      }
+                    },
+                  ),
+                ],
 
                 const SizedBox(height: 24),
 
@@ -92,7 +139,42 @@ class _TagihIuranScreenState extends State<TagihIuranScreen> {
                   children: [
                     ElevatedButton(
                       onPressed: () {
-                        // TODO: Add logic to tagih all families
+                        if (selectedIuran == null ||
+                            selectedIuran == '-- Pilih Iuran --') {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('Silakan pilih jenis iuran.'),
+                              backgroundColor: Colors.red,
+                            ),
+                          );
+                          return;
+                        }
+                        if (selectedDate == null) {
+                          setState(() {
+                            showDateError = true;
+                          });
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('Tanggal wajib diisi.'),
+                              backgroundColor: Colors.red,
+                            ),
+                          );
+                          return;
+                        }
+
+                        setState(() {
+                          showDateError = false;
+                        });
+
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(
+                              'Tagihan untuk "$selectedIuran" tanggal '
+                              '${selectedDate!.day}/${selectedDate!.month}/${selectedDate!.year} berhasil dikirim.',
+                            ),
+                            backgroundColor: Colors.green,
+                          ),
+                        );
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: const Color(0xFF3E6FAA),
@@ -114,6 +196,8 @@ class _TagihIuranScreenState extends State<TagihIuranScreen> {
                       onPressed: () {
                         setState(() {
                           selectedIuran = null;
+                          selectedDate = null;
+                          showDateError = false;
                         });
                       },
                       style: OutlinedButton.styleFrom(

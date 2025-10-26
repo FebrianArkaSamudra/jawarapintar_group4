@@ -1,4 +1,6 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 
 class PemasukanTambahScreen extends StatefulWidget {
   const PemasukanTambahScreen({super.key});
@@ -14,8 +16,17 @@ class _PemasukanTambahScreenState extends State<PemasukanTambahScreen> {
   final TextEditingController _nominalController = TextEditingController();
   String? _selectedKategori;
   DateTime? _selectedDate;
+  File? _selectedFile;
+  final ImagePicker _imagePicker = ImagePicker();
 
-  final List<String> _kategoriList = ['Gaji', 'Bonus', 'Hadiah', 'Lainnya', 'Dana Bantuan Pemerintah', 'Pendapatan Lainnya'];
+  final List<String> _kategoriList = [
+    'Gaji',
+    'Bonus',
+    'Hadiah',
+    'Lainnya',
+    'Dana Bantuan Pemerintah',
+    'Pendapatan Lainnya',
+  ];
 
   void _pickDate() async {
     DateTime now = DateTime.now();
@@ -34,6 +45,27 @@ class _PemasukanTambahScreenState extends State<PemasukanTambahScreen> {
     }
   }
 
+  Future<void> _pickFile() async {
+    try {
+      final XFile? pickedFile = await _imagePicker.pickImage(
+        source: ImageSource.gallery,
+        maxWidth: 1920,
+        maxHeight: 1080,
+        imageQuality: 85,
+      );
+
+      if (pickedFile != null) {
+        setState(() {
+          _selectedFile = File(pickedFile.path);
+        });
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Error memilih file: $e')));
+    }
+  }
+
   void _resetForm() {
     _formKey.currentState?.reset();
     _namaController.clear();
@@ -42,6 +74,7 @@ class _PemasukanTambahScreenState extends State<PemasukanTambahScreen> {
     setState(() {
       _selectedKategori = null;
       _selectedDate = null;
+      _selectedFile = null;
     });
   }
 
@@ -65,7 +98,7 @@ class _PemasukanTambahScreenState extends State<PemasukanTambahScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[100],
+      backgroundColor: const Color(0xFFF8F9FF),
       body: Center(
         child: Card(
           shape: RoundedRectangleBorder(
@@ -232,22 +265,83 @@ class _PemasukanTambahScreenState extends State<PemasukanTambahScreen> {
                       style: TextStyle(fontWeight: FontWeight.w600),
                     ),
                     const SizedBox(height: 8),
-                    Container(
-                      height: 120,
-                      width: double.infinity,
-                      decoration: BoxDecoration(
-                        color: Colors.grey[200],
-                        borderRadius: BorderRadius.circular(8),
-                        border: Border.all(color: Colors.grey.shade400),
-                      ),
-                      child: Center(
-                        child: Text(
-                          'Upload bukti pemasukan (.png/.jpg)',
-                          style: TextStyle(
-                            color: Colors.grey[600],
-                            fontSize: 14,
-                          ),
+                    InkWell(
+                      onTap: _pickFile,
+                      borderRadius: BorderRadius.circular(8),
+                      child: Container(
+                        height: 120,
+                        width: double.infinity,
+                        decoration: BoxDecoration(
+                          color: Colors.grey[200],
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(color: Colors.grey.shade400),
                         ),
+                        child: _selectedFile == null
+                            ? Center(
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Icon(
+                                      Icons.cloud_upload_outlined,
+                                      size: 40,
+                                      color: Colors.grey[600],
+                                    ),
+                                    const SizedBox(height: 8),
+                                    Text(
+                                      'Klik untuk upload bukti pemasukan',
+                                      style: TextStyle(
+                                        color: Colors.grey[600],
+                                        fontSize: 14,
+                                      ),
+                                    ),
+                                    Text(
+                                      '(.png/.jpg)',
+                                      style: TextStyle(
+                                        color: Colors.grey[500],
+                                        fontSize: 12,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              )
+                            : Stack(
+                                children: [
+                                  ClipRRect(
+                                    borderRadius: BorderRadius.circular(8),
+                                    child: Image.file(
+                                      _selectedFile!,
+                                      width: double.infinity,
+                                      height: 120,
+                                      fit: BoxFit.cover,
+                                    ),
+                                  ),
+                                  Positioned(
+                                    top: 8,
+                                    right: 8,
+                                    child: GestureDetector(
+                                      onTap: () {
+                                        setState(() {
+                                          _selectedFile = null;
+                                        });
+                                      },
+                                      child: Container(
+                                        padding: const EdgeInsets.all(4),
+                                        decoration: BoxDecoration(
+                                          color: Colors.red,
+                                          borderRadius: BorderRadius.circular(
+                                            4,
+                                          ),
+                                        ),
+                                        child: const Icon(
+                                          Icons.close,
+                                          color: Colors.white,
+                                          size: 20,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
                       ),
                     ),
                     const SizedBox(height: 28),
