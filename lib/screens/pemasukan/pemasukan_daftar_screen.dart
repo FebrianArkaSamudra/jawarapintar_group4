@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:jawarapintar/screens/pemasukan/pemasukan_lain_detail_screen.dart';
 
 class PemasukanDaftarScreen extends StatefulWidget {
   const PemasukanDaftarScreen({super.key});
@@ -58,6 +59,22 @@ class _PemasukanDaftarScreenState extends State<PemasukanDaftarScreen> {
   ];
 
   List<Map<String, String>> _filteredRows = [];
+
+  // Pagination (Slides)
+  int _currentPage = 1;
+  final int _itemsPerPage = 5;
+
+  List<Map<String, String>> get _paginatedRows {
+    final int startIndex = (_currentPage - 1) * _itemsPerPage;
+    int endIndex = startIndex + _itemsPerPage;
+    if (endIndex > _filteredRows.length) endIndex = _filteredRows.length;
+    if (startIndex >= _filteredRows.length) return [];
+    return _filteredRows.sublist(startIndex, endIndex);
+  }
+
+  int get _totalPages => (_filteredRows.isEmpty)
+      ? 1
+      : (_filteredRows.length / _itemsPerPage).ceil();
 
   @override
   void initState() {
@@ -422,192 +439,208 @@ class _PemasukanDaftarScreenState extends State<PemasukanDaftarScreen> {
 
         return true;
       }).toList();
+      _currentPage = 1; // reset to first slide after filtering
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    final headerTextStyle = const TextStyle(
-      fontWeight: FontWeight.w500,
-      color: Colors.black87,
-      fontSize: 14,
-    );
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final bool isMobile = constraints.maxWidth < 600;
+        final double horizontalPadding = isMobile ? 8 : 16;
+        final double verticalPadding = isMobile ? 12 : 24;
+        final double buttonFontSize = isMobile ? 12 : 14;
+        final double buttonIconSize = isMobile ? 18 : 24;
 
-    final cellTextStyle = const TextStyle(
-      fontWeight: FontWeight.w400,
-      color: Colors.black87,
-      fontSize: 13,
-    );
-
-    return Scaffold(
-      body: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Container(
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(12),
-            boxShadow: const [
-              BoxShadow(
-                color: Color(0x1A000000),
-                blurRadius: 8,
-                offset: Offset(0, 4),
-              ),
-            ],
-          ),
-          padding: const EdgeInsets.fromLTRB(24, 20, 24, 24),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Align(
-                alignment: Alignment.topRight,
-                child: ElevatedButton(
-                  onPressed: _showFilterDialog,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF3E6FAA),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(30),
-                    ),
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 10,
-                    ),
-                    minimumSize: Size.zero,
-                    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                    elevation: 0,
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: const [
-                      Icon(Icons.filter_list, size: 20, color: Colors.white),
-                      SizedBox(width: 6),
-                      Text(
-                        'Filter',
+        return Scaffold(
+          backgroundColor: const Color(0xFFF5F7FA),
+          body: Padding(
+            padding: EdgeInsets.symmetric(
+              horizontal: horizontalPadding,
+              vertical: verticalPadding,
+            ),
+            child: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Filter button
+                  Align(
+                    alignment: Alignment.topRight,
+                    child: ElevatedButton.icon(
+                      onPressed: _showFilterDialog,
+                      icon: Icon(
+                        Icons.filter_list,
+                        color: Colors.white,
+                        size: buttonIconSize,
+                      ),
+                      label: Text(
+                        "Filter",
                         style: TextStyle(
                           color: Colors.white,
-                          fontWeight: FontWeight.w600,
+                          fontSize: buttonFontSize,
                         ),
                       ),
-                    ],
-                  ),
-                ),
-              ),
-              const SizedBox(height: 20),
-              Expanded(
-                child: SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: ConstrainedBox(
-                    constraints: BoxConstraints(
-                      minWidth: MediaQuery.of(context).size.width - 64,
-                    ),
-                    child: DataTable(
-                      headingRowHeight: 44,
-                      dataRowHeight: 48,
-                      horizontalMargin: 16,
-                      columnSpacing: 24,
-                      headingTextStyle: headerTextStyle,
-                      dividerThickness: 1,
-                      headingRowColor: MaterialStateProperty.all(
-                        const Color(0xFFF8F9FB),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFF3E6FAA),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        padding: EdgeInsets.symmetric(
+                          horizontal: isMobile ? 12 : 16,
+                          vertical: isMobile ? 8 : 10,
+                        ),
                       ),
-                      dataRowColor: MaterialStateProperty.resolveWith<Color?>((
-                        Set<MaterialState> states,
-                      ) {
-                        if (states.contains(MaterialState.selected)) {
-                          return Colors.blue.withOpacity(0.1);
-                        }
-                        return null;
-                      }),
-                      columns: const [
-                        DataColumn(label: Text('NO')),
-                        DataColumn(label: Text('NAMA')),
-                        DataColumn(label: Text('JENIS PEMASUKAN')),
-                        DataColumn(label: Text('TANGGAL')),
-                        DataColumn(label: Text('NOMINAL')),
-                        DataColumn(label: Text('AKSI')),
-                      ],
-                      rows: List<DataRow>.generate(_filteredRows.length, (
-                        index,
-                      ) {
-                        final row = _filteredRows[index];
-                        final isEven = index % 2 == 0;
-                        return DataRow(
-                          color: MaterialStateProperty.all(
-                            isEven ? Colors.white : const Color(0xFFF7F7F7),
-                          ),
-                          cells: [
-                            DataCell(Text(row['no']!, style: cellTextStyle)),
-                            DataCell(Text(row['nama']!, style: cellTextStyle)),
-                            DataCell(Text(row['jenis']!, style: cellTextStyle)),
-                            DataCell(
-                              Text(row['tanggal']!, style: cellTextStyle),
-                            ),
-                            DataCell(
-                              Text(row['nominal']!, style: cellTextStyle),
-                            ),
-                            DataCell(
-                              IconButton(
-                                icon: const Icon(Icons.more_horiz),
-                                onPressed: () {},
-                                color: Colors.black54,
-                                splashRadius: 20,
-                                padding: EdgeInsets.zero,
-                                constraints: const BoxConstraints(),
-                              ),
-                            ),
-                          ],
-                        );
-                      }),
                     ),
                   ),
-                ),
-              ),
-              const SizedBox(height: 20),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  IconButton(
-                    onPressed: null,
-                    icon: const Icon(Icons.arrow_left),
-                    color: Colors.grey,
-                    splashRadius: 20,
-                  ),
-                  const SizedBox(width: 8),
-                  ElevatedButton(
-                    onPressed: () {},
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF3E6FAA),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(6),
-                      ),
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 8,
-                      ),
-                      elevation: 0,
-                      minimumSize: const Size(40, 32),
-                    ),
-                    child: const Text(
-                      '1',
-                      style: TextStyle(
+                  SizedBox(height: isMobile ? 12 : 20),
+
+                  // Table inside container
+                  SingleChildScrollView(
+                    scrollDirection: Axis.vertical,
+                    child: Container(
+                      decoration: BoxDecoration(
                         color: Colors.white,
-                        fontWeight: FontWeight.w500,
-                        fontSize: 14,
+                        borderRadius: BorderRadius.circular(10),
+                        boxShadow: const [
+                          BoxShadow(
+                            color: Colors.black12,
+                            blurRadius: 4,
+                            offset: Offset(0, 2),
+                          ),
+                        ],
+                      ),
+                      padding: EdgeInsets.all(isMobile ? 8 : 12),
+                      child: SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        child: isMobile
+                            ? FittedBox(
+                                fit: BoxFit.scaleDown,
+                                alignment: Alignment.centerLeft,
+                                child: _buildDataTable(
+                                  buttonFontSize: buttonFontSize,
+                                ),
+                              )
+                            : _buildDataTable(),
                       ),
                     ),
                   ),
-                  const SizedBox(width: 8),
-                  IconButton(
-                    onPressed: null,
-                    icon: const Icon(Icons.arrow_right),
-                    color: Colors.grey,
-                    splashRadius: 20,
-                  ),
+                  SizedBox(height: isMobile ? 12 : 20),
+                  _buildPagination(),
                 ],
               ),
-            ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  DataTable _buildDataTable({double? buttonFontSize}) {
+    final headerTextStyle = TextStyle(
+      fontWeight: FontWeight.bold,
+      color: Colors.black87,
+      fontSize: buttonFontSize ?? 14,
+    );
+
+    final cellTextStyle = TextStyle(
+      fontWeight: FontWeight.w400,
+      color: Colors.black87,
+      fontSize: buttonFontSize ?? 13,
+    );
+
+    return DataTable(
+      headingTextStyle: headerTextStyle,
+      dataTextStyle: cellTextStyle,
+      columns: const [
+        DataColumn(label: Text('No')),
+        DataColumn(label: Text('Nama')),
+        DataColumn(label: Text('Jenis Pemasukan')),
+        DataColumn(label: Text('Tanggal')),
+        DataColumn(label: Text('Nominal')),
+        DataColumn(label: Text('Aksi')),
+      ],
+      rows: _paginatedRows.map((row) {
+        return DataRow(
+          cells: [
+            DataCell(Text(row['no']!, style: cellTextStyle)),
+            DataCell(Text(row['nama']!, style: cellTextStyle)),
+            DataCell(Text(row['jenis']!, style: cellTextStyle)),
+            DataCell(Text(row['tanggal']!, style: cellTextStyle)),
+            DataCell(Text(row['nominal']!, style: cellTextStyle)),
+            DataCell(
+              PopupMenuButton<String>(
+                icon: const Icon(Icons.more_horiz),
+                onSelected: (value) {
+                  if (value == 'detail') {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => PemasukanLainDetailScreen(item: row),
+                      ),
+                    );
+                  }
+                },
+                itemBuilder: (context) => const [
+                  PopupMenuItem(value: 'detail', child: Text('Detail')),
+                ],
+              ),
+            ),
+          ],
+        );
+      }).toList(),
+    );
+  }
+
+  Widget _buildPagination() {
+    final bool isFirst = _currentPage <= 1;
+    final bool isLast = _currentPage >= _totalPages;
+
+    List<Widget> pageButtons = [];
+    for (int i = 1; i <= _totalPages; i++) {
+      final bool active = i == _currentPage;
+      pageButtons.add(
+        GestureDetector(
+          onTap: () => setState(() => _currentPage = i),
+          child: Container(
+            margin: const EdgeInsets.symmetric(horizontal: 4),
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: active ? const Color(0xFF3E6FAA) : const Color(0xFFF0F0F0),
+              shape: BoxShape.circle,
+            ),
+            child: Text(
+              '$i',
+              style: TextStyle(
+                color: active ? Colors.white : Colors.black87,
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
           ),
         ),
-      ),
+      );
+    }
+
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        IconButton(
+          onPressed: isFirst
+              ? null
+              : () => setState(() => _currentPage = _currentPage - 1),
+          icon: const Icon(Icons.chevron_left),
+          color: isFirst ? Colors.grey : const Color(0xFF3E6FAA),
+        ),
+        ...pageButtons,
+        IconButton(
+          onPressed: isLast
+              ? null
+              : () => setState(() => _currentPage = _currentPage + 1),
+          icon: const Icon(Icons.chevron_right),
+          color: isLast ? Colors.grey : const Color(0xFF3E6FAA),
+        ),
+      ],
     );
   }
 }

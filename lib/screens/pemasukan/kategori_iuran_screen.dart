@@ -49,6 +49,21 @@ class _KategoriIuranScreenState extends State<KategoriIuranScreen> {
   String? selectedJenis = "Semua";
   TextEditingController namaController = TextEditingController();
 
+  // Pagination (Slides)
+  int _currentPage = 1;
+  final int _itemsPerPage = 5;
+
+  List<Map<String, dynamic>> get _paginatedList {
+    final int startIndex = (_currentPage - 1) * _itemsPerPage;
+    int endIndex = startIndex + _itemsPerPage;
+    if (endIndex > filteredList.length) endIndex = filteredList.length;
+    if (startIndex >= filteredList.length) return [];
+    return filteredList.sublist(startIndex, endIndex);
+  }
+
+  int get _totalPages =>
+      (filteredList.isEmpty) ? 1 : (filteredList.length / _itemsPerPage).ceil();
+
   @override
   void initState() {
     super.initState();
@@ -68,6 +83,7 @@ class _KategoriIuranScreenState extends State<KategoriIuranScreen> {
             : item['jenis'] == jenisFilter;
         return namaMatch && jenisMatch;
       }).toList();
+      _currentPage = 1; // reset to first slide after filtering
     });
   }
 
@@ -76,6 +92,7 @@ class _KategoriIuranScreenState extends State<KategoriIuranScreen> {
       namaController.clear();
       selectedJenis = "Semua";
       filteredList = List<Map<String, dynamic>>.from(iuranList);
+      _currentPage = 1; // reset to first slide after reset
     });
   }
 
@@ -359,7 +376,6 @@ class _KategoriIuranScreenState extends State<KategoriIuranScreen> {
         final double verticalPadding = isMobile ? 12 : 24;
         final double titleFontSize = isMobile ? 16 : 20;
         final double infoFontSize = isMobile ? 10 : 12;
-        final double infoTextFontSize = isMobile ? 11 : 13;
         final double buttonFontSize = isMobile ? 12 : 14;
         final double buttonIconSize = isMobile ? 18 : 24;
 
@@ -492,7 +508,7 @@ class _KategoriIuranScreenState extends State<KategoriIuranScreen> {
                                     DataColumn(label: Text("Nominal")),
                                     DataColumn(label: Text("Aksi")),
                                   ],
-                                  rows: filteredList.map((item) {
+                                  rows: _paginatedList.map((item) {
                                     return DataRow(
                                       cells: [
                                         DataCell(Text(item['no'].toString())),
@@ -542,7 +558,7 @@ class _KategoriIuranScreenState extends State<KategoriIuranScreen> {
                                   DataColumn(label: Text("Nominal")),
                                   DataColumn(label: Text("Aksi")),
                                 ],
-                                rows: filteredList.map((item) {
+                                rows: _paginatedList.map((item) {
                                   return DataRow(
                                     cells: [
                                       DataCell(Text(item['no'].toString())),
@@ -580,12 +596,67 @@ class _KategoriIuranScreenState extends State<KategoriIuranScreen> {
                       ),
                     ),
                   ),
+
+                  SizedBox(height: isMobile ? 12 : 20),
+                  _buildPagination(isMobile),
                 ],
               ),
             ),
           ),
         );
       },
+    );
+  }
+
+  Widget _buildPagination(bool isMobile) {
+    final bool isFirst = _currentPage <= 1;
+    final bool isLast = _currentPage >= _totalPages;
+
+    List<Widget> pageButtons = [];
+    for (int i = 1; i <= _totalPages; i++) {
+      final bool active = i == _currentPage;
+      pageButtons.add(
+        GestureDetector(
+          onTap: () => setState(() => _currentPage = i),
+          child: Container(
+            margin: const EdgeInsets.symmetric(horizontal: 4),
+            padding: EdgeInsets.all(isMobile ? 6 : 8),
+            decoration: BoxDecoration(
+              color: active ? const Color(0xFF3E6FAA) : const Color(0xFFF0F0F0),
+              shape: BoxShape.circle,
+            ),
+            child: Text(
+              '$i',
+              style: TextStyle(
+                color: active ? Colors.white : Colors.black87,
+                fontSize: isMobile ? 12 : 14,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
+        ),
+      );
+    }
+
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        IconButton(
+          onPressed: isFirst
+              ? null
+              : () => setState(() => _currentPage = _currentPage - 1),
+          icon: const Icon(Icons.chevron_left),
+          color: isFirst ? Colors.grey : const Color(0xFF3E6FAA),
+        ),
+        ...pageButtons,
+        IconButton(
+          onPressed: isLast
+              ? null
+              : () => setState(() => _currentPage = _currentPage + 1),
+          icon: const Icon(Icons.chevron_right),
+          color: isLast ? Colors.grey : const Color(0xFF3E6FAA),
+        ),
+      ],
     );
   }
 }

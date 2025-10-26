@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:jawarapintar/screens/pemasukan/tagihan_detail_screen.dart';
 
 class TagihanScreen extends StatefulWidget {
   const TagihanScreen({super.key});
@@ -48,10 +49,26 @@ class _TagihanScreenState extends State<TagihanScreen> {
   String? searchNama;
   DateTime? selectedDate;
 
+  // Pagination (Slides)
+  int _currentPage = 1;
+  final int _itemsPerPage = 5;
+
+  List<Map<String, dynamic>> get _paginatedData {
+    final int startIndex = (_currentPage - 1) * _itemsPerPage;
+    int endIndex = startIndex + _itemsPerPage;
+    if (endIndex > filteredData.length) endIndex = filteredData.length;
+    if (startIndex >= filteredData.length) return [];
+    return filteredData.sublist(startIndex, endIndex);
+  }
+
+  int get _totalPages =>
+      (filteredData.isEmpty) ? 1 : (filteredData.length / _itemsPerPage).ceil();
+
   @override
   void initState() {
     super.initState();
     filteredData = List.from(allData);
+    _currentPage = 1;
   }
 
   void _showFilterDialog() {
@@ -244,6 +261,7 @@ class _TagihanScreenState extends State<TagihanScreen> {
 
         return match;
       }).toList();
+      _currentPage = 1; // reset to first slide after filtering
     });
   }
 
@@ -315,110 +333,217 @@ class _TagihanScreenState extends State<TagihanScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: const Color(0xFFF6F8FC),
-      body: Padding(
-        padding: const EdgeInsets.all(24),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                ElevatedButton.icon(
-                  onPressed: _showFilterDialog,
-                  icon: const Icon(Icons.filter_list),
-                  label: const Text(
-                    'Filter',
-                    style: TextStyle(fontFamily: 'Poppins'),
-                  ),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF3E6FAA),
-                    foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 12,
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 12),
-                OutlinedButton.icon(
-                  onPressed: () {},
-                  icon: const Icon(Icons.picture_as_pdf),
-                  label: const Text(
-                    'Cetak PDF',
-                    style: TextStyle(fontFamily: 'Poppins'),
-                  ),
-                  style: OutlinedButton.styleFrom(
-                    foregroundColor: const Color(0xFF3E6FAA),
-                    side: const BorderSide(color: Color(0xFF3E6FAA)),
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 12,
-                    ),
-                  ),
-                ),
-              ],
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final bool isMobile = constraints.maxWidth < 600;
+        final double horizontalPadding = isMobile ? 8 : 24;
+        final double verticalPadding = isMobile ? 12 : 24;
+        final double buttonIconSize = isMobile ? 18 : 24;
+        final double buttonFontSize = isMobile ? 12 : 14;
+
+        return Scaffold(
+          backgroundColor: const Color(0xFFF6F8FC),
+          body: Padding(
+            padding: EdgeInsets.symmetric(
+              horizontal: horizontalPadding,
+              vertical: verticalPadding,
             ),
-            const SizedBox(height: 16),
-            Expanded(
-              child: Container(
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(12),
-                  boxShadow: const [
-                    BoxShadow(color: Colors.black12, blurRadius: 4),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    ElevatedButton.icon(
+                      onPressed: _showFilterDialog,
+                      icon: Icon(Icons.filter_list, size: buttonIconSize),
+                      label: Text(
+                        'Filter',
+                        style: TextStyle(
+                          fontFamily: 'Poppins',
+                          fontSize: buttonFontSize,
+                        ),
+                      ),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFF3E6FAA),
+                        foregroundColor: Colors.white,
+                        padding: EdgeInsets.symmetric(
+                          horizontal: isMobile ? 12 : 16,
+                          vertical: isMobile ? 8 : 12,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    OutlinedButton.icon(
+                      onPressed: () {},
+                      icon: Icon(Icons.picture_as_pdf, size: buttonIconSize),
+                      label: Text(
+                        'Cetak PDF',
+                        style: TextStyle(
+                          fontFamily: 'Poppins',
+                          fontSize: buttonFontSize,
+                        ),
+                      ),
+                      style: OutlinedButton.styleFrom(
+                        foregroundColor: const Color(0xFF3E6FAA),
+                        side: const BorderSide(color: Color(0xFF3E6FAA)),
+                        padding: EdgeInsets.symmetric(
+                          horizontal: isMobile ? 12 : 16,
+                          vertical: isMobile ? 8 : 12,
+                        ),
+                      ),
+                    ),
                   ],
                 ),
-                child: SingleChildScrollView(
-                  scrollDirection: Axis.vertical,
-                  child: SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    child: DataTable(
-                      columnSpacing: 20,
-                      headingRowHeight: 48,
-                      dataRowHeight: 56,
-                      columns: const [
-                        DataColumn(label: Text('No')),
-                        DataColumn(label: Text('Nama Keluarga')),
-                        DataColumn(label: Text('Status Keluarga')),
-                        DataColumn(label: Text('Iuran')),
-                        DataColumn(label: Text('Kode Tagihan')),
-                        DataColumn(label: Text('Nominal')),
-                        DataColumn(label: Text('Periode')),
-                        DataColumn(label: Text('Status')),
-                        DataColumn(label: Text('Aksi')),
+                SizedBox(height: isMobile ? 12 : 16),
+                Expanded(
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(10),
+                      boxShadow: const [
+                        BoxShadow(
+                          color: Colors.black12,
+                          blurRadius: 4,
+                          offset: Offset(0, 2),
+                        ),
                       ],
-                      rows: filteredData.map((item) {
-                        return DataRow(
-                          cells: [
-                            DataCell(Text(item['no'].toString())),
-                            DataCell(Text(item['nama'])),
-                            DataCell(
-                              statusKeluargaPill(item['statusKeluarga']),
-                            ),
-                            DataCell(Text(item['iuran'])),
-                            DataCell(Text(item['kodeTagihan'])),
-                            DataCell(Text(item['nominal'])),
-                            DataCell(Text(item['periode'])),
-                            DataCell(statusPill(item['status'])),
-                            DataCell(
-                              IconButton(
-                                icon: const Icon(Icons.more_horiz),
-                                onPressed: () {},
-                              ),
-                            ),
-                          ],
-                        );
-                      }).toList(),
+                    ),
+                    padding: EdgeInsets.all(isMobile ? 8 : 12),
+                    child: SingleChildScrollView(
+                      scrollDirection: Axis.vertical,
+                      child: SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        child: isMobile
+                            ? FittedBox(
+                                fit: BoxFit.scaleDown,
+                                alignment: Alignment.centerLeft,
+                                child: _buildDataTable(
+                                  buttonFontSize: buttonFontSize,
+                                ),
+                              )
+                            : _buildDataTable(),
+                      ),
                     ),
                   ),
                 ),
+                SizedBox(height: isMobile ? 12 : 20),
+                _buildPagination(isMobile),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  DataTable _buildDataTable({double? buttonFontSize}) {
+    return DataTable(
+      columnSpacing: 20,
+      headingRowHeight: 48,
+      dataRowHeight: 56,
+      headingTextStyle: const TextStyle(
+        fontWeight: FontWeight.bold,
+        color: Colors.black87,
+      ),
+      dataTextStyle: buttonFontSize != null
+          ? TextStyle(fontSize: buttonFontSize)
+          : null,
+      columns: const [
+        DataColumn(label: Text('No')),
+        DataColumn(label: Text('Nama Keluarga')),
+        DataColumn(label: Text('Status Keluarga')),
+        DataColumn(label: Text('Iuran')),
+        DataColumn(label: Text('Kode Tagihan')),
+        DataColumn(label: Text('Nominal')),
+        DataColumn(label: Text('Periode')),
+        DataColumn(label: Text('Status')),
+        DataColumn(label: Text('Aksi')),
+      ],
+      rows: _paginatedData.map((item) {
+        return DataRow(
+          cells: [
+            DataCell(Text(item['no'].toString())),
+            DataCell(Text(item['nama'])),
+            DataCell(statusKeluargaPill(item['statusKeluarga'])),
+            DataCell(Text(item['iuran'])),
+            DataCell(Text(item['kodeTagihan'])),
+            DataCell(Text(item['nominal'])),
+            DataCell(Text(item['periode'])),
+            DataCell(statusPill(item['status'])),
+            DataCell(
+              PopupMenuButton<String>(
+                icon: const Icon(Icons.more_horiz),
+                onSelected: (value) {
+                  if (value == 'detail') {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => TagihanDetailScreen(item: item),
+                      ),
+                    );
+                  }
+                },
+                itemBuilder: (context) => const [
+                  PopupMenuItem(value: 'detail', child: Text('Detail')),
+                ],
               ),
             ),
           ],
+        );
+      }).toList(),
+    );
+  }
+
+  Widget _buildPagination(bool isMobile) {
+    final bool isFirst = _currentPage <= 1;
+    final bool isLast = _currentPage >= _totalPages;
+
+    List<Widget> pageButtons = [];
+    for (int i = 1; i <= _totalPages; i++) {
+      final bool active = i == _currentPage;
+      pageButtons.add(
+        GestureDetector(
+          onTap: () => setState(() => _currentPage = i),
+          child: Container(
+            margin: const EdgeInsets.symmetric(horizontal: 4),
+            padding: EdgeInsets.all(isMobile ? 6 : 8),
+            decoration: BoxDecoration(
+              color: active ? const Color(0xFF3E6FAA) : const Color(0xFFF0F0F0),
+              shape: BoxShape.circle,
+            ),
+            child: Text(
+              '$i',
+              style: TextStyle(
+                color: active ? Colors.white : Colors.black87,
+                fontSize: isMobile ? 12 : 14,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
         ),
-      ),
+      );
+    }
+
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        IconButton(
+          onPressed: isFirst
+              ? null
+              : () => setState(() => _currentPage = _currentPage - 1),
+          icon: const Icon(Icons.chevron_left),
+          color: isFirst ? Colors.grey : const Color(0xFF3E6FAA),
+        ),
+        ...pageButtons,
+        IconButton(
+          onPressed: isLast
+              ? null
+              : () => setState(() => _currentPage = _currentPage + 1),
+          icon: const Icon(Icons.chevron_right),
+          color: isLast ? Colors.grey : const Color(0xFF3E6FAA),
+        ),
+      ],
     );
   }
 }
