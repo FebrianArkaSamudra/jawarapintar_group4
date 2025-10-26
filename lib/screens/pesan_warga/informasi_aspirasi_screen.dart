@@ -126,6 +126,8 @@ class _InformasiAspirasiScreenState extends State<InformasiAspirasiScreen> {
   Widget _buildStatusBadge(BuildContext context, String status) {
     Color color;
     Color textColor;
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isMobile = screenWidth < 768;
 
     switch (status.toLowerCase()) {
       case 'diterima':
@@ -146,7 +148,10 @@ class _InformasiAspirasiScreenState extends State<InformasiAspirasiScreen> {
     }
 
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
+      padding: EdgeInsets.symmetric(
+        horizontal: isMobile ? 6.0 : 8.0,
+        vertical: 4.0,
+      ),
       decoration: BoxDecoration(
         color: color,
         borderRadius: BorderRadius.circular(16),
@@ -155,12 +160,20 @@ class _InformasiAspirasiScreenState extends State<InformasiAspirasiScreen> {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(Icons.assignment_turned_in_outlined, color: textColor, size: 14),
-          const SizedBox(width: 6),
+          Icon(
+            Icons.assignment_turned_in_outlined,
+            color: textColor,
+            size: isMobile ? 12 : 14,
+          ),
+          SizedBox(width: isMobile ? 4 : 6),
           Text(
             status,
             textAlign: TextAlign.center,
-            style: TextStyle(color: textColor, fontWeight: FontWeight.w600),
+            style: TextStyle(
+              color: textColor,
+              fontWeight: FontWeight.w600,
+              fontSize: isMobile ? 11 : 13,
+            ),
           ),
         ],
       ),
@@ -171,6 +184,8 @@ class _InformasiAspirasiScreenState extends State<InformasiAspirasiScreen> {
   void _showFilterModal(BuildContext context) {
     String? selectedStatus;
     final TextEditingController judulController = TextEditingController();
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isMobile = screenWidth < 768;
 
     showDialog(
       context: context,
@@ -180,19 +195,24 @@ class _InformasiAspirasiScreenState extends State<InformasiAspirasiScreen> {
             borderRadius: BorderRadius.circular(12),
           ),
           titlePadding: EdgeInsets.zero,
-          contentPadding: const EdgeInsets.all(20),
+          contentPadding: EdgeInsets.all(isMobile ? 16 : 20),
           title: Padding(
-            padding: const EdgeInsets.all(16).copyWith(bottom: 0),
+            padding: EdgeInsets.all(isMobile ? 12 : 16).copyWith(bottom: 0),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Text(
-                  'Filter Pesan Warga',
-                  style: TextStyle(fontWeight: FontWeight.bold),
+                Expanded(
+                  child: Text(
+                    'Filter Pesan Warga',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: isMobile ? 16 : 18,
+                    ),
+                  ),
                 ),
                 InkWell(
                   onTap: () => Navigator.of(dialogCtx).pop(),
-                  child: const Icon(Icons.close),
+                  child: const Icon(Icons.close, size: 24),
                 ),
               ],
             ),
@@ -200,78 +220,114 @@ class _InformasiAspirasiScreenState extends State<InformasiAspirasiScreen> {
           content: StatefulBuilder(
             builder: (context, setStateSB) {
               return SizedBox(
-                width: 500,
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const SizedBox(height: 12),
-                    const Text(
-                      'Judul',
-                      style: TextStyle(fontWeight: FontWeight.w600),
-                    ),
-                    const SizedBox(height: 8),
-                    TextField(
-                      controller: judulController,
-                      decoration: InputDecoration(
-                        hintText: 'Cari judul...',
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(15),
+                width: isMobile ? double.maxFinite : 500,
+                child: SingleChildScrollView(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const SizedBox(height: 12),
+                      const Text(
+                        'Judul',
+                        style: TextStyle(
+                          fontWeight: FontWeight.w600,
+                          fontSize: 14,
                         ),
                       ),
-                    ),
-                    const SizedBox(height: 16),
-                    const Text(
-                      'Status',
-                      style: TextStyle(fontWeight: FontWeight.w600),
-                    ),
-                    const SizedBox(height: 8),
-                    DropdownButtonFormField<String>(
-                      value: selectedStatus,
-                      hint: const Text('-- Pilih Status --'),
-                      items: const ['Pending', 'Diterima', 'Ditolak']
-                          .map(
-                            (s) => DropdownMenuItem(value: s, child: Text(s)),
-                          )
-                          .toList(),
-                      onChanged: (v) => setStateSB(() => selectedStatus = v),
-                    ),
-                    const SizedBox(height: 20),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        OutlinedButton(
-                          onPressed: () {
-                            judulController.clear();
-                            setStateSB(() => selectedStatus = null);
-                            setState(
-                              () => _filteredItems = List.from(_allItems),
-                            );
-                          },
-                          child: const Text('Reset Filter'),
+                      const SizedBox(height: 8),
+                      TextField(
+                        controller: judulController,
+                        decoration: InputDecoration(
+                          hintText: 'Cari judul...',
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 12,
+                          ),
                         ),
-                        ElevatedButton(
-                          onPressed: () {
-                            Navigator.of(dialogCtx).pop();
-                            setState(() {
-                              _filteredItems = _allItems.where((item) {
-                                final matchJudul =
-                                    judulController.text.isEmpty ||
-                                    item.judul.toLowerCase().contains(
-                                      judulController.text.toLowerCase(),
-                                    );
-                                final matchStatus =
-                                    selectedStatus == null ||
-                                    item.status == selectedStatus;
-                                return matchJudul && matchStatus;
-                              }).toList();
-                            });
-                          },
-                          child: const Text('Terapkan'),
+                      ),
+                      const SizedBox(height: 16),
+                      const Text(
+                        'Status',
+                        style: TextStyle(
+                          fontWeight: FontWeight.w600,
+                          fontSize: 14,
                         ),
-                      ],
-                    ),
-                  ],
+                      ),
+                      const SizedBox(height: 8),
+                      DropdownButtonFormField<String>(
+                        value: selectedStatus,
+                        hint: const Text('-- Pilih Status --'),
+                        decoration: InputDecoration(
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 12,
+                          ),
+                        ),
+                        items: const ['Pending', 'Diterima', 'Ditolak']
+                            .map(
+                              (s) => DropdownMenuItem(value: s, child: Text(s)),
+                            )
+                            .toList(),
+                        onChanged: (v) => setStateSB(() => selectedStatus = v),
+                      ),
+                      const SizedBox(height: 20),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Expanded(
+                            child: OutlinedButton(
+                              onPressed: () {
+                                judulController.clear();
+                                setStateSB(() => selectedStatus = null);
+                                setState(
+                                  () => _filteredItems = List.from(_allItems),
+                                );
+                              },
+                              style: OutlinedButton.styleFrom(
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 12,
+                                ),
+                              ),
+                              child: const Text('Reset'),
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: ElevatedButton(
+                              onPressed: () {
+                                Navigator.of(dialogCtx).pop();
+                                setState(() {
+                                  _filteredItems = _allItems.where((item) {
+                                    final matchJudul =
+                                        judulController.text.isEmpty ||
+                                        item.judul.toLowerCase().contains(
+                                          judulController.text.toLowerCase(),
+                                        );
+                                    final matchStatus =
+                                        selectedStatus == null ||
+                                        item.status == selectedStatus;
+                                    return matchJudul && matchStatus;
+                                  }).toList();
+                                });
+                              },
+                              style: ElevatedButton.styleFrom(
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 12,
+                                ),
+                              ),
+                              child: const Text('Terapkan'),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
               );
             },
@@ -362,18 +418,60 @@ class _InformasiAspirasiScreenState extends State<InformasiAspirasiScreen> {
     );
   }
 
+  // ===== DETAIL INLINE FOR MOBILE =====
+  Widget _buildDetailSectionInline() {
+    final item = _selectedItem!;
+    return Column(
+      children: [
+        Row(
+          children: [
+            IconButton(
+              icon: const Icon(Icons.arrow_back),
+              onPressed: () => setState(() {
+                _selectedItem = null;
+                _isEditing = false;
+              }),
+            ),
+            const Text(
+              'Kembali ke Daftar',
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+            ),
+          ],
+        ),
+        const SizedBox(height: 8),
+        Expanded(
+          child: SingleChildScrollView(
+            child: Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(16.0),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: const Color(0xFFE0E0E0)),
+              ),
+              child: _isEditing ? _buildEditForm(item) : _buildDetailView(item),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
   // ===== DETAIL / EDIT SECTION =====
   Widget _buildDetailSection() {
     if (_selectedItem == null) return const SizedBox();
     final item = _selectedItem!;
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isMobile = screenWidth < 768;
+
     return Padding(
-      padding: const EdgeInsets.only(top: 16.0),
+      padding: EdgeInsets.only(top: isMobile ? 12.0 : 16.0),
       child: Column(
         children: [
           const Divider(thickness: 1.5, height: 32),
           Container(
             width: double.infinity,
-            padding: const EdgeInsets.all(16.0),
+            padding: EdgeInsets.all(isMobile ? 12.0 : 16.0),
             decoration: BoxDecoration(
               color: const Color(0xFFF9F9F9),
               borderRadius: BorderRadius.circular(12),
@@ -387,12 +485,18 @@ class _InformasiAspirasiScreenState extends State<InformasiAspirasiScreen> {
   }
 
   Widget _buildDetailView(_AspirasiItem item) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isMobile = screenWidth < 768;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
+        Text(
           'Detail Informasi Aspirasi',
-          style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+          style: TextStyle(
+            fontSize: isMobile ? 14 : 16,
+            fontWeight: FontWeight.w600,
+          ),
         ),
         const SizedBox(height: 12),
         _buildDetailRow('Pengirim', item.pengirim),
@@ -400,13 +504,19 @@ class _InformasiAspirasiScreenState extends State<InformasiAspirasiScreen> {
         _buildDetailRow('Status', item.status),
         _buildDetailRow('Tanggal', item.tanggal),
         _buildDetailRow('Deskripsi', item.deskripsi),
-        const SizedBox(height: 12),
+        SizedBox(height: isMobile ? 8 : 12),
         Align(
-          alignment: Alignment.centerRight,
+          alignment: isMobile ? Alignment.center : Alignment.centerRight,
           child: ElevatedButton.icon(
             onPressed: () => setState(() => _selectedItem = null),
-            icon: const Icon(Icons.close),
+            icon: const Icon(Icons.close, size: 18),
             label: const Text('Tutup'),
+            style: ElevatedButton.styleFrom(
+              padding: EdgeInsets.symmetric(
+                horizontal: isMobile ? 16 : 20,
+                vertical: isMobile ? 10 : 12,
+              ),
+            ),
           ),
         ),
       ],
@@ -422,20 +532,29 @@ class _InformasiAspirasiScreenState extends State<InformasiAspirasiScreen> {
       text: item.deskripsi,
     );
     String? selectedStatus = item.status;
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isMobile = screenWidth < 768;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
+        Text(
           'Edit Informasi Aspirasi',
-          style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+          style: TextStyle(
+            fontSize: isMobile ? 14 : 16,
+            fontWeight: FontWeight.w600,
+          ),
         ),
         const SizedBox(height: 12),
         TextField(
           controller: judulController,
           decoration: InputDecoration(
             labelText: 'Judul Aspirasi',
-            border: OutlineInputBorder(borderRadius: BorderRadius.circular(15)),
+            border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: 12,
+              vertical: 12,
+            ),
           ),
         ),
         const SizedBox(height: 12),
@@ -444,7 +563,11 @@ class _InformasiAspirasiScreenState extends State<InformasiAspirasiScreen> {
           maxLines: 3,
           decoration: InputDecoration(
             labelText: 'Deskripsi Aspirasi',
-            border: OutlineInputBorder(borderRadius: BorderRadius.circular(15)),
+            border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: 12,
+              vertical: 12,
+            ),
           ),
         ),
         const SizedBox(height: 12),
@@ -452,7 +575,11 @@ class _InformasiAspirasiScreenState extends State<InformasiAspirasiScreen> {
           value: selectedStatus,
           decoration: InputDecoration(
             labelText: 'Status Aspirasi',
-            border: OutlineInputBorder(borderRadius: BorderRadius.circular(15)),
+            border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: 12,
+              vertical: 12,
+            ),
           ),
           items: const [
             DropdownMenuItem(value: 'Pending', child: Text('Pending')),
@@ -462,70 +589,121 @@ class _InformasiAspirasiScreenState extends State<InformasiAspirasiScreen> {
           onChanged: (v) => selectedStatus = v,
         ),
         const SizedBox(height: 16),
-        Align(
-          alignment: Alignment.centerRight,
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              OutlinedButton(
-                onPressed: () => setState(() {
-                  _selectedItem = null;
-                  _isEditing = false;
-                }),
-                child: const Text('Batal'),
+        isMobile
+            ? Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  OutlinedButton(
+                    onPressed: () => setState(() {
+                      _selectedItem = null;
+                      _isEditing = false;
+                    }),
+                    style: OutlinedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                    ),
+                    child: const Text('Batal'),
+                  ),
+                  const SizedBox(height: 8),
+                  ElevatedButton.icon(
+                    onPressed: () {
+                      setState(() {
+                        item.judul = judulController.text;
+                        item.deskripsi = deskripsiController.text;
+                        item.status = selectedStatus ?? item.status;
+                        _isEditing = false;
+                      });
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('Perubahan disimpan')),
+                      );
+                    },
+                    icon: const Icon(Icons.save_outlined, size: 18),
+                    label: const Text('Simpan'),
+                    style: ElevatedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                    ),
+                  ),
+                ],
+              )
+            : Align(
+                alignment: Alignment.centerRight,
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    OutlinedButton(
+                      onPressed: () => setState(() {
+                        _selectedItem = null;
+                        _isEditing = false;
+                      }),
+                      child: const Text('Batal'),
+                    ),
+                    const SizedBox(width: 8),
+                    ElevatedButton.icon(
+                      onPressed: () {
+                        setState(() {
+                          item.judul = judulController.text;
+                          item.deskripsi = deskripsiController.text;
+                          item.status = selectedStatus ?? item.status;
+                          _isEditing = false;
+                        });
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text('Perubahan disimpan')),
+                        );
+                      },
+                      icon: const Icon(Icons.save_outlined, size: 18),
+                      label: const Text('Simpan'),
+                    ),
+                  ],
+                ),
               ),
-              const SizedBox(width: 8),
-              ElevatedButton.icon(
-                onPressed: () {
-                  setState(() {
-                    item.judul = judulController.text;
-                    item.deskripsi = deskripsiController.text;
-                    item.status = selectedStatus ?? item.status;
-                    _isEditing = false;
-                  });
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Perubahan disimpan')),
-                  );
-                },
-                icon: const Icon(Icons.save_outlined),
-                label: const Text('Simpan'),
-              ),
-            ],
-          ),
-        ),
       ],
     );
   }
 
-  Widget _buildDetailRow(String label, String value) => Padding(
-    padding: const EdgeInsets.only(bottom: 8.0),
-    child: Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        SizedBox(
-          width: 130,
-          child: Text(
-            '$label:',
-            style: const TextStyle(fontWeight: FontWeight.w600),
-          ),
-        ),
-        Expanded(child: Text(value)),
-      ],
-    ),
-  );
+  Widget _buildDetailRow(String label, String value) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isMobile = screenWidth < 768;
+
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8.0),
+      child: isMobile
+          ? Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  '$label:',
+                  style: const TextStyle(
+                    fontWeight: FontWeight.w600,
+                    fontSize: 13,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(value, style: const TextStyle(fontSize: 13)),
+              ],
+            )
+          : Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SizedBox(
+                  width: 130,
+                  child: Text(
+                    '$label:',
+                    style: const TextStyle(fontWeight: FontWeight.w600),
+                  ),
+                ),
+                Expanded(child: Text(value)),
+              ],
+            ),
+    );
+  }
 
   // ===== MAIN BUILD =====
   @override
   Widget build(BuildContext context) {
-    const headerStyle = TextStyle(
-      fontWeight: FontWeight.w600,
-      color: Color(0xFF666666),
-      fontSize: 14,
-    );
-    const bodyStyle = TextStyle(color: Color(0xFF333333), fontSize: 14);
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isMobile = screenWidth < 768;
 
     return Padding(
-      padding: const EdgeInsets.all(24.0),
+      padding: EdgeInsets.all(isMobile ? 16.0 : 24.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -542,88 +720,237 @@ class _InformasiAspirasiScreenState extends State<InformasiAspirasiScreen> {
                   ),
                 ],
               ),
-              padding: const EdgeInsets.all(20),
+              padding: EdgeInsets.all(isMobile ? 12.0 : 20.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  Align(
-                    alignment: Alignment.topRight,
-                    child: OutlinedButton.icon(
-                      onPressed: () => _showFilterModal(context),
-                      icon: const Icon(Icons.filter_list),
-                      label: const Text('Filters'),
-                    ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      if (!isMobile)
+                        const Text(
+                          'Informasi Aspirasi Warga',
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                            color: Color(0xFF333333),
+                          ),
+                        ),
+                      OutlinedButton.icon(
+                        onPressed: () => _showFilterModal(context),
+                        icon: const Icon(Icons.filter_list, size: 18),
+                        label: Text(isMobile ? 'Filter' : 'Filters'),
+                        style: OutlinedButton.styleFrom(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: isMobile ? 12 : 16,
+                            vertical: isMobile ? 8 : 12,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
-                  const SizedBox(height: 6),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 8.0),
-                    child: Row(
-                      children: const [
-                        SizedBox(
-                          width: 50,
-                          child: Text('No', style: headerStyle),
-                        ),
-                        Expanded(
-                          flex: 2,
-                          child: Center(
-                            child: Text('Pengirim', style: headerStyle),
-                          ),
-                        ),
-                        Expanded(
-                          flex: 3,
-                          child: Center(
-                            child: Text('Judul', style: headerStyle),
-                          ),
-                        ),
-                        Expanded(
-                          flex: 2,
-                          child: Center(
-                            child: Text('Status', style: headerStyle),
-                          ),
-                        ),
-                        Expanded(
-                          flex: 3,
-                          child: Center(
-                            child: Text('Tanggal Dibuat', style: headerStyle),
-                          ),
-                        ),
-                        SizedBox(
-                          width: 50,
-                          child: Center(
-                            child: Text('Aksi', style: headerStyle),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const Divider(
-                    height: 1,
-                    thickness: 1,
-                    color: Color(0xFFE0E0E0),
-                  ),
-                  const SizedBox(height: 6),
+                  const SizedBox(height: 16),
                   Expanded(
-                    child: ListView.builder(
-                      itemCount: _filteredItems.length,
-                      itemBuilder: (context, index) {
-                        final it = _filteredItems[index];
-                        return _HoverableRow(
-                          data: it,
-                          bodyStyle: bodyStyle,
-                          buildStatusBadge: _buildStatusBadge,
-                          buildActionButton: _buildActionMenu,
-                          index: index,
-                        );
-                      },
-                    ),
+                    child: _selectedItem != null && isMobile
+                        ? _buildDetailSectionInline()
+                        : (isMobile
+                              ? _buildMobileList()
+                              : _buildDesktopTable()),
                   ),
-                  _buildDetailSection(),
+                  if (!isMobile) _buildDetailSection(),
                 ],
               ),
             ),
           ),
         ],
       ),
+    );
+  }
+
+  // ===== MOBILE CARD LIST =====
+  Widget _buildMobileList() {
+    if (_filteredItems.isEmpty) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: const [
+            Icon(Icons.inbox_outlined, size: 64, color: Color(0xFFCCCCCC)),
+            SizedBox(height: 16),
+            Text(
+              'Tidak ada data',
+              style: TextStyle(fontSize: 16, color: Color(0xFF999999)),
+            ),
+          ],
+        ),
+      );
+    }
+
+    return ListView.builder(
+      padding: const EdgeInsets.only(bottom: 16),
+      itemCount: _filteredItems.length,
+      itemBuilder: (context, index) {
+        final item = _filteredItems[index];
+        return Card(
+          margin: const EdgeInsets.only(bottom: 12),
+          elevation: 2,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(8),
+            side: const BorderSide(color: Color(0xFFE0E0E0), width: 0.5),
+          ),
+          child: InkWell(
+            onTap: () {
+              setState(() {
+                _selectedItem = item;
+                _isEditing = false;
+              });
+            },
+            borderRadius: BorderRadius.circular(8),
+            child: Padding(
+              padding: const EdgeInsets.all(12.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 4,
+                        ),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFF0F0F0),
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                        child: Text(
+                          '#${item.no}',
+                          style: const TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w600,
+                            color: Color(0xFF666666),
+                          ),
+                        ),
+                      ),
+                      _buildActionMenu(context, item, index),
+                    ],
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    item.judul,
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                      color: Color(0xFF333333),
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Row(
+                    children: [
+                      const Icon(
+                        Icons.person_outline,
+                        size: 14,
+                        color: Color(0xFF999999),
+                      ),
+                      const SizedBox(width: 4),
+                      Expanded(
+                        child: Text(
+                          item.pengirim,
+                          style: const TextStyle(
+                            fontSize: 13,
+                            color: Color(0xFF666666),
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 8),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Expanded(
+                        child: Row(
+                          children: [
+                            const Icon(
+                              Icons.calendar_today,
+                              size: 14,
+                              color: Color(0xFF999999),
+                            ),
+                            const SizedBox(width: 4),
+                            Expanded(
+                              child: Text(
+                                item.tanggal,
+                                style: const TextStyle(
+                                  fontSize: 12,
+                                  color: Color(0xFF666666),
+                                ),
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      _buildStatusBadge(context, item.status),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  // ===== DESKTOP TABLE =====
+  Widget _buildDesktopTable() {
+    const headerStyle = TextStyle(
+      fontWeight: FontWeight.w600,
+      color: Color(0xFF666666),
+      fontSize: 14,
+    );
+    const bodyStyle = TextStyle(color: Color(0xFF333333), fontSize: 14);
+
+    return Column(
+      children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 4.0),
+          child: Row(
+            children: const [
+              SizedBox(width: 50, child: Text('No', style: headerStyle)),
+              Expanded(flex: 2, child: Text('Pengirim', style: headerStyle)),
+              Expanded(flex: 3, child: Text('Judul', style: headerStyle)),
+              Expanded(
+                flex: 2,
+                child: Center(child: Text('Status', style: headerStyle)),
+              ),
+              Expanded(flex: 2, child: Text('Tanggal', style: headerStyle)),
+              SizedBox(
+                width: 50,
+                child: Center(child: Text('Aksi', style: headerStyle)),
+              ),
+            ],
+          ),
+        ),
+        const Divider(height: 1, thickness: 1, color: Color(0xFFE0E0E0)),
+        const SizedBox(height: 6),
+        Expanded(
+          child: ListView.builder(
+            itemCount: _filteredItems.length,
+            itemBuilder: (context, index) {
+              final it = _filteredItems[index];
+              return _HoverableRow(
+                data: it,
+                bodyStyle: bodyStyle,
+                buildStatusBadge: _buildStatusBadge,
+                buildActionButton: _buildActionMenu,
+                index: index,
+              );
+            },
+          ),
+        ),
+      ],
     );
   }
 }
@@ -675,7 +1002,10 @@ class _HoverableRowState extends State<_HoverableRow> {
           child: Container(
             decoration: decoration,
             child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 12.0),
+              padding: const EdgeInsets.symmetric(
+                vertical: 12.0,
+                horizontal: 4.0,
+              ),
               child: Row(
                 children: [
                   SizedBox(
@@ -684,17 +1014,18 @@ class _HoverableRowState extends State<_HoverableRow> {
                   ),
                   Expanded(
                     flex: 2,
-                    child: Center(
-                      child: Text(
-                        widget.data.pengirim,
-                        style: widget.bodyStyle,
-                      ),
+                    child: Text(
+                      widget.data.pengirim,
+                      style: widget.bodyStyle,
+                      overflow: TextOverflow.ellipsis,
                     ),
                   ),
                   Expanded(
                     flex: 3,
-                    child: Center(
-                      child: Text(widget.data.judul, style: widget.bodyStyle),
+                    child: Text(
+                      widget.data.judul,
+                      style: widget.bodyStyle,
+                      overflow: TextOverflow.ellipsis,
                     ),
                   ),
                   Expanded(
@@ -707,9 +1038,11 @@ class _HoverableRowState extends State<_HoverableRow> {
                     ),
                   ),
                   Expanded(
-                    flex: 3,
-                    child: Center(
-                      child: Text(widget.data.tanggal, style: widget.bodyStyle),
+                    flex: 2,
+                    child: Text(
+                      widget.data.tanggal,
+                      style: widget.bodyStyle,
+                      overflow: TextOverflow.ellipsis,
                     ),
                   ),
                   SizedBox(

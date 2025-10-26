@@ -27,6 +27,7 @@ class _CustomSidebarState extends State<CustomSidebar> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   bool _isSidebarMinimized = false;
   final Map<String, bool> _expandedItems = {};
+  bool _isProfileExpanded = false;
 
   @override
   void initState() {
@@ -368,45 +369,134 @@ class _CustomSidebarState extends State<CustomSidebar> {
   }
 
   Widget _buildUserProfile(bool isMobile) {
-    return Padding(
-      padding: EdgeInsets.all(_isSidebarMinimized && !isMobile ? 12.0 : 16.0),
-      child: Row(
-        mainAxisAlignment: _isSidebarMinimized && !isMobile
-            ? MainAxisAlignment.center
-            : MainAxisAlignment.start,
-        children: [
-          const CircleAvatar(
-            backgroundColor: Color(0xFFD3E0EA),
-            radius: 18,
-            child: Icon(Icons.person, color: Color(0xFF3F6FAA), size: 20),
+    if (_isSidebarMinimized && !isMobile) {
+      // Minimized view - just show avatar
+      return Padding(
+        padding: const EdgeInsets.all(12.0),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const CircleAvatar(
+              backgroundColor: Color(0xFFD3E0EA),
+              radius: 18,
+              child: Icon(Icons.person, color: Color(0xFF3F6FAA), size: 20),
+            ),
+          ],
+        ),
+      );
+    }
+
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        InkWell(
+          onTap: () {
+            setState(() {
+              _isProfileExpanded = !_isProfileExpanded;
+            });
+          },
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Row(
+              children: [
+                const CircleAvatar(
+                  backgroundColor: Color(0xFFD3E0EA),
+                  radius: 18,
+                  child: Icon(Icons.person, color: Color(0xFF3F6FAA), size: 20),
+                ),
+                const SizedBox(width: 8),
+                const Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        'Admin Testing',
+                        style: TextStyle(
+                          fontSize: 13,
+                          fontWeight: FontWeight.w600,
+                        ),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      Text(
+                        'admin@jawara.test',
+                        style: TextStyle(
+                          color: Color(0xFF999999),
+                          fontSize: 11,
+                        ),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ],
+                  ),
+                ),
+                Icon(
+                  _isProfileExpanded
+                      ? Icons.keyboard_arrow_up
+                      : Icons.keyboard_arrow_down,
+                  color: const Color(0xFF5C7E9D),
+                  size: 20,
+                ),
+              ],
+            ),
           ),
-          if (!_isSidebarMinimized || isMobile) ...[
-            const SizedBox(width: 8),
-            const Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    'Yuma Akhunza K.P',
-                    style: TextStyle(
-                      color: Color(0xFF333333),
-                      fontSize: 13,
-                      fontWeight: FontWeight.w600,
-                    ),
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  Text(
-                    'yuma.akhunza@gmail.com',
-                    style: TextStyle(color: Color(0xFF999999), fontSize: 11),
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ],
+        ),
+        if (_isProfileExpanded) _buildLogoutOption(isMobile),
+      ],
+    );
+  }
+
+  Widget _buildLogoutOption(bool isMobile) {
+    return InkWell(
+      onTap: () => _showLogoutDialog(isMobile),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
+        child: Row(
+          children: [
+            const SizedBox(width: 42), // Align with text above
+            const Icon(Icons.logout, color: Color(0xFF5C7E9D), size: 20),
+            const SizedBox(width: 12),
+            Text(
+              'Logout',
+              style: TextStyle(
+                color: const Color(0xFF5C7E9D),
+                fontSize: 13,
+                fontWeight: FontWeight.w500,
               ),
             ),
           ],
-        ],
+        ),
       ),
+    );
+  }
+
+  void _showLogoutDialog(bool isMobile) {
+    showDialog(
+      context: context,
+      builder: (BuildContext dialogContext) {
+        return AlertDialog(
+          title: const Text('Logout'),
+          content: const Text('Are you sure you want to logout?'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(dialogContext).pop(),
+              child: const Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(dialogContext).pop();
+                if (isMobile) {
+                  _scaffoldKey.currentState?.closeDrawer();
+                }
+                // Navigate to login page
+                Navigator.of(
+                  context,
+                ).pushNamedAndRemoveUntil('/login', (route) => false);
+              },
+              child: const Text('Logout', style: TextStyle(color: Colors.red)),
+            ),
+          ],
+        );
+      },
     );
   }
 }
