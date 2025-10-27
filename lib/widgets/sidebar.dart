@@ -271,6 +271,8 @@ class _CustomSidebarState extends State<CustomSidebar> {
                                   : FontWeight.w500,
                               fontSize: 14,
                             ),
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 2,
                           ),
                           onTap: () {
                             widget.onMenuSelect(item.title, subItem);
