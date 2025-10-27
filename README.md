@@ -84,14 +84,13 @@ It displays quick statistics such as the number of residents (9 people from 7 fa
 This section helps admins monitor community data efficiently using visual cards, pie charts, and bar graphs that cover three key areas: Kegiatan (activity management and event tracking), Kependudukan, and Keuangan (financial transactions with income and expense analysis).
 
 🖼️ **Displaying the feature:** 
-![Dashboard](/lib/IMG/Dashboard.png)
-
+![alt text](lib/IMG/Dashboard.gif)
 ---
 
 ## 👨‍👩‍👧‍👦 Data Warga & Rumah
 
 🖼️ **Displaying the feature:**
-![DataWarga](/lib/IMG/data_warga.gif)
+![alt text](lib/IMG/data_warga.gif)
 
 **Description:**  
 The Data Warga & Rumah section serves as the comprehensive resident and housing management system for the community.
@@ -102,7 +101,7 @@ This section helps admins efficiently manage community members and properties us
 ## 📥 Pemasukan
 
 🖼️ **Displaying the feature:**
-![Pemasukan](/lib/IMG/pemasukan.gif)
+![alt text](lib/IMG/pemasukan.gif)
 
 **Description:**  
 
@@ -115,7 +114,7 @@ This section helps admins efficiently manage community revenue through filterabl
 ## 📤 Pengeluaran
 
 🖼️ **Displaying the feature:**
-![Pengeluaran](/lib/IMG/pengeluaran.gif)
+![alt text](lib/IMG/pengeluaran.gif)
 
 **Description:**  
 The **Pengeluaran** module manages all community expense records, displaying a list of past expenditures complete with dates, descriptions, and total amounts. Users can search through existing data, view detailed information for each record, and add new entries through the **Tambah** form, which provides input fields for date, description, expense category, and total cost — ensuring accurate and organized financial tracking.
@@ -125,7 +124,7 @@ The **Pengeluaran** module manages all community expense records, displaying a l
 ## 📊 Laporan Keuangan
 
 🖼️ **Displaying the feature:**
-![LaporanKeuangan](/lib/IMG/laporan_keuangan.gif)
+![alt text](lib/IMG/laporan_keuangan.gif)
 
 **Description:**  
 The **Laporan Keuangan** module provides a complete financial overview of all transactions within the system. It consists of three main sections — **Semua Laporan**, **Laporan Pemasukan**, and **Laporan Pengeluaran** — allowing admins to view total income, expenses, and combined summaries in one place. Each report shows detailed records with amounts, categories, and timestamps, and the **Cetak Laporan** option enables exporting financial data into printable PDF format for easy reporting and documentation.
@@ -135,7 +134,7 @@ The **Laporan Keuangan** module provides a complete financial overview of all tr
 ## 📢 Kegiatan & Broadcast
 
 🖼️ **Displaying the feature:**
-![Broadcast](/lib/IMG/kegiatan_broadcast.gif)
+![alt text](lib/IMG/kegiatan_broadcast.gif)
 
 **Description:**  
 The kegiatan_broadcast folder contains the UI for managing broadcasts/events: responsive list screens that render card-based items on mobile and table-style rows on larger screens, add/edit forms, and a centered card-style detail view; items are passed as simple Map<String,String> objects, and a reusable FilterDialog returns {'query','kategori'} via Navigator.pop for local filtering recommend consolidating duplicate detail widgets and extracting the filter dialog to a single reusable file for maintainability.
@@ -145,7 +144,7 @@ The kegiatan_broadcast folder contains the UI for managing broadcasts/events: re
 ## 💬 Pesan Warga
 
 🖼️ **Displaying the feature:**
-![PesanWarga](/lib/IMG/pesan_warga.gif)
+![alt text](lib/IMG/Pesan_warga.gif)
 
 **Description:**  
 The **Pesan Warga** module serves as a communication channel between residents and administrators, allowing users to submit messages, complaints, or suggestions directly through the system. Each message includes the sender’s name, submission date, and a status indicator — **Diterima**, **Pending**, or **Ditolak** — providing clear visibility of message progress. Users can also filter messages by status for easier tracking. Admins can review each submission, manage responses, and maintain records for transparency and follow-up actions. This feature helps ensure that every resident’s voice is acknowledged and processed efficiently within the community management system.
@@ -155,7 +154,7 @@ The **Pesan Warga** module serves as a communication channel between residents a
 ## 🧍‍♂️ Penerimaan Warga
 
 🖼️ **Displaying the feature:**
-![PenerimaanWarga](/lib/IMG/penerimaan_warga.gif)
+![alt text](lib/IMG/penerimaan_warga.gif)
 
 **Description:**  
 The **Penerimaan Warga** feature manages the process of recording and tracking new resident registrations. Each entry includes essential information such as **NIK**, **email**, and **gender**, displayed neatly in separate cards. Every resident’s registration is tagged with a status — **Diterima**, **Pending**, or **Ditolak** — to indicate their current approval stage. The system also provides a **filter** option, allowing users or admins to easily sort and review applications based on their status. This module ensures a transparent and organized approach to monitoring resident acceptance within the community database.
@@ -165,7 +164,7 @@ The **Penerimaan Warga** feature manages the process of recording and tracking n
 ## 🔁 Mutasi Keluarga
 
 🖼️ **Displaying the feature:**
-![MutasiKeluarga](/lib/IMG/mutasi_keluarga.gif)
+![alt text](lib/IMG/mutasi_keluarga.gif)
 
 **Description:**  
 The Family Mutation feature tracks family relocations within or outside an administrative area. The list page displays mutation records with key details like date, family name, and mutation type, while the add page allows users to record new moves with reasons and dates. This ensures accurate population data for better administrative coordination.
@@ -185,7 +184,7 @@ The **Activity Log** feature serves as a centralized monitoring tool that record
 ## ⚙️ Manajemen Pengguna
 
 🖼️ **Displaying the feature:**  
-![ManajemenPengguna](/lib/IMG/Manajemen_pengguna.gif)
+![alt text](lib/IMG/Manajemen_pengguna.gif)
 
 **Description:**  
 The **Manajemen Pengguna** module allows admins to manage user accounts efficiently within the system. Through the **Daftar Pengguna** screen, all registered users are displayed in an organized list showing their **name**, **email**, and **status** (such as *Diterima*).  
@@ -198,7 +197,7 @@ This feature provides a **search bar** and **filter option** for quick user look
 ## 🔄 Channel Transfer
 
 🖼️ **Displaying the feature:**  
-![ChannelTransfer](/lib/IMG/channel_transfer.gif)
+![alt text](lib/IMG/channel_transfer.gif)
 
 **Description:**  
 The Channel module manages payment and transfer channels such as banks, e-wallets, and QRIS. It features a list view with icons, account details, and color-coded status badges, plus an add/edit form with file picker integration for QR and thumbnail uploads. Users can create, edit, or delete channels with confirmation dialogs. Icons adjust by type (Bank, E-Wallet, QRIS), and forms validate inputs before saving.
@@ -206,7 +205,7 @@ The Channel module manages payment and transfer channels such as banks, e-wallet
 ## 🔄 User Profile
 
 🖼️ **Displaying the feature:**  
-![UserProfile](/lib/IMG/profile.gif)
+![alt text](lib/IMG/profile.gif)
 
 **Description:**  
 _Explain how this feature enables users to transfer data or information between channels, ensuring smooth coordination and communication._
