@@ -133,247 +133,255 @@ class _PemasukanDaftarScreenState extends State<PemasukanDaftarScreen> {
                         ],
                       ),
                       const SizedBox(height: 24),
-                    // Nama field
-                    const Text(
-                      'Nama',
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    TextField(
-                      controller: _namaFilterController,
-                      decoration: InputDecoration(
-                        hintText: 'Cari nama...',
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: const BorderSide(
-                            color: Color(0xFF3E6FAA),
-                            width: 2,
-                          ),
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: const BorderSide(
-                            color: Color(0xFF3E6FAA),
-                            width: 2,
-                          ),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: const BorderSide(
-                            color: Color(0xFF3E6FAA),
-                            width: 2,
-                          ),
-                        ),
-                        contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 12,
+                      // Nama field
+                      const Text(
+                        'Nama',
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
                         ),
                       ),
-                    ),
-                    const SizedBox(height: 20),
-                    // Kategori field
-                    const Text(
-                      'Kategori',
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    DropdownButtonFormField<String>(
-                      value: _selectedKategoriFilter,
-                      decoration: InputDecoration(
-                        hintText: '-- Pilih Kategori --',
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 12,
-                        ),
-                      ),
-                      items: _kategoriList
-                          .map(
-                            (kategori) => DropdownMenuItem(
-                              value: kategori,
-                              child: Text(kategori),
+                      const SizedBox(height: 8),
+                      TextField(
+                        controller: _namaFilterController,
+                        decoration: InputDecoration(
+                          hintText: 'Cari nama...',
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8),
+                            borderSide: const BorderSide(
+                              color: Color(0xFF3E6FAA),
+                              width: 2,
                             ),
-                          )
-                          .toList(),
-                      onChanged: (value) {
-                        setDialogState(() {
-                          _selectedKategoriFilter = value;
-                        });
-                      },
-                    ),
-                    const SizedBox(height: 20),
-                    // Dari Tanggal field
-                    const Text(
-                      'Dari Tanggal',
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w500,
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8),
+                            borderSide: const BorderSide(
+                              color: Color(0xFF3E6FAA),
+                              width: 2,
+                            ),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8),
+                            borderSide: const BorderSide(
+                              color: Color(0xFF3E6FAA),
+                              width: 2,
+                            ),
+                          ),
+                          contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 12,
+                          ),
+                        ),
                       ),
-                    ),
-                    const SizedBox(height: 8),
-                    TextField(
-                      controller: _dariTanggalController,
-                      readOnly: true,
-                      decoration: InputDecoration(
-                        hintText: '--/--/----',
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
+                      const SizedBox(height: 20),
+                      // Kategori field
+                      const Text(
+                        'Kategori',
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
                         ),
-                        contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 12,
+                      ),
+                      const SizedBox(height: 8),
+                      DropdownButtonFormField<String>(
+                        value: _selectedKategoriFilter,
+                        decoration: InputDecoration(
+                          hintText: '-- Pilih Kategori --',
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 12,
+                          ),
                         ),
-                        suffixIcon: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            if (_dariTanggalController.text.isNotEmpty)
+                        items: _kategoriList
+                            .map(
+                              (kategori) => DropdownMenuItem(
+                                value: kategori,
+                                child: Text(kategori),
+                              ),
+                            )
+                            .toList(),
+                        onChanged: (value) {
+                          setDialogState(() {
+                            _selectedKategoriFilter = value;
+                          });
+                        },
+                      ),
+                      const SizedBox(height: 20),
+                      // Dari Tanggal field
+                      const Text(
+                        'Dari Tanggal',
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      TextField(
+                        controller: _dariTanggalController,
+                        readOnly: true,
+                        decoration: InputDecoration(
+                          hintText: '--/--/----',
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 12,
+                          ),
+                          suffixIcon: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              if (_dariTanggalController.text.isNotEmpty)
+                                IconButton(
+                                  icon: const Icon(Icons.clear, size: 20),
+                                  onPressed: () {
+                                    setDialogState(() {
+                                      _dariTanggal = null;
+                                      _dariTanggalController.clear();
+                                    });
+                                  },
+                                ),
                               IconButton(
-                                icon: const Icon(Icons.clear, size: 20),
-                                onPressed: () {
-                                  setDialogState(() {
-                                    _dariTanggal = null;
-                                    _dariTanggalController.clear();
-                                  });
+                                icon: const Icon(
+                                  Icons.calendar_today,
+                                  size: 20,
+                                ),
+                                onPressed: () async {
+                                  final DateTime? picked = await showDatePicker(
+                                    context: context,
+                                    initialDate: _dariTanggal ?? DateTime.now(),
+                                    firstDate: DateTime(2020),
+                                    lastDate: DateTime(2030),
+                                  );
+                                  if (picked != null) {
+                                    setDialogState(() {
+                                      _dariTanggal = picked;
+                                      _dariTanggalController.text =
+                                          "${picked.day.toString().padLeft(2, '0')}/${picked.month.toString().padLeft(2, '0')}/${picked.year}";
+                                    });
+                                  }
                                 },
                               ),
-                            IconButton(
-                              icon: const Icon(Icons.calendar_today, size: 20),
-                              onPressed: () async {
-                                final DateTime? picked = await showDatePicker(
-                                  context: context,
-                                  initialDate: _dariTanggal ?? DateTime.now(),
-                                  firstDate: DateTime(2020),
-                                  lastDate: DateTime(2030),
-                                );
-                                if (picked != null) {
-                                  setDialogState(() {
-                                    _dariTanggal = picked;
-                                    _dariTanggalController.text =
-                                        "${picked.day.toString().padLeft(2, '0')}/${picked.month.toString().padLeft(2, '0')}/${picked.year}";
-                                  });
-                                }
-                              },
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
                       ),
-                    ),
-                    const SizedBox(height: 20),
-                    // Sampai Tanggal field
-                    const Text(
-                      'Sampai Tanggal',
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w500,
+                      const SizedBox(height: 20),
+                      // Sampai Tanggal field
+                      const Text(
+                        'Sampai Tanggal',
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
+                        ),
                       ),
-                    ),
-                    const SizedBox(height: 8),
-                    TextField(
-                      controller: _sampaiTanggalController,
-                      readOnly: true,
-                      decoration: InputDecoration(
-                        hintText: '--/--/----',
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 12,
-                        ),
-                        suffixIcon: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            if (_sampaiTanggalController.text.isNotEmpty)
+                      const SizedBox(height: 8),
+                      TextField(
+                        controller: _sampaiTanggalController,
+                        readOnly: true,
+                        decoration: InputDecoration(
+                          hintText: '--/--/----',
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 12,
+                          ),
+                          suffixIcon: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              if (_sampaiTanggalController.text.isNotEmpty)
+                                IconButton(
+                                  icon: const Icon(Icons.clear, size: 20),
+                                  onPressed: () {
+                                    setDialogState(() {
+                                      _sampaiTanggal = null;
+                                      _sampaiTanggalController.clear();
+                                    });
+                                  },
+                                ),
                               IconButton(
-                                icon: const Icon(Icons.clear, size: 20),
-                                onPressed: () {
-                                  setDialogState(() {
-                                    _sampaiTanggal = null;
-                                    _sampaiTanggalController.clear();
-                                  });
+                                icon: const Icon(
+                                  Icons.calendar_today,
+                                  size: 20,
+                                ),
+                                onPressed: () async {
+                                  final DateTime? picked = await showDatePicker(
+                                    context: context,
+                                    initialDate:
+                                        _sampaiTanggal ?? DateTime.now(),
+                                    firstDate: DateTime(2020),
+                                    lastDate: DateTime(2030),
+                                  );
+                                  if (picked != null) {
+                                    setDialogState(() {
+                                      _sampaiTanggal = picked;
+                                      _sampaiTanggalController.text =
+                                          "${picked.day.toString().padLeft(2, '0')}/${picked.month.toString().padLeft(2, '0')}/${picked.year}";
+                                    });
+                                  }
                                 },
                               ),
-                            IconButton(
-                              icon: const Icon(Icons.calendar_today, size: 20),
-                              onPressed: () async {
-                                final DateTime? picked = await showDatePicker(
-                                  context: context,
-                                  initialDate: _sampaiTanggal ?? DateTime.now(),
-                                  firstDate: DateTime(2020),
-                                  lastDate: DateTime(2030),
-                                );
-                                if (picked != null) {
-                                  setDialogState(() {
-                                    _sampaiTanggal = picked;
-                                    _sampaiTanggalController.text =
-                                        "${picked.day.toString().padLeft(2, '0')}/${picked.month.toString().padLeft(2, '0')}/${picked.year}";
-                                  });
-                                }
-                              },
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
                       ),
-                    ),
-                    const SizedBox(height: 24),
-                    // Buttons
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        TextButton(
-                          onPressed: () {
-                            setDialogState(() {
-                              _namaFilterController.clear();
-                              _selectedKategoriFilter = null;
-                              _dariTanggal = null;
-                              _sampaiTanggal = null;
-                              _dariTanggalController.clear();
-                              _sampaiTanggalController.clear();
-                            });
-                          },
-                          child: const Text(
-                            'Reset Filter',
-                            style: TextStyle(
-                              color: Colors.black87,
-                              fontSize: 16,
+                      const SizedBox(height: 24),
+                      // Buttons
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          TextButton(
+                            onPressed: () {
+                              setDialogState(() {
+                                _namaFilterController.clear();
+                                _selectedKategoriFilter = null;
+                                _dariTanggal = null;
+                                _sampaiTanggal = null;
+                                _dariTanggalController.clear();
+                                _sampaiTanggalController.clear();
+                              });
+                            },
+                            child: const Text(
+                              'Reset Filter',
+                              style: TextStyle(
+                                color: Colors.black87,
+                                fontSize: 16,
+                              ),
                             ),
                           ),
-                        ),
-                        ElevatedButton(
-                          onPressed: () {
-                            _applyFilter();
-                            Navigator.pop(context);
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xFF5B7FBD),
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 32,
-                              vertical: 12,
+                          ElevatedButton(
+                            onPressed: () {
+                              _applyFilter();
+                              Navigator.pop(context);
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: const Color(0xFF5B7FBD),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 32,
+                                vertical: 12,
+                              ),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8),
+                              ),
                             ),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8),
+                            child: const Text(
+                              'Terapkan',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                              ),
                             ),
                           ),
-                          child: const Text(
-                            'Terapkan',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 16,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
               ),
             );
