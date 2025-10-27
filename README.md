@@ -46,7 +46,7 @@ Here’s the detailed breakdown of all main features developed for **Jawara Pint
 | 🏡 Data Warga & Rumah | Baws | October 22, 2025 | 🟢 Done |
 | 🧍‍♂️ Penerimaan Warga | Yuma Akhunza K.P | October 23, 2025 | 🟢 Done |
 | 📜 Log Aktivitas | Mikaila Kafka Akmalsyah | October 23, 2025 | 🟢 Done |
-| 🔐 Login Page | Mikaila Kafka Akmalsyah | October 25, 2025 | 🟢 Done |
+| 🔐 Login Page | Febrian Arka Samudra | October 25, 2025 | 🟢 Done |
 | 🧩 Fixing Layouts | Hammam Abdullah | October 25, 2025 | 🟢 Done |
 
 ---
@@ -69,14 +69,13 @@ Each team member contributed to their assigned modules, ensuring:
 Below is a breakdown of each feature in the app, complete with screenshots and sample Dart code.
 
 ---
-
-### 🧭 Sidebar
+### 🧭 Login & Sidebar
 
 Provides quick navigation across all modules and collapses for compact view.
 
 🖼️ **Displaying the feature:**
 
-![Sidebar](/lib/IMG/Sidebar.png)
+![alt text](lib/IMG/Login.gif)
 
 ### 📊 Dashboard
 
