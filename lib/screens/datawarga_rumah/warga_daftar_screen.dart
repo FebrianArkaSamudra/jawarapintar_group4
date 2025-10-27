@@ -410,111 +410,149 @@ class _WargaDaftarScreenState extends State<WargaDaftarScreen> {
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(12),
                               ),
+                              contentPadding: const EdgeInsets.all(20),
                               title: const Text(
                                 'Filter Penerimaan Warga',
                                 style: TextStyle(
                                   fontFamily: 'Poppins',
                                   fontWeight: FontWeight.bold,
+                                  fontSize: 18,
                                 ),
                               ),
-                              content: Column(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  TextField(
-                                    controller: _namaController,
-                                    decoration: InputDecoration(
-                                      labelText: 'Nama',
-                                      hintText: 'Cari nama...',
-                                      border: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(8),
-                                      ),
-                                      contentPadding:
-                                          const EdgeInsets.symmetric(
-                                            horizontal: 12,
+                              content: SingleChildScrollView(
+                                child: SizedBox(
+                                  width:
+                                      MediaQuery.of(context).size.width * 0.8,
+                                  child: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      TextField(
+                                        controller: _namaController,
+                                        decoration: InputDecoration(
+                                          labelText: 'Nama',
+                                          hintText: 'Cari nama...',
+                                          border: OutlineInputBorder(
+                                            borderRadius: BorderRadius.circular(
+                                              8,
+                                            ),
                                           ),
-                                    ),
-                                  ),
-                                  const SizedBox(height: 12),
-                                  DropdownButtonFormField<String>(
-                                    decoration: InputDecoration(
-                                      labelText: 'Jenis Kelamin',
-                                      border: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(8),
-                                      ),
-                                    ),
-                                    value: selectedGender,
-                                    items: const [
-                                      DropdownMenuItem(
-                                        value: 'Laki-laki',
-                                        child: Text('Laki-laki'),
-                                      ),
-                                      DropdownMenuItem(
-                                        value: 'Perempuan',
-                                        child: Text('Perempuan'),
-                                      ),
-                                    ],
-                                    onChanged: (v) =>
-                                        setState(() => selectedGender = v),
-                                  ),
-                                  const SizedBox(height: 12),
-                                  DropdownButtonFormField<String>(
-                                    decoration: InputDecoration(
-                                      labelText: 'Status',
-                                      border: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(8),
-                                      ),
-                                    ),
-                                    value: selectedStatus,
-                                    items: const [
-                                      DropdownMenuItem(
-                                        value: 'Aktif',
-                                        child: Text('Aktif'),
-                                      ),
-                                      DropdownMenuItem(
-                                        value: 'Nonaktif',
-                                        child: Text('Nonaktif'),
-                                      ),
-                                      DropdownMenuItem(
-                                        value: 'Hidup',
-                                        child: Text('Hidup'),
-                                      ),
-                                      DropdownMenuItem(
-                                        value: 'Wafat',
-                                        child: Text('Wafat'),
-                                      ),
-                                    ],
-                                    onChanged: (v) =>
-                                        setState(() => selectedStatus = v),
-                                  ),
-                                  const SizedBox(height: 12),
-                                  DropdownButtonFormField<String>(
-                                    decoration: InputDecoration(
-                                      labelText: 'Keluarga',
-                                      border: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(8),
-                                      ),
-                                    ),
-                                    value: selectedKeluarga,
-                                    items: const [
-                                      DropdownMenuItem(
-                                        value: 'Keluarga Mara Nunez',
-                                        child: Text('Keluarga Mara Nunez'),
-                                      ),
-                                      DropdownMenuItem(
-                                        value: 'Keluarga Varizky Naldiba Rimra',
-                                        child: Text(
-                                          'Keluarga Varizky Naldiba Rimra',
+                                          contentPadding:
+                                              const EdgeInsets.symmetric(
+                                                horizontal: 12,
+                                                vertical: 10,
+                                              ),
                                         ),
                                       ),
-                                      DropdownMenuItem(
-                                        value: 'Keluarga Tes',
-                                        child: Text('Keluarga Tes'),
+                                      const SizedBox(height: 12),
+                                      DropdownButtonFormField<String>(
+                                        decoration: InputDecoration(
+                                          labelText: 'Jenis Kelamin',
+                                          border: OutlineInputBorder(
+                                            borderRadius: BorderRadius.circular(
+                                              8,
+                                            ),
+                                          ),
+                                          contentPadding:
+                                              const EdgeInsets.symmetric(
+                                                horizontal: 12,
+                                                vertical: 10,
+                                              ),
+                                        ),
+                                        value: selectedGender,
+                                        isExpanded: true,
+                                        items: const [
+                                          DropdownMenuItem(
+                                            value: 'Laki-laki',
+                                            child: Text('Laki-laki'),
+                                          ),
+                                          DropdownMenuItem(
+                                            value: 'Perempuan',
+                                            child: Text('Perempuan'),
+                                          ),
+                                        ],
+                                        onChanged: (v) =>
+                                            setState(() => selectedGender = v),
+                                      ),
+                                      const SizedBox(height: 12),
+                                      DropdownButtonFormField<String>(
+                                        decoration: InputDecoration(
+                                          labelText: 'Status',
+                                          border: OutlineInputBorder(
+                                            borderRadius: BorderRadius.circular(
+                                              8,
+                                            ),
+                                          ),
+                                          contentPadding:
+                                              const EdgeInsets.symmetric(
+                                                horizontal: 12,
+                                                vertical: 10,
+                                              ),
+                                        ),
+                                        value: selectedStatus,
+                                        isExpanded: true,
+                                        items: const [
+                                          DropdownMenuItem(
+                                            value: 'Aktif',
+                                            child: Text('Aktif'),
+                                          ),
+                                          DropdownMenuItem(
+                                            value: 'Nonaktif',
+                                            child: Text('Nonaktif'),
+                                          ),
+                                          DropdownMenuItem(
+                                            value: 'Hidup',
+                                            child: Text('Hidup'),
+                                          ),
+                                          DropdownMenuItem(
+                                            value: 'Wafat',
+                                            child: Text('Wafat'),
+                                          ),
+                                        ],
+                                        onChanged: (v) =>
+                                            setState(() => selectedStatus = v),
+                                      ),
+                                      const SizedBox(height: 12),
+                                      DropdownButtonFormField<String>(
+                                        decoration: InputDecoration(
+                                          labelText: 'Keluarga',
+                                          border: OutlineInputBorder(
+                                            borderRadius: BorderRadius.circular(
+                                              8,
+                                            ),
+                                          ),
+                                          contentPadding:
+                                              const EdgeInsets.symmetric(
+                                                horizontal: 12,
+                                                vertical: 10,
+                                              ),
+                                        ),
+                                        value: selectedKeluarga,
+                                        isExpanded: true,
+                                        items: const [
+                                          DropdownMenuItem(
+                                            value: 'Keluarga Mara Nunez',
+                                            child: Text('Keluarga Mara Nunez'),
+                                          ),
+                                          DropdownMenuItem(
+                                            value:
+                                                'Keluarga Varizky Naldiba Rimra',
+                                            child: Text(
+                                              'Keluarga Varizky Naldiba Rimra',
+                                              overflow: TextOverflow.ellipsis,
+                                            ),
+                                          ),
+                                          DropdownMenuItem(
+                                            value: 'Keluarga Tes',
+                                            child: Text('Keluarga Tes'),
+                                          ),
+                                        ],
+                                        onChanged: (v) => setState(
+                                          () => selectedKeluarga = v,
+                                        ),
                                       ),
                                     ],
-                                    onChanged: (v) =>
-                                        setState(() => selectedKeluarga = v),
                                   ),
-                                ],
+                                ),
                               ),
                               actions: [
                                 TextButton(
